@@ -188,6 +188,30 @@
     "confirmation": {
       "title": "Booking confirmed",
       "description": "Thank you — a confirmation with your reference number is on its way to your inbox."
+    },
+    "steps": {
+      "details": "Your trip",
+      "contact": "Your details",
+      "review": "Review"
+    },
+    "startDate": "Start date",
+    "endDate": "End date",
+    "travellers": "Travellers",
+    "adults": "Adults",
+    "children": "Children",
+    "infants": "Infants",
+    "estimatedTotal": "Estimated total",
+    "estimateNote": "This is an estimate. We confirm the final price when we confirm your booking.",
+    "back": "Back",
+    "continue": "Continue",
+    "confirm": "Confirm booking",
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone",
+      "country": "Country",
+      "notes": "Anything we should know?"
     }
   },
   "pages": {
@@ -213,5 +237,16 @@
     "generic": "Something went wrong.",
     "tryAgain": "Try again",
     "loadFailed": "We could not load this content."
+  },
+  "filters": {
+    "any": "Any",
+    "stars": "Stars",
+    "maxPrice": "Max price",
+    "sortBy": "Sort by",
+    "newest": "Newest",
+    "priceAsc": "Price: low to high",
+    "priceDesc": "Price: high to low",
+    "ratingDesc": "Highest rated",
+    "clear": "Clear filters"
   }
 }

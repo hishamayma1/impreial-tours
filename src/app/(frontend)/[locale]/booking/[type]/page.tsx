@@ -1,23 +1,23 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { PageHeader } from '@/components/layout/PageHeader'
-import { PhasePlaceholder } from '@/components/ui/PhasePlaceholder'
-import { type Locale } from '@/i18n/routing'
+import { BookingWizard } from '@/components/booking/BookingWizard'
+import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
+import { getSiteSettings } from '@/lib/payload/queries'
 
 const PATH = '/booking'
 
+/** The four checkout shapes the wizard knows how to render. */
+const TYPES = ['tour', 'hotel', 'car', 'bike'] as const
+type BookingType = (typeof TYPES)[number]
+
 type PageParams = { locale: string; type: string }
 
-/**
- * Phase 1 leaves this route dynamic. Phase 3 adds `generateStaticParams` over every
- * locale x slug and swaps the humanised type below for the real document title.
- */
-const humanise = (value: string) =>
-  decodeURIComponent(value)
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase())
+export const generateStaticParams = () =>
+  locales.flatMap((locale) => TYPES.map((type) => ({ locale, type })))
 
 export const generateMetadata = async ({
   params,
@@ -25,12 +25,14 @@ export const generateMetadata = async ({
   params: Promise<PageParams>
 }): Promise<Metadata> => {
   const { locale, type } = await params
+  const t = await getTranslations({ locale, namespace: 'booking' })
 
   return {
-    title: humanise(type),
-    // TODO(phase 3): hreflang must point at each locale's own slug via
-    // getAlternateSlugs(doc) so switching language keeps the SAME document.
+    title: t('title'),
+    description: t('description'),
     alternates: buildAlternates(locale as Locale, `${PATH}/${type}`),
+    // Checkout has nothing to offer a search engine and should never be indexed.
+    robots: { index: false, follow: false },
   }
 }
 
@@ -38,13 +40,17 @@ const BookingPage = async ({ params }: { params: Promise<PageParams> }) => {
   const { locale, type } = await params
   setRequestLocale(locale)
 
-  const t = await getTranslations('booking')
-  const common = await getTranslations('common')
+  if (!TYPES.includes(type as BookingType)) notFound()
+
+  const [t, settings] = await Promise.all([
+    getTranslations('booking'),
+    getSiteSettings(locale as Locale),
+  ])
 
   return (
     <>
-      <PageHeader eyebrow={t('title')} title={humanise(type)} />
-      <PhasePlaceholder note={common('comingSoon')} />
+      <PageHeader title={t('title')} description={t('description')} />
+      <BookingWizard serviceType={type} currencies={settings.currencies} />
     </>
   )
 }

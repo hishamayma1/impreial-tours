@@ -188,6 +188,30 @@
     "confirmation": {
       "title": "Reserva confirmada",
       "description": "Gracias: le enviaremos por correo electrónico una confirmación con su número de referencia."
+    },
+    "steps": {
+      "details": "Su viaje",
+      "contact": "Sus datos",
+      "review": "Revisión"
+    },
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "travellers": "Viajeros",
+    "adults": "Adultos",
+    "children": "Niños",
+    "infants": "Bebés",
+    "estimatedTotal": "Total estimado",
+    "estimateNote": "Se trata de una estimación. Le confirmaremos el precio final al confirmar su reserva.",
+    "back": "Atrás",
+    "continue": "Continuar",
+    "confirm": "Confirmar reserva",
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "country": "País",
+      "notes": "¿Algo que debamos saber?"
     }
   },
   "pages": {
@@ -213,5 +237,16 @@
     "generic": "Algo ha salido mal.",
     "tryAgain": "Reintentar",
     "loadFailed": "No hemos podido cargar este contenido."
+  },
+  "filters": {
+    "any": "Cualquiera",
+    "stars": "Estrellas",
+    "maxPrice": "Precio máx.",
+    "sortBy": "Ordenar por",
+    "newest": "Más recientes",
+    "priceAsc": "Precio: de menor a mayor",
+    "priceDesc": "Precio: de mayor a menor",
+    "ratingDesc": "Mejor valorados",
+    "clear": "Borrar filtros"
   }
 }
