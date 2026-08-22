@@ -95,6 +95,13 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
     connectOptions: {
       maxPoolSize: 20,
+      /**
+       * Fail fast when the cluster is unreachable. The driver's 30s default means a
+       * page that makes several reads stacks up minutes of waiting before any of them
+       * reports the outage — long enough for a request to be abandoned rather than
+       * degrade to the empty state the front end is written to handle.
+       */
+      serverSelectionTimeoutMS: 8000,
     },
   }),
   sharp,

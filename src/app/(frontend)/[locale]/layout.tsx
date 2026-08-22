@@ -14,14 +14,16 @@ import { firstFilled } from '@/lib/utils'
 import '../globals.css'
 
 const display = Playfair_Display({
-  subsets: ['latin'],
+  // latin-ext carries the accented characters Spanish and German need; without it
+  // those glyphs fall back to a system face mid-word.
+  subsets: ['latin', 'latin-ext'],
   weight: ['500', '600', '700'],
   variable: '--font-display',
   display: 'swap',
 })
 
 const body = Inter({
-  subsets: ['latin'],
+  subsets: ['latin', 'latin-ext'],
   weight: ['400', '500', '600'],
   variable: '--font-body',
   display: 'swap',
