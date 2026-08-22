@@ -187,7 +187,10 @@
     "description": "Prüfen Sie Ihre Auswahl, ergänzen Sie Ihre Daten und bestätigen Sie.",
     "confirmation": {
       "title": "Buchung bestätigt",
-      "description": "Vielen Dank — eine Bestätigung mit Ihrer Referenznummer ist auf dem Weg in Ihr Postfach."
+      "description": "Vielen Dank — eine Bestätigung mit Ihrer Referenznummer ist auf dem Weg in Ihr Postfach.",
+      "reference": "Buchungsreferenz",
+      "emailNote": "Wir haben Ihnen eine Bestätigung per E-Mail geschickt. Unser Team meldet sich in Kürze, um die Einzelheiten abzustimmen.",
+      "backHome": "Zurück zur Startseite"
     },
     "steps": {
       "details": "Ihre Reise",
@@ -248,5 +251,28 @@
     "priceDesc": "Preis: absteigend",
     "ratingDesc": "Beste Bewertung",
     "clear": "Filter zurücksetzen"
+  },
+  "quote": {
+    "submit": "Angebot anfordern",
+    "addStop": "Stopp hinzufügen",
+    "removeStop": "Entfernen",
+    "successTitle": "Vielen Dank — wir haben Ihre Anfrage",
+    "successBody": "Ihre Angebotsreferenz lautet {reference}. Wir öffnen WhatsApp, damit Sie sie direkt an unser Team senden können; falls sich nichts geöffnet hat, nutzen Sie die Schaltfläche unten.",
+    "openWhatsapp": "WhatsApp öffnen",
+    "disabled": "Individuelle Angebote sind vorübergehend nicht verfügbar. Bitte kontaktieren Sie uns direkt.",
+    "fields": {
+      "name": "Name",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "pickupLocation": "Abholung",
+      "dropoffLocation": "Ziel",
+      "stops": "Weitere Stopps",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "passengers": "Personen",
+      "luggage": "Gepäck",
+      "vehiclePreference": "Bevorzugtes Fahrzeug",
+      "specialRequests": "Besondere Wünsche"
+    }
   }
 }

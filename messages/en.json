@@ -187,7 +187,10 @@
     "description": "Review your selection, add your details and confirm.",
     "confirmation": {
       "title": "Booking confirmed",
-      "description": "Thank you — a confirmation with your reference number is on its way to your inbox."
+      "description": "Thank you — a confirmation with your reference number is on its way to your inbox.",
+      "reference": "Booking reference",
+      "emailNote": "We have emailed you a confirmation. Our team will be in touch shortly to finalise the details.",
+      "backHome": "Back to home"
     },
     "steps": {
       "details": "Your trip",
@@ -248,5 +251,28 @@
     "priceDesc": "Price: high to low",
     "ratingDesc": "Highest rated",
     "clear": "Clear filters"
+  },
+  "quote": {
+    "submit": "Request a quote",
+    "addStop": "Add a stop",
+    "removeStop": "Remove",
+    "successTitle": "Thank you — we have your request",
+    "successBody": "Your quote reference is {reference}. We are opening WhatsApp so you can send it straight to our team; if it did not open, use the button below.",
+    "openWhatsapp": "Open WhatsApp",
+    "disabled": "Custom quotes are temporarily unavailable. Please contact us directly.",
+    "fields": {
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "pickupLocation": "Pick-up",
+      "dropoffLocation": "Drop-off",
+      "stops": "Extra stops",
+      "date": "Date",
+      "time": "Time",
+      "passengers": "Passengers",
+      "luggage": "Luggage",
+      "vehiclePreference": "Preferred vehicle",
+      "specialRequests": "Special requests"
+    }
   }
 }

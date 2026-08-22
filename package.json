@@ -17,9 +17,12 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts",
-    "test:pricing": "node --experimental-strip-types tests/pricing.test.ts"
+    "test:pricing": "node --experimental-strip-types tests/pricing.test.ts",
+    "test": "npm run test:pricing && npm run test:whatsapp",
+    "test:whatsapp": "node --experimental-strip-types tests/whatsapp.test.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
     "@payloadcms/db-mongodb": "^3.58.0",
     "@payloadcms/email-nodemailer": "^3.88.0",
     "@payloadcms/next": "^3.58.0",
@@ -32,8 +35,10 @@
     "payload": "^3.58.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hook-form": "^7.86.0",
     "sharp": "0.34.2",
     "tailwind-merge": "^2.5.4",
+    "zod": "^4.4.3",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

@@ -187,7 +187,10 @@
     "description": "Revise su selección, añada sus datos y confirme.",
     "confirmation": {
       "title": "Reserva confirmada",
-      "description": "Gracias: le enviaremos por correo electrónico una confirmación con su número de referencia."
+      "description": "Gracias: le enviaremos por correo electrónico una confirmación con su número de referencia.",
+      "reference": "Referencia de la reserva",
+      "emailNote": "Le hemos enviado una confirmación por correo electrónico. Nuestro equipo se pondrá en contacto en breve para concretar los detalles.",
+      "backHome": "Volver al inicio"
     },
     "steps": {
       "details": "Su viaje",
@@ -248,5 +251,28 @@
     "priceDesc": "Precio: de mayor a menor",
     "ratingDesc": "Mejor valorados",
     "clear": "Borrar filtros"
+  },
+  "quote": {
+    "submit": "Solicitar presupuesto",
+    "addStop": "Añadir parada",
+    "removeStop": "Quitar",
+    "successTitle": "Gracias: hemos recibido su solicitud",
+    "successBody": "Su referencia de presupuesto es {reference}. Estamos abriendo WhatsApp para que pueda enviarla directamente a nuestro equipo; si no se ha abierto, utilice el botón de abajo.",
+    "openWhatsapp": "Abrir WhatsApp",
+    "disabled": "Los presupuestos a medida no están disponibles temporalmente. Póngase en contacto con nosotros directamente.",
+    "fields": {
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "pickupLocation": "Recogida",
+      "dropoffLocation": "Destino",
+      "stops": "Paradas adicionales",
+      "date": "Fecha",
+      "time": "Hora",
+      "passengers": "Pasajeros",
+      "luggage": "Equipaje",
+      "vehiclePreference": "Vehículo preferido",
+      "specialRequests": "Peticiones especiales"
+    }
   }
 }

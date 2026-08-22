@@ -75,9 +75,11 @@ export const Header = async ({ locale }: { locale: Locale }) => {
     getTranslations('nav'),
   ])
 
-  // TODO(phase 2): read from the `Navigation` global instead of `Header`, and drop
-  // items whose service is switched off in SiteSettings.enabledServices.
-  const navItems = header.navItems.length > 0 ? header.navItems : buildDefaultNav(t)
+  // TODO(phase 6): prefer the `Navigation` global over the legacy `Header` global.
+  const navItems =
+    header.navItems.length > 0
+      ? header.navItems
+      : buildDefaultNav(t, settings.enabledServices)
   const cta = header.cta ?? buildDefaultCta(t)
 
   return (

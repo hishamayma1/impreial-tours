@@ -112,4 +112,8 @@ export type SiteSettingsVM = {
   logo: ImageVM | null
   currencies: CurrencyVM[]
   defaultSeo: { title: string; description: string; image: ImageVM | null }
+  /** Spec Section 3 additions. */
+  whatsappNumber: string
+  enabledServices: string[]
+  enableCustomQuote: boolean
 }

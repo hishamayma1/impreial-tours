@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { PageHeader } from '@/components/layout/PageHeader'
-import { PhasePlaceholder } from '@/components/ui/PhasePlaceholder'
+import { CustomQuoteForm } from '@/components/booking/CustomQuoteForm'
+import { Container } from '@/components/ui/Container'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
+import { getSiteSettings } from '@/lib/payload/queries'
 
 const PATH = '/transfers/custom'
 
-/** Pre-render this route for all three languages. */
 export const generateStaticParams = () => locales.map((locale) => ({ locale }))
 
 export const generateMetadata = async ({
@@ -30,18 +31,32 @@ const CustomTripPage = async ({ params }: { params: Promise<{ locale: string }> 
   const { locale } = await params
   setRequestLocale(locale)
 
-  const t = await getTranslations('transfers.custom')
-  const eyebrow = await getTranslations('transfers')
-  const common = await getTranslations('common')
+  const [t, parent, quote, settings] = await Promise.all([
+    getTranslations('transfers.custom'),
+    getTranslations('transfers'),
+    getTranslations('quote'),
+    getSiteSettings(locale as Locale),
+  ])
+
+  // SiteSettings.enableCustomQuote is the kill switch for this form (Section 3). The
+  // route handler enforces it too, so turning it off closes both doors.
+  const enabled = settings.enableCustomQuote !== false
 
   return (
     <>
-      <PageHeader
-        eyebrow={eyebrow('title')}
-        title={t('title')}
-        description={t('description')}
-      />
-      <PhasePlaceholder note={common('comingSoon')} />
+      <PageHeader eyebrow={parent('title')} title={t('title')} description={t('description')} />
+
+      <Container size="narrow" className="py-14 md:py-20">
+        {enabled ? (
+          <CustomQuoteForm />
+        ) : (
+          <div className="rounded-xl border border-dashed border-hairline p-10 text-center">
+            <p className="font-body-md text-body-md text-on-surface-variant">
+              {quote('disabled')}
+            </p>
+          </div>
+        )}
+      </Container>
     </>
   )
 }
