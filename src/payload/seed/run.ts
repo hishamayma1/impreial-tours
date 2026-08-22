@@ -4,6 +4,8 @@ import { locales, defaultLocale, type Locale } from '../../i18n/routing'
 import assets from './assets.json' with { type: 'json' }
 import { destinations, homeCopy, offers, posts, services, testimonials } from './data'
 import { altText } from './alt-text'
+import { seedServices } from './seed-services'
+import { seedNavigation } from './seed-navigation'
 
 type AssetKey = keyof typeof assets
 type MediaIds = Record<string, string>
@@ -73,6 +75,12 @@ const withRetry = async <T>(operation: () => Promise<T>, attempts = 4): Promise<
 
 const wipe = async (payload: Payload) => {
   const collections = [
+    // Spec Section 3 services first: they hold relationships into destinations/media.
+    'tours',
+    'hotels',
+    'transfers',
+    'bicycles',
+    'pages',
     'services',
     'offers',
     'destinations',
@@ -81,6 +89,8 @@ const wipe = async (payload: Payload) => {
     'categories',
     'media',
   ] as const
+  // Bookings, quote-requests and users are deliberately never wiped — they are
+  // customer data, not seed content.
 
   for (const collection of collections) {
     const { totalDocs } = await payload.count({ collection })
@@ -167,13 +177,14 @@ const seedContent = async (payload: Payload, media: MediaIds) => {
   }
   payload.logger.info(`Seeded ${offers.length} offers`)
 
+  const destinationIds: string[] = []
   for (const destination of destinations) {
-    await createLocalized(
+    destinationIds.push(await createLocalized(
       payload,
       'destinations',
       { order: destination.order, featured: true, image: media[destination.asset] },
       { en: destination.copy.en, es: destination.copy.es, de: destination.copy.de },
-    )
+    ))
   }
   payload.logger.info(`Seeded ${destinations.length} destinations`)
 
@@ -219,6 +230,9 @@ const seedContent = async (payload: Payload, media: MediaIds) => {
     )
   }
   payload.logger.info(`Seeded ${posts.length} journal posts`)
+
+  // Spec Section 3: three sample records per service, in all three languages.
+  await seedServices(payload, media, destinationIds)
 }
 
 const seedGlobals = async (payload: Payload, media: MediaIds) => {
@@ -274,6 +288,7 @@ const seedGlobals = async (payload: Payload, media: MediaIds) => {
     },
   })
 
+  await seedNavigation(payload)
   payload.logger.info('Seeded globals for all locales')
 }
 

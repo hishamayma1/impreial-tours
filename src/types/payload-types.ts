@@ -67,14 +67,20 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    tours: Tour;
+    hotels: Hotel;
+    transfers: Transfer;
+    bicycles: Bicycle;
+    bookings: Booking;
+    'quote-requests': QuoteRequest;
+    pages: Page;
+    destinations: Destination;
+    media: Media;
     services: Service;
     offers: Offer;
-    destinations: Destination;
     testimonials: Testimonial;
     posts: Post;
     categories: Category;
-    bookings: Booking;
-    media: Media;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,14 +89,20 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    tours: ToursSelect<false> | ToursSelect<true>;
+    hotels: HotelsSelect<false> | HotelsSelect<true>;
+    transfers: TransfersSelect<false> | TransfersSelect<true>;
+    bicycles: BicyclesSelect<false> | BicyclesSelect<true>;
+    bookings: BookingsSelect<false> | BookingsSelect<true>;
+    'quote-requests': QuoteRequestsSelect<false> | QuoteRequestsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    destinations: DestinationsSelect<false> | DestinationsSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     offers: OffersSelect<false> | OffersSelect<true>;
-    destinations: DestinationsSelect<false> | DestinationsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
-    bookings: BookingsSelect<false> | BookingsSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -104,12 +116,14 @@ export interface Config {
   globals: {
     'home-page': HomePage;
     header: Header;
+    navigation: Navigation;
     footer: Footer;
     'site-settings': SiteSetting;
   };
   globalsSelect: {
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
     header: HeaderSelect<false> | HeaderSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
@@ -143,24 +157,150 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services".
+ * via the `definition` "tours".
  */
-export interface Service {
+export interface Tour {
   id: string;
-  title: string;
-  description: string;
   /**
-   * Optional badge shown above the card title.
+   * Drives which fields appear below, and which listing the tour joins.
    */
-  icon?: ('explore' | 'all-inclusive' | 'hotel' | 'bike' | 'sailing') | null;
+  tourType: 'daily' | 'experience';
+  title: string;
+  /**
+   * Leave blank to generate it from the title.
+   */
+  slug?: string | null;
+  destination?: (string | null) | Destination;
+  heroImage: string | Media;
+  gallery?:
+    | {
+        image: string | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shown on cards and in search results.
+   */
+  shortDescription: string;
+  overview: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  highlights?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  included?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  notIncluded?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  meetingPoint: string;
+  /**
+   * Languages this tour is guided in.
+   */
+  languages?: ('en' | 'es' | 'de')[] | null;
+  difficulty?: ('easy' | 'moderate' | 'hard') | null;
+  groupSizeMax?: number | null;
+  rating?: number | null;
+  badge?: ('none' | 'bestseller' | 'new') | null;
+  durationHours?: number | null;
+  startTimes?:
+    | {
+        time: string;
+        id?: string | null;
+      }[]
+    | null;
+  availableWeekdays?: ('mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun')[] | null;
+  pricePerPerson?: number | null;
+  childPrice?: number | null;
+  /**
+   * Flat price to book the whole tour privately. Optional.
+   */
+  privateGroupPrice?: number | null;
+  instantConfirmation?: boolean | null;
+  durationDays?: number | null;
+  nights?: number | null;
+  itinerary?:
+    | {
+        dayNumber: number;
+        dayTitle: string;
+        dayDescription: string;
+        meals?: ('breakfast' | 'lunch' | 'dinner')[] | null;
+        accommodation?: string | null;
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  accommodationIncluded?: boolean | null;
+  pricing?: {
+    basePricePerPerson?: number | null;
+    /**
+     * Added once for a traveller who will not share a room.
+     */
+    singleSupplement?: number | null;
+    /**
+     * Per-person price by group size — larger groups pay less per head. Tiers must not overlap.
+     */
+    priceTiers?:
+      | {
+          minPax: number;
+          maxPax: number;
+          pricePerPerson: number;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  departureDates?:
+    | {
+        date: string;
+        capacity?: number | null;
+        /**
+         * Replaces the tier price for this departure only.
+         */
+        priceOverride?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "destinations".
+ */
+export interface Destination {
+  id: string;
+  name: string;
+  country?: string | null;
+  summary?: string | null;
   image: string | Media;
   /**
-   * Locale-agnostic path, e.g. /tours/daily.
+   * Show in the homepage Featured Destinations grid.
    */
-  href?: string | null;
-  /**
-   * Lower numbers appear first.
-   */
+  featured?: boolean | null;
   order?: number | null;
   /**
    * Leave blank to generate it from the title.
@@ -244,6 +384,670 @@ export interface Media {
   };
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hotels".
+ */
+export interface Hotel {
+  id: string;
+  name: string;
+  /**
+   * Leave blank to generate it from the title.
+   */
+  slug?: string | null;
+  destination?: (string | null) | Destination;
+  starRating?: number | null;
+  heroImage: string | Media;
+  gallery?:
+    | {
+        image: string | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  address?: string | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  coordinates?: [number, number] | null;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  /**
+   * Stored as stable keys; the front end renders the localized label from messages/*.json so amenity names translate without re-tagging every hotel.
+   */
+  amenities?:
+    | (
+        | 'wifi'
+        | 'pool'
+        | 'spa'
+        | 'parking'
+        | 'breakfast'
+        | 'gym'
+        | 'ac'
+        | 'restaurant'
+        | 'airportShuttle'
+        | 'petFriendly'
+      )[]
+    | null;
+  policies?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  roomTypes?:
+    | {
+        roomName: string;
+        roomImages?:
+          | {
+              image: string | Media;
+              id?: string | null;
+            }[]
+          | null;
+        roomDescription?: string | null;
+        maxOccupancy: number;
+        bedConfiguration?: string | null;
+        /**
+         * Per person, per night, in the base currency.
+         */
+        pricing?: {
+          /**
+           * One guest alone in the room.
+           */
+          singlePrice?: number | null;
+          /**
+           * Per person when two share.
+           */
+          doublePrice?: number | null;
+          /**
+           * Per person when three share.
+           */
+          triplePrice?: number | null;
+        };
+        extraBedPrice?: number | null;
+        breakfastIncluded?: boolean | null;
+        refundable?: boolean | null;
+        /**
+         * Rooms of this type available to sell.
+         */
+        inventory?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * A multiplier applied on top of the base room price for stays in this window. 1.25 = +25%.
+   */
+  seasonalRates?:
+    | {
+        label: string;
+        startDate: string;
+        endDate: string;
+        multiplier: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transfers".
+ */
+export interface Transfer {
+  id: string;
+  transferType: 'airport' | 'intercity' | 'custom';
+  title: string;
+  /**
+   * Leave blank to generate it from the title.
+   */
+  slug?: string | null;
+  description?: string | null;
+  heroImage?: (string | null) | Media;
+  vehicles?:
+    | {
+        className: string;
+        image?: (string | null) | Media;
+        maxPassengers: number;
+        maxLuggage?: number | null;
+        features?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  airport?: string | null;
+  direction?: ('arrival' | 'departure' | 'roundTrip') | null;
+  /**
+   * Price bands by area — each hotel or district maps to one zone.
+   */
+  zones?:
+    | {
+        zoneName: string;
+        hotelsOrAreas?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        vehiclePricing?:
+          | {
+              vehicleClass: string;
+              maxPassengers: number;
+              maxLuggage?: number | null;
+              price: number;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  meetAndGreet?: boolean | null;
+  freeWaitingMinutes?: number | null;
+  routes?:
+    | {
+        fromCity: string;
+        toCity: string;
+        distanceKm?: number | null;
+        estimatedDurationMin?: number | null;
+        oneWayOnly?: boolean | null;
+        vehiclePricing?:
+          | {
+              vehicleClass: string;
+              maxPassengers: number;
+              maxLuggage?: number | null;
+              price: number;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Custom trips carry no pricing — submissions land in Quote Requests for manual quoting. The form itself is switched on by SiteSettings.enableCustomQuote.
+   */
+  customNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bicycles".
+ */
+export interface Bicycle {
+  id: string;
+  bikeType: 'rental' | 'tour';
+  title: string;
+  /**
+   * Leave blank to generate it from the title.
+   */
+  slug?: string | null;
+  image?: (string | null) | Media;
+  gallery?:
+    | {
+        image: string | Media;
+        id?: string | null;
+      }[]
+    | null;
+  description?: string | null;
+  bikeModel?: string | null;
+  specs?: {
+    frameSize?: string | null;
+    gears?: number | null;
+    electric?: boolean | null;
+    weightKg?: number | null;
+  };
+  /**
+   * Duration bands, cheapest per hour as the window grows. durationHours drives the checkout maths; durationLabel is what the customer reads.
+   */
+  rentalPricing?:
+    | {
+        durationLabel: string;
+        durationHours: number;
+        price: number;
+        id?: string | null;
+      }[]
+    | null;
+  deposit?: number | null;
+  includedAccessories?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  inventory?: number | null;
+  routeName?: string | null;
+  distanceKm?: number | null;
+  elevationGainM?: number | null;
+  difficulty?: ('easy' | 'moderate' | 'hard') | null;
+  durationHours?: number | null;
+  /**
+   * Route image or GPX file.
+   */
+  routeMap?: (string | null) | Media;
+  routePlan?:
+    | {
+        stopName: string;
+        stopDescription?: string | null;
+        distanceFromStartKm?: number | null;
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  pricePerPerson?: number | null;
+  minAge?: number | null;
+  guideIncluded?: boolean | null;
+  bikeIncluded?: boolean | null;
+  startTimes?:
+    | {
+        time: string;
+        id?: string | null;
+      }[]
+    | null;
+  maxGroupSize?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings".
+ */
+export interface Booking {
+  id: string;
+  bookingReference?: string | null;
+  serviceType: 'dailyTour' | 'experience' | 'hotel' | 'transfer' | 'bicycle' | 'enquiry';
+  status?: ('pending' | 'confirmed' | 'cancelled' | 'completed' | 'refunded') | null;
+  paymentStatus?: ('unpaid' | 'deposit' | 'paid' | 'refunded') | null;
+  source?: ('website' | 'whatsapp' | 'phone' | 'agent') | null;
+  assignedTo?: (string | null) | User;
+  customer?: {
+    firstName?: string | null;
+    lastName?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    country?: string | null;
+    locale?: string | null;
+    /**
+     * Written by the customer.
+     */
+    notes?: string | null;
+  };
+  travelers?: {
+    adults?: number | null;
+    children?: number | null;
+    infants?: number | null;
+  };
+  dates?: {
+    startDate?: string | null;
+    endDate?: string | null;
+  };
+  /**
+   * Built server-side from CMS prices. Totals below are re-derived from these on every save — editing a price here changes the total.
+   */
+  lineItems?:
+    | {
+        itemType?: ('tour' | 'room' | 'vehicle' | 'bicycle' | 'extra') | null;
+        refId?:
+          | ({
+              relationTo: 'tours';
+              value: string | Tour;
+            } | null)
+          | ({
+              relationTo: 'hotels';
+              value: string | Hotel;
+            } | null)
+          | ({
+              relationTo: 'transfers';
+              value: string | Transfer;
+            } | null)
+          | ({
+              relationTo: 'bicycles';
+              value: string | Bicycle;
+            } | null);
+        label: string;
+        quantity: number;
+        unitPrice: number;
+        subtotal?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  pricing?: {
+    subtotal?: number | null;
+    discount?: number | null;
+    /**
+     * Fraction, e.g. 0.14
+     */
+    taxRate?: number | null;
+    tax?: number | null;
+    total?: number | null;
+    currency?: string | null;
+  };
+  serviceDetails?: {
+    hotel?: {
+      rooms?:
+        | {
+            roomTypeId: string;
+            occupancy: 'single' | 'double' | 'triple';
+            guests?: number | null;
+            quantity?: number | null;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    transfer?: {
+      pickup?: string | null;
+      dropoff?: string | null;
+      flightNumber?: string | null;
+      vehicleClass?: string | null;
+      pickupTime?: string | null;
+      roundTrip?: boolean | null;
+    };
+    bicycle?: {
+      pickupTime?: string | null;
+      returnTime?: string | null;
+      bikeIds?:
+        | {
+            bikeId: string;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    tour?: {
+      startTime?: string | null;
+      departureDate?: string | null;
+      privateGroup?: boolean | null;
+      singleRooms?: number | null;
+    };
+    /**
+     * Captured by the homepage hero search before a product is chosen.
+     */
+    enquiry?: {
+      destination?: string | null;
+      tourType?: ('private' | 'group' | 'yacht' | 'villa') | null;
+      path?: string | null;
+    };
+  };
+  internalNotes?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: string;
+  name: string;
+  phone?: string | null;
+  avatar?: (string | null) | Media;
+  roles: ('admin' | 'manager' | 'editor' | 'support')[];
+  /**
+   * Scopes a Manager to specific services. Ignored for other roles — admins reach everything, editors and support are governed by their role alone.
+   */
+  allowedServices?: ('tours' | 'hotels' | 'transfers' | 'bicycles')[] | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quote-requests".
+ */
+export interface QuoteRequest {
+  id: string;
+  status?: ('new' | 'contacted' | 'quoted' | 'converted' | 'closed') | null;
+  serviceInterest?: ('tours' | 'hotels' | 'transfers' | 'bicycles') | null;
+  preferredLanguage?: ('en' | 'es' | 'de') | null;
+  name: string;
+  phone: string;
+  email?: string | null;
+  pickupLocation?: string | null;
+  dropoffLocation?: string | null;
+  stops?:
+    | {
+        location: string;
+        id?: string | null;
+      }[]
+    | null;
+  date?: string | null;
+  time?: string | null;
+  vehiclePreference?: string | null;
+  passengers?: number | null;
+  luggage?: number | null;
+  specialRequests?: string | null;
+  quotedPrice?: number | null;
+  quotedBy?: (string | null) | User;
+  /**
+   * Set when the customer was handed the WhatsApp deep link.
+   */
+  whatsappSentAt?: string | null;
+  /**
+   * Filled in by "Convert to booking".
+   */
+  convertedBooking?: (string | null) | Booking;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string;
+  title: string;
+  /**
+   * Leave blank to generate it from the title.
+   */
+  slug?: string | null;
+  layout?:
+    | (
+        | {
+            eyebrow?: string | null;
+            heading: string;
+            body?: string | null;
+            image?: (string | null) | Media;
+            ctaLabel?: string | null;
+            ctaHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'richText';
+          }
+        | {
+            heading?: string | null;
+            tourType?: ('daily' | 'experience') | null;
+            items?: (string | Tour)[] | null;
+            limit?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'tourGrid';
+          }
+        | {
+            heading?: string | null;
+            items?: (string | Hotel)[] | null;
+            limit?: number | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hotelGrid';
+          }
+        | {
+            heading?: string | null;
+            items?: (string | Testimonial)[] | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'testimonials';
+          }
+        | {
+            heading?: string | null;
+            items?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faq';
+          }
+        | {
+            heading: string;
+            body?: string | null;
+            ctaLabel?: string | null;
+            ctaHref?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'ctaBand';
+          }
+        | {
+            heading?: string | null;
+            images?:
+              | {
+                  image: string | Media;
+                  caption?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+      )[]
+    | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (string | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: string;
+  /**
+   * Typographic quote marks are added by the layout.
+   */
+  quote: string;
+  author: string;
+  location?: string | null;
+  portrait?: (string | null) | Media;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: string;
+  title: string;
+  description: string;
+  /**
+   * Optional badge shown above the card title.
+   */
+  icon?: ('explore' | 'all-inclusive' | 'hotel' | 'bike' | 'sailing') | null;
+  image: string | Media;
+  /**
+   * Locale-agnostic path, e.g. /tours/daily.
+   */
+  href?: string | null;
+  /**
+   * Lower numbers appear first.
+   */
+  order?: number | null;
+  /**
+   * Leave blank to generate it from the title.
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Seasonal, time-boxed journeys shown in the homepage carousel.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -277,47 +1081,6 @@ export interface Offer {
    * Leave blank to generate it from the title.
    */
   slug?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "destinations".
- */
-export interface Destination {
-  id: string;
-  name: string;
-  country?: string | null;
-  summary?: string | null;
-  image: string | Media;
-  /**
-   * Show in the homepage Featured Destinations grid.
-   */
-  featured?: boolean | null;
-  order?: number | null;
-  /**
-   * Leave blank to generate it from the title.
-   */
-  slug?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials".
- */
-export interface Testimonial {
-  id: string;
-  /**
-   * Typographic quote marks are added by the layout.
-   */
-  quote: string;
-  author: string;
-  location?: string | null;
-  portrait?: (string | null) | Media;
-  order?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -373,59 +1136,6 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "bookings".
- */
-export interface Booking {
-  id: string;
-  reference?: string | null;
-  status?: ('new' | 'contacted' | 'confirmed' | 'cancelled') | null;
-  destination: string;
-  tourType: 'private' | 'group' | 'yacht' | 'villa';
-  travelDate?: string | null;
-  guests?: number | null;
-  fullName?: string | null;
-  email?: string | null;
-  notes?: string | null;
-  /**
-   * Captured automatically from the request.
-   */
-  source?: {
-    locale?: ('en' | 'es' | 'de') | null;
-    currency?: string | null;
-    path?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: string;
-  name: string;
-  roles: ('admin' | 'editor')[];
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -449,16 +1159,48 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
+        relationTo: 'tours';
+        value: string | Tour;
+      } | null)
+    | ({
+        relationTo: 'hotels';
+        value: string | Hotel;
+      } | null)
+    | ({
+        relationTo: 'transfers';
+        value: string | Transfer;
+      } | null)
+    | ({
+        relationTo: 'bicycles';
+        value: string | Bicycle;
+      } | null)
+    | ({
+        relationTo: 'bookings';
+        value: string | Booking;
+      } | null)
+    | ({
+        relationTo: 'quote-requests';
+        value: string | QuoteRequest;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'destinations';
+        value: string | Destination;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: string | Media;
+      } | null)
+    | ({
         relationTo: 'services';
         value: string | Service;
       } | null)
     | ({
         relationTo: 'offers';
         value: string | Offer;
-      } | null)
-    | ({
-        relationTo: 'destinations';
-        value: string | Destination;
       } | null)
     | ({
         relationTo: 'testimonials';
@@ -471,14 +1213,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: string | Category;
-      } | null)
-    | ({
-        relationTo: 'bookings';
-        value: string | Booking;
-      } | null)
-    | ({
-        relationTo: 'media';
-        value: string | Media;
       } | null)
     | ({
         relationTo: 'users';
@@ -528,39 +1262,555 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "services_select".
+ * via the `definition` "tours_select".
  */
-export interface ServicesSelect<T extends boolean = true> {
+export interface ToursSelect<T extends boolean = true> {
+  tourType?: T;
   title?: T;
-  description?: T;
-  icon?: T;
-  image?: T;
-  href?: T;
-  order?: T;
   slug?: T;
+  destination?: T;
+  heroImage?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  shortDescription?: T;
+  overview?: T;
+  highlights?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  included?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  notIncluded?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  meetingPoint?: T;
+  languages?: T;
+  difficulty?: T;
+  groupSizeMax?: T;
+  rating?: T;
+  badge?: T;
+  durationHours?: T;
+  startTimes?:
+    | T
+    | {
+        time?: T;
+        id?: T;
+      };
+  availableWeekdays?: T;
+  pricePerPerson?: T;
+  childPrice?: T;
+  privateGroupPrice?: T;
+  instantConfirmation?: T;
+  durationDays?: T;
+  nights?: T;
+  itinerary?:
+    | T
+    | {
+        dayNumber?: T;
+        dayTitle?: T;
+        dayDescription?: T;
+        meals?: T;
+        accommodation?: T;
+        image?: T;
+        id?: T;
+      };
+  accommodationIncluded?: T;
+  pricing?:
+    | T
+    | {
+        basePricePerPerson?: T;
+        singleSupplement?: T;
+        priceTiers?:
+          | T
+          | {
+              minPax?: T;
+              maxPax?: T;
+              pricePerPerson?: T;
+              id?: T;
+            };
+      };
+  departureDates?:
+    | T
+    | {
+        date?: T;
+        capacity?: T;
+        priceOverride?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "offers_select".
+ * via the `definition` "hotels_select".
  */
-export interface OffersSelect<T extends boolean = true> {
+export interface HotelsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  destination?: T;
+  starRating?: T;
+  heroImage?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  description?: T;
+  address?: T;
+  coordinates?: T;
+  checkInTime?: T;
+  checkOutTime?: T;
+  amenities?: T;
+  policies?: T;
+  roomTypes?:
+    | T
+    | {
+        roomName?: T;
+        roomImages?:
+          | T
+          | {
+              image?: T;
+              id?: T;
+            };
+        roomDescription?: T;
+        maxOccupancy?: T;
+        bedConfiguration?: T;
+        pricing?:
+          | T
+          | {
+              singlePrice?: T;
+              doublePrice?: T;
+              triplePrice?: T;
+            };
+        extraBedPrice?: T;
+        breakfastIncluded?: T;
+        refundable?: T;
+        inventory?: T;
+        id?: T;
+      };
+  seasonalRates?:
+    | T
+    | {
+        label?: T;
+        startDate?: T;
+        endDate?: T;
+        multiplier?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transfers_select".
+ */
+export interface TransfersSelect<T extends boolean = true> {
+  transferType?: T;
   title?: T;
+  slug?: T;
+  description?: T;
+  heroImage?: T;
+  vehicles?:
+    | T
+    | {
+        className?: T;
+        image?: T;
+        maxPassengers?: T;
+        maxLuggage?: T;
+        features?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  airport?: T;
+  direction?: T;
+  zones?:
+    | T
+    | {
+        zoneName?: T;
+        hotelsOrAreas?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        vehiclePricing?:
+          | T
+          | {
+              vehicleClass?: T;
+              maxPassengers?: T;
+              maxLuggage?: T;
+              price?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  meetAndGreet?: T;
+  freeWaitingMinutes?: T;
+  routes?:
+    | T
+    | {
+        fromCity?: T;
+        toCity?: T;
+        distanceKm?: T;
+        estimatedDurationMin?: T;
+        oneWayOnly?: T;
+        vehiclePricing?:
+          | T
+          | {
+              vehicleClass?: T;
+              maxPassengers?: T;
+              maxLuggage?: T;
+              price?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  customNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bicycles_select".
+ */
+export interface BicyclesSelect<T extends boolean = true> {
+  bikeType?: T;
+  title?: T;
+  slug?: T;
   image?: T;
-  badges?:
+  gallery?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  description?: T;
+  bikeModel?: T;
+  specs?:
+    | T
+    | {
+        frameSize?: T;
+        gears?: T;
+        electric?: T;
+        weightKg?: T;
+      };
+  rentalPricing?:
+    | T
+    | {
+        durationLabel?: T;
+        durationHours?: T;
+        price?: T;
+        id?: T;
+      };
+  deposit?: T;
+  includedAccessories?:
     | T
     | {
         text?: T;
-        tone?: T;
         id?: T;
       };
-  href?: T;
-  activeFrom?: T;
-  activeUntil?: T;
-  order?: T;
+  inventory?: T;
+  routeName?: T;
+  distanceKm?: T;
+  elevationGainM?: T;
+  difficulty?: T;
+  durationHours?: T;
+  routeMap?: T;
+  routePlan?:
+    | T
+    | {
+        stopName?: T;
+        stopDescription?: T;
+        distanceFromStartKm?: T;
+        image?: T;
+        id?: T;
+      };
+  pricePerPerson?: T;
+  minAge?: T;
+  guideIncluded?: T;
+  bikeIncluded?: T;
+  startTimes?:
+    | T
+    | {
+        time?: T;
+        id?: T;
+      };
+  maxGroupSize?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings_select".
+ */
+export interface BookingsSelect<T extends boolean = true> {
+  bookingReference?: T;
+  serviceType?: T;
+  status?: T;
+  paymentStatus?: T;
+  source?: T;
+  assignedTo?: T;
+  customer?:
+    | T
+    | {
+        firstName?: T;
+        lastName?: T;
+        email?: T;
+        phone?: T;
+        country?: T;
+        locale?: T;
+        notes?: T;
+      };
+  travelers?:
+    | T
+    | {
+        adults?: T;
+        children?: T;
+        infants?: T;
+      };
+  dates?:
+    | T
+    | {
+        startDate?: T;
+        endDate?: T;
+      };
+  lineItems?:
+    | T
+    | {
+        itemType?: T;
+        refId?: T;
+        label?: T;
+        quantity?: T;
+        unitPrice?: T;
+        subtotal?: T;
+        id?: T;
+      };
+  pricing?:
+    | T
+    | {
+        subtotal?: T;
+        discount?: T;
+        taxRate?: T;
+        tax?: T;
+        total?: T;
+        currency?: T;
+      };
+  serviceDetails?:
+    | T
+    | {
+        hotel?:
+          | T
+          | {
+              rooms?:
+                | T
+                | {
+                    roomTypeId?: T;
+                    occupancy?: T;
+                    guests?: T;
+                    quantity?: T;
+                    id?: T;
+                  };
+            };
+        transfer?:
+          | T
+          | {
+              pickup?: T;
+              dropoff?: T;
+              flightNumber?: T;
+              vehicleClass?: T;
+              pickupTime?: T;
+              roundTrip?: T;
+            };
+        bicycle?:
+          | T
+          | {
+              pickupTime?: T;
+              returnTime?: T;
+              bikeIds?:
+                | T
+                | {
+                    bikeId?: T;
+                    id?: T;
+                  };
+            };
+        tour?:
+          | T
+          | {
+              startTime?: T;
+              departureDate?: T;
+              privateGroup?: T;
+              singleRooms?: T;
+            };
+        enquiry?:
+          | T
+          | {
+              destination?: T;
+              tourType?: T;
+              path?: T;
+            };
+      };
+  internalNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quote-requests_select".
+ */
+export interface QuoteRequestsSelect<T extends boolean = true> {
+  status?: T;
+  serviceInterest?: T;
+  preferredLanguage?: T;
+  name?: T;
+  phone?: T;
+  email?: T;
+  pickupLocation?: T;
+  dropoffLocation?: T;
+  stops?:
+    | T
+    | {
+        location?: T;
+        id?: T;
+      };
+  date?: T;
+  time?: T;
+  vehiclePreference?: T;
+  passengers?: T;
+  luggage?: T;
+  specialRequests?: T;
+  quotedPrice?: T;
+  quotedBy?: T;
+  whatsappSentAt?: T;
+  convertedBooking?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
   slug?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              body?: T;
+              image?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        richText?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        tourGrid?:
+          | T
+          | {
+              heading?: T;
+              tourType?: T;
+              items?: T;
+              limit?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hotelGrid?:
+          | T
+          | {
+              heading?: T;
+              items?: T;
+              limit?: T;
+              id?: T;
+              blockName?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              heading?: T;
+              items?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faq?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        ctaBand?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              heading?: T;
+              images?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -580,71 +1830,6 @@ export interface DestinationsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials_select".
- */
-export interface TestimonialsSelect<T extends boolean = true> {
-  quote?: T;
-  author?: T;
-  location?: T;
-  portrait?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts_select".
- */
-export interface PostsSelect<T extends boolean = true> {
-  title?: T;
-  excerpt?: T;
-  heroImage?: T;
-  content?: T;
-  category?: T;
-  publishedAt?: T;
-  slug?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories_select".
- */
-export interface CategoriesSelect<T extends boolean = true> {
-  title?: T;
-  kind?: T;
-  slug?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "bookings_select".
- */
-export interface BookingsSelect<T extends boolean = true> {
-  reference?: T;
-  status?: T;
-  destination?: T;
-  tourType?: T;
-  travelDate?: T;
-  guests?: T;
-  fullName?: T;
-  email?: T;
-  notes?: T;
-  source?:
-    | T
-    | {
-        locale?: T;
-        currency?: T;
-        path?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -731,11 +1916,94 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  icon?: T;
+  image?: T;
+  href?: T;
+  order?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "offers_select".
+ */
+export interface OffersSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  badges?:
+    | T
+    | {
+        text?: T;
+        tone?: T;
+        id?: T;
+      };
+  href?: T;
+  activeFrom?: T;
+  activeUntil?: T;
+  order?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  quote?: T;
+  author?: T;
+  location?: T;
+  portrait?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  excerpt?: T;
+  heroImage?: T;
+  content?: T;
+  category?: T;
+  publishedAt?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  title?: T;
+  kind?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  phone?: T;
+  avatar?: T;
   roles?: T;
+  allowedServices?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -865,6 +2133,97 @@ export interface Header {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: string;
+  mainNav?:
+    | {
+        label: string;
+        linkType?: ('page' | 'collection' | 'custom') | null;
+        page?: (string | null) | Page;
+        collectionPath?:
+          | (
+              | '/tours/daily'
+              | '/tours/experiences'
+              | '/hotels'
+              | '/transfers'
+              | '/transfers/airport'
+              | '/transfers/intercity'
+              | '/transfers/custom'
+              | '/bicycles'
+            )
+          | null;
+        /**
+         * Locale-less path, e.g. /about — the locale prefix is added for you.
+         */
+        url?: string | null;
+        /**
+         * Optional. When set, this item is hidden if the service is switched off in Site Settings.
+         */
+        service?: ('tours' | 'hotels' | 'transfers' | 'bicycles') | null;
+        children?:
+          | {
+              label: string;
+              linkType?: ('page' | 'collection' | 'custom') | null;
+              page?: (string | null) | Page;
+              collectionPath?:
+                | (
+                    | '/tours/daily'
+                    | '/tours/experiences'
+                    | '/hotels'
+                    | '/transfers'
+                    | '/transfers/airport'
+                    | '/transfers/intercity'
+                    | '/transfers/custom'
+                    | '/bicycles'
+                  )
+                | null;
+              /**
+               * Locale-less path, e.g. /about — the locale prefix is added for you.
+               */
+              url?: string | null;
+              /**
+               * Optional. When set, this item is hidden if the service is switched off in Site Settings.
+               */
+              service?: ('tours' | 'hotels' | 'transfers' | 'bicycles') | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  cta: {
+    label: string;
+    linkType?: ('page' | 'collection' | 'custom') | null;
+    page?: (string | null) | Page;
+    collectionPath?:
+      | (
+          | '/tours/daily'
+          | '/tours/experiences'
+          | '/hotels'
+          | '/transfers'
+          | '/transfers/airport'
+          | '/transfers/intercity'
+          | '/transfers/custom'
+          | '/bicycles'
+        )
+      | null;
+    /**
+     * Locale-less path, e.g. /about — the locale prefix is added for you.
+     */
+    url?: string | null;
+    /**
+     * Optional. When set, this item is hidden if the service is switched off in Site Settings.
+     */
+    service?: ('tours' | 'hotels' | 'transfers' | 'bicycles') | null;
+    id?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer".
  */
 export interface Footer {
@@ -896,6 +2255,32 @@ export interface Footer {
 export interface SiteSetting {
   id: string;
   brandName?: string | null;
+  contact?: {
+    contactEmail?: string | null;
+    phone?: string | null;
+    /**
+     * International format, digits only, no + or spaces (e.g. 201234567890). Used to build the wa.me deep link for custom quotes.
+     */
+    whatsappNumber?: string | null;
+    address?: string | null;
+    businessHours?: string | null;
+  };
+  socialLinks?:
+    | {
+        platform: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Switching a service off hides its navigation entries site-wide.
+   */
+  enabledServices?: ('tours' | 'hotels' | 'transfers' | 'bicycles')[] | null;
+  /**
+   * Shows the custom-trip form at /transfers/custom.
+   */
+  enableCustomQuote?: boolean | null;
+  defaultCurrency?: string | null;
   logo?: (string | null) | Media;
   defaultSeo?: {
     title?: string | null;
@@ -999,6 +2384,48 @@ export interface HeaderSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  mainNav?:
+    | T
+    | {
+        label?: T;
+        linkType?: T;
+        page?: T;
+        collectionPath?: T;
+        url?: T;
+        service?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              linkType?: T;
+              page?: T;
+              collectionPath?: T;
+              url?: T;
+              service?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        label?: T;
+        linkType?: T;
+        page?: T;
+        collectionPath?: T;
+        url?: T;
+        service?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
@@ -1026,6 +2453,25 @@ export interface FooterSelect<T extends boolean = true> {
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   brandName?: T;
+  contact?:
+    | T
+    | {
+        contactEmail?: T;
+        phone?: T;
+        whatsappNumber?: T;
+        address?: T;
+        businessHours?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  enabledServices?: T;
+  enableCustomQuote?: T;
+  defaultCurrency?: T;
   logo?: T;
   defaultSeo?:
     | T

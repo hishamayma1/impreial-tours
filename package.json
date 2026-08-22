@@ -2,7 +2,7 @@
   "name": "imperial-tours",
   "version": "1.0.0",
   "private": true,
-  "description": "Imperial Tours — luxury Egypt travel platform. Next.js App Router + Payload CMS + MongoDB.",
+  "description": "Imperial Tours \u2014 luxury Egypt travel platform. Next.js App Router + Payload CMS + MongoDB.",
   "type": "module",
   "engines": {
     "node": ">=20.9.0"
@@ -16,7 +16,8 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts"
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts",
+    "test:pricing": "node --experimental-strip-types tests/pricing.test.ts"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.58.0",

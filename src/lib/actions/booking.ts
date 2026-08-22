@@ -45,22 +45,39 @@ export async function createBookingEnquiry(
     const doc = await payload.create({
       collection: 'bookings',
       data: {
-        destination,
-        tourType: input.tourType,
-        travelDate: input.travelDate || undefined,
-        guests: typeof input.guests === 'number' ? input.guests : 2,
-        fullName: input.fullName?.trim() || undefined,
-        email: input.email?.trim() || undefined,
-        notes: input.notes?.trim() || undefined,
-        source: {
+        // The hero search captures an open enquiry before a product is chosen, so it
+        // lands in the unified Bookings funnel under the 'enquiry' service type.
+        serviceType: 'enquiry',
+        status: 'pending',
+        source: 'website',
+        customer: {
+          firstName: input.fullName?.trim() || 'Website enquiry',
+          email: input.email?.trim() || undefined,
+          notes: input.notes?.trim() || undefined,
           locale: isLocale(input.locale) ? input.locale : undefined,
-          currency: input.currency,
-          path: requestHeaders.get('referer') ?? undefined,
+        },
+        travelers: {
+          adults: typeof input.guests === 'number' ? input.guests : 2,
+        },
+        dates: {
+          startDate: input.travelDate || undefined,
+        },
+        pricing: {
+          currency: input.currency || 'USD',
+        },
+        serviceDetails: {
+          enquiry: {
+            destination,
+            tourType: input.tourType,
+            path: requestHeaders.get('referer') ?? undefined,
+          },
         },
       },
+      // The form is public; Bookings is staff-only by design.
+      overrideAccess: true,
     })
 
-    return { ok: true, reference: String((doc as { reference?: string }).reference ?? doc.id) }
+    return { ok: true, reference: String((doc as { bookingReference?: string }).bookingReference ?? doc.id) }
   } catch {
     return { ok: false, error: 'server' }
   }
