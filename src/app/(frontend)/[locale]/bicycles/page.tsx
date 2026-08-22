@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { PageHeader } from '@/components/layout/PageHeader'
-import { PhasePlaceholder } from '@/components/ui/PhasePlaceholder'
+import { ServiceGrid } from '@/components/services/ServiceGrid'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
+import { getSiteSettings } from '@/lib/payload/queries'
+import { getBicycles } from '@/lib/payload/services'
 
 const PATH = '/bicycles'
 
-/** Pre-render this route for all three languages. */
 export const generateStaticParams = () => locales.map((locale) => ({ locale }))
 
 export const generateMetadata = async ({
@@ -26,12 +27,25 @@ export const generateMetadata = async ({
   }
 }
 
-const BicyclesPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+const BicyclesPage = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>
+  searchParams: Promise<{ page?: string }>
+}) => {
   const { locale } = await params
+  // The URL is the source of truth for paging and filters (spec Section 6), so the
+  // page reads searchParams rather than any client store.
+  const { page } = await searchParams
   setRequestLocale(locale)
 
   const t = await getTranslations('bicycles')
-  const common = await getTranslations('common')
+
+  const [data, settings] = await Promise.all([
+    getBicycles(locale as Locale, undefined, { page: Number(page) || 1 }),
+    getSiteSettings(locale as Locale),
+  ])
 
   return (
     <>
@@ -39,7 +53,7 @@ const BicyclesPage = async ({ params }: { params: Promise<{ locale: string }> })
         title={t('title')}
         description={t('description')}
       />
-      <PhasePlaceholder note={common('comingSoon')} />
+      <ServiceGrid data={data} basePath="/bicycles" currencies={settings.currencies} />
     </>
   )
 }
