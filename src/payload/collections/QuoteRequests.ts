@@ -130,6 +130,15 @@ export const QuoteRequests: CollectionConfig = {
       },
     },
     {
+      name: 'convertTrigger',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '@/payload/components/ConvertToBooking#ConvertToBooking',
+        },
+      },
+    },
+    {
       name: 'convertedBooking',
       type: 'relationship',
       relationTo: 'bookings',

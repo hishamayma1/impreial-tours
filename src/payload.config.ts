@@ -45,7 +45,10 @@ export default buildConfig({
     meta: {
       titleSuffix: ' — Imperial Tours',
     },
-    components: {},
+    components: {
+      // Section 4: the stats row above the dashboard's collection list.
+      beforeDashboard: ['@/payload/components/Dashboard#Dashboard'],
+    },
   },
 
   /**

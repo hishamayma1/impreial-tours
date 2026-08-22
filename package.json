@@ -18,8 +18,9 @@
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts",
     "test:pricing": "node --experimental-strip-types tests/pricing.test.ts",
-    "test": "npm run test:pricing && npm run test:whatsapp",
-    "test:whatsapp": "node --experimental-strip-types tests/whatsapp.test.ts"
+    "test": "npm run test:pricing && npm run test:whatsapp && npm run test:access",
+    "test:whatsapp": "node --experimental-strip-types tests/whatsapp.test.ts",
+    "test:access": "node --experimental-strip-types tests/access.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
