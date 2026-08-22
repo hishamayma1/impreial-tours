@@ -88,7 +88,12 @@ export type HomePageVM = {
   }
 }
 
-export type NavItemVM = { label: string; href: string }
+export type NavItemVM = {
+  label: string
+  href: string
+  /** Present on hub items that open a dropdown (Tours, Transfers). */
+  children?: NavItemVM[]
+}
 
 export type HeaderVM = {
   navItems: NavItemVM[]

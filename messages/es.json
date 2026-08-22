@@ -12,7 +12,15 @@
     "bookNow": "Reservar",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
-    "skipToContent": "Ir al contenido"
+    "skipToContent": "Ir al contenido",
+    "dailyTours": "Excursiones de un día",
+    "fullExperiences": "Experiencias completas",
+    "hotels": "Hoteles",
+    "transfers": "Traslados",
+    "airportTransfer": "Traslado al aeropuerto",
+    "cityToCity": "Entre ciudades",
+    "customTrip": "Viaje a medida",
+    "bicycles": "Bicicletas"
   },
   "currency": {
     "label": "Moneda",
@@ -72,11 +80,79 @@
   "common": {
     "loading": "Cargando…",
     "error": "Algo ha salido mal.",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "comingSoon": "Esta sección forma parte de una fase posterior del desarrollo. La ruta, sus metadatos y su navegación ya están listos."
   },
   "notFound": {
     "title": "Esta página se ha salido del mapa.",
     "body": "Puede que el viaje que buscas se haya movido o retirado.",
     "cta": "Volver al inicio"
+  },
+  "tours": {
+    "eyebrow": "Tours",
+    "daily": {
+      "title": "Excursiones de un día",
+      "description": "Viajes de un solo día con salidas fijas: descubra los lugares más extraordinarios de Egipto y regrese al anochecer."
+    },
+    "experiences": {
+      "title": "Experiencias completas",
+      "description": "Paquetes de varios días con itinerario día a día, alojamiento y guía privado durante todo el viaje."
+    }
+  },
+  "hotels": {
+    "title": "Hoteles",
+    "description": "Alojamientos seleccionados, con precio por persona según la ocupación: individual, doble o triple."
+  },
+  "transfers": {
+    "title": "Traslados",
+    "description": "Coches privados con conductores profesionales: recogidas en el aeropuerto, rutas entre ciudades o un viaje diseñado a su medida.",
+    "airport": {
+      "title": "Traslado al aeropuerto",
+      "description": "Recepción personalizada en llegadas y salidas entre el aeropuerto y su hotel, con precio fijo por zona y vehículo."
+    },
+    "intercity": {
+      "title": "Entre ciudades",
+      "description": "Rutas directas entre ciudades con precio fijo por clase de vehículo, sin extras ocultos."
+    },
+    "custom": {
+      "title": "Viaje a medida",
+      "description": "Díganos a dónde quiere ir y le enviaremos un presupuesto personalizado por WhatsApp."
+    }
+  },
+  "bicycles": {
+    "title": "Bicicletas",
+    "description": "Alquile por horas o por días, o únase a una ruta guiada previamente planificada."
+  },
+  "booking": {
+    "title": "Su reserva",
+    "description": "Revise su selección, añada sus datos y confirme.",
+    "confirmation": {
+      "title": "Reserva confirmada",
+      "description": "Gracias: le enviaremos por correo electrónico una confirmación con su número de referencia."
+    }
+  },
+  "pages": {
+    "about": {
+      "title": "Sobre Imperial Tours",
+      "description": "Viajes seleccionados para el viajero exigente, gestionados por un equipo que vive y trabaja en Egipto."
+    },
+    "contact": {
+      "title": "Contacto",
+      "description": "Preguntas sobre un viaje, una reserva o un presupuesto: respondemos en español, inglés y alemán."
+    }
+  },
+  "forms": {
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Introduzca un correo electrónico válido",
+    "invalidPhone": "Introduzca un número de teléfono válido",
+    "submit": "Enviar",
+    "submitting": "Enviando…",
+    "success": "Gracias: hemos recibido su solicitud.",
+    "genericError": "Algo ha salido mal. Inténtelo de nuevo."
+  },
+  "errors": {
+    "generic": "Algo ha salido mal.",
+    "tryAgain": "Reintentar",
+    "loadFailed": "No hemos podido cargar este contenido."
   }
 }

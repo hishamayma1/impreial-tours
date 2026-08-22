@@ -68,6 +68,22 @@ const config: Config = {
         'on-secondary': '#ffffff',
         'surface-container-high': '#eae7e7',
         'surface-tint': '#4e5f7b',
+        /**
+         * Spec Section 0 semantic aliases. `accent` is the one accent colour
+         * (navy #10223B) and `hairline` is the 1px border used on every card.
+         */
+        accent: {
+          DEFAULT: '#10223b',
+          dark: '#0a1728',
+          light: '#1c3a63',
+        },
+        hairline: '#c5c6ce',
+      },
+      borderColor: {
+        hairline: '#c5c6ce',
+      },
+      borderWidth: {
+        hairline: '1px',
       },
       borderRadius: {
         DEFAULT: '0.25rem',

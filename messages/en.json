@@ -12,7 +12,15 @@
     "bookNow": "Book Now",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "dailyTours": "Daily Tours",
+    "fullExperiences": "Full Experiences",
+    "hotels": "Hotels",
+    "transfers": "Transfers",
+    "airportTransfer": "Airport Transfer",
+    "cityToCity": "City to City",
+    "customTrip": "Custom Trip",
+    "bicycles": "Bicycles"
   },
   "currency": {
     "label": "Currency",
@@ -72,11 +80,79 @@
   "common": {
     "loading": "Loading…",
     "error": "Something went wrong.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "comingSoon": "This section is part of a later build phase. The route, its metadata and its navigation are already in place."
   },
   "notFound": {
     "title": "This page has wandered off the map.",
     "body": "The journey you are looking for may have been moved or retired.",
     "cta": "Back to home"
+  },
+  "tours": {
+    "eyebrow": "Tours",
+    "daily": {
+      "title": "Daily Tours",
+      "description": "Single-day journeys with fixed departures — see the most extraordinary sights of Egypt and be back by evening."
+    },
+    "experiences": {
+      "title": "Full Experiences",
+      "description": "Multi-day packages with a day-by-day itinerary, accommodation and a private guide throughout."
+    }
+  },
+  "hotels": {
+    "title": "Hotels",
+    "description": "Handpicked stays, priced per person by occupancy — single, double or triple."
+  },
+  "transfers": {
+    "title": "Transfers",
+    "description": "Private cars with professional drivers — airport pickups, city-to-city routes, or a trip built entirely around you.",
+    "airport": {
+      "title": "Airport Transfer",
+      "description": "Meet-and-greet arrivals and departures between the airport and your hotel, at a fixed price by zone and vehicle."
+    },
+    "intercity": {
+      "title": "City to City",
+      "description": "Direct routes between cities at a fixed price per vehicle class — no hidden extras."
+    },
+    "custom": {
+      "title": "Custom Trip",
+      "description": "Tell us where you want to go and we will send you a personal quote on WhatsApp."
+    }
+  },
+  "bicycles": {
+    "title": "Bicycles",
+    "description": "Rent by the hour or by the day, or join a guided ride along a planned route."
+  },
+  "booking": {
+    "title": "Your booking",
+    "description": "Review your selection, add your details and confirm.",
+    "confirmation": {
+      "title": "Booking confirmed",
+      "description": "Thank you — a confirmation with your reference number is on its way to your inbox."
+    }
+  },
+  "pages": {
+    "about": {
+      "title": "About Imperial Tours",
+      "description": "Curated journeys for the discerning traveler, run by a team that lives and works in Egypt."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Questions about a journey, a booking or a quote — we answer in English, Spanish and German."
+    }
+  },
+  "forms": {
+    "required": "This field is required",
+    "invalidEmail": "Enter a valid email address",
+    "invalidPhone": "Enter a valid phone number",
+    "submit": "Send",
+    "submitting": "Sending…",
+    "success": "Thank you — we have received your request.",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "errors": {
+    "generic": "Something went wrong.",
+    "tryAgain": "Try again",
+    "loadFailed": "We could not load this content."
   }
 }

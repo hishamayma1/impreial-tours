@@ -8,6 +8,7 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { routing, locales, localeLabels, type Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/payload/queries'
+import { buildAlternates, siteUrl } from '@/lib/seo'
 import { firstFilled } from '@/lib/utils'
 
 import '../globals.css'
@@ -44,24 +45,14 @@ export const generateMetadata = async ({
 
   const siteName = firstFilled(settings.brandName, t('siteName'))
   const description = firstFilled(settings.defaultSeo.description, t('defaultDescription'))
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
-
   return {
-    metadataBase: new URL(baseUrl),
+    metadataBase: new URL(siteUrl),
     title: {
       default: `${siteName} — ${t('tagline')}`,
       template: `%s — ${siteName}`,
     },
     description,
-    alternates: {
-      canonical: locale === routing.defaultLocale ? '/' : `/${locale}`,
-      languages: Object.fromEntries(
-        locales.map((code) => [
-          localeLabels[code].hreflang,
-          code === routing.defaultLocale ? '/' : `/${code}`,
-        ]),
-      ),
-    },
+    alternates: buildAlternates(locale as Locale),
     openGraph: {
       type: 'website',
       siteName,

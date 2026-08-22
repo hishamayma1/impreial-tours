@@ -12,7 +12,15 @@
     "bookNow": "Jetzt buchen",
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen",
-    "skipToContent": "Zum Inhalt springen"
+    "skipToContent": "Zum Inhalt springen",
+    "dailyTours": "Tagestouren",
+    "fullExperiences": "Komplett-Erlebnisse",
+    "hotels": "Hotels",
+    "transfers": "Transfers",
+    "airportTransfer": "Flughafentransfer",
+    "cityToCity": "Stadt zu Stadt",
+    "customTrip": "Individuelle Reise",
+    "bicycles": "Fahrräder"
   },
   "currency": {
     "label": "Währung",
@@ -72,11 +80,79 @@
   "common": {
     "loading": "Wird geladen…",
     "error": "Etwas ist schiefgelaufen.",
-    "retry": "Erneut versuchen"
+    "retry": "Erneut versuchen",
+    "comingSoon": "Dieser Bereich gehört zu einer späteren Entwicklungsphase. Route, Metadaten und Navigation stehen bereits."
   },
   "notFound": {
     "title": "Diese Seite ist von der Landkarte verschwunden.",
     "body": "Die gesuchte Reise wurde möglicherweise verschoben oder eingestellt.",
     "cta": "Zurück zur Startseite"
+  },
+  "tours": {
+    "eyebrow": "Touren",
+    "daily": {
+      "title": "Tagestouren",
+      "description": "Eintägige Reisen mit festen Abfahrtszeiten — erleben Sie Ägyptens außergewöhnlichste Sehenswürdigkeiten und sind am Abend zurück."
+    },
+    "experiences": {
+      "title": "Komplett-Erlebnisse",
+      "description": "Mehrtägige Pakete mit Tag-für-Tag-Reiseverlauf, Unterkunft und durchgehend privater Reiseleitung."
+    }
+  },
+  "hotels": {
+    "title": "Hotels",
+    "description": "Handverlesene Unterkünfte, Preis pro Person je nach Belegung — Einzel, Doppel oder Dreibett."
+  },
+  "transfers": {
+    "title": "Transfers",
+    "description": "Privatwagen mit professionellen Fahrern — Flughafenabholung, Strecken zwischen Städten oder eine ganz auf Sie zugeschnittene Fahrt.",
+    "airport": {
+      "title": "Flughafentransfer",
+      "description": "Empfangsservice bei An- und Abreise zwischen Flughafen und Hotel, zum Festpreis nach Zone und Fahrzeug."
+    },
+    "intercity": {
+      "title": "Stadt zu Stadt",
+      "description": "Direkte Verbindungen zwischen Städten zum Festpreis je Fahrzeugklasse — ohne versteckte Zusatzkosten."
+    },
+    "custom": {
+      "title": "Individuelle Reise",
+      "description": "Sagen Sie uns, wohin Sie möchten, und wir senden Ihnen ein persönliches Angebot per WhatsApp."
+    }
+  },
+  "bicycles": {
+    "title": "Fahrräder",
+    "description": "Stundenweise oder tageweise mieten — oder einer geführten Tour auf geplanter Strecke folgen."
+  },
+  "booking": {
+    "title": "Ihre Buchung",
+    "description": "Prüfen Sie Ihre Auswahl, ergänzen Sie Ihre Daten und bestätigen Sie.",
+    "confirmation": {
+      "title": "Buchung bestätigt",
+      "description": "Vielen Dank — eine Bestätigung mit Ihrer Referenznummer ist auf dem Weg in Ihr Postfach."
+    }
+  },
+  "pages": {
+    "about": {
+      "title": "Über Imperial Tours",
+      "description": "Kuratierte Reisen für anspruchsvolle Gäste, betreut von einem Team, das in Ägypten lebt und arbeitet."
+    },
+    "contact": {
+      "title": "Kontakt",
+      "description": "Fragen zu einer Reise, einer Buchung oder einem Angebot — wir antworten auf Deutsch, Englisch und Spanisch."
+    }
+  },
+  "forms": {
+    "required": "Dieses Feld ist erforderlich",
+    "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer ein",
+    "submit": "Senden",
+    "submitting": "Wird gesendet…",
+    "success": "Vielen Dank — wir haben Ihre Anfrage erhalten.",
+    "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen.",
+    "tryAgain": "Erneut versuchen",
+    "loadFailed": "Dieser Inhalt konnte nicht geladen werden."
   }
 }

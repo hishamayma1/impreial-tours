@@ -15,6 +15,9 @@ type MobileNavProps = {
   cta: NavItemVM | null
 }
 
+const itemClass =
+  'rounded-lg px-2 py-3 font-body-md text-body-md tracking-wider text-on-surface-variant transition-colors hover:bg-surface-container hover:text-brand'
+
 export const MobileNav = ({ items, cta }: MobileNavProps) => {
   const t = useTranslations('nav')
   const open = useUIStore((state) => state.mobileNavOpen)
@@ -56,20 +59,33 @@ export const MobileNav = ({ items, cta }: MobileNavProps) => {
       >
         <nav className="flex flex-col gap-1">
           {items.map((item) => (
-            <Link
-              key={`${item.href}-${item.label}`}
-              href={item.href}
-              onClick={close}
-              className="rounded-lg px-2 py-3 font-body-md text-body-md tracking-wider text-on-surface-variant transition-colors hover:bg-surface-container hover:text-brand"
-            >
-              {item.label}
-            </Link>
+            <div key={`${item.href}-${item.label}`}>
+              <Link href={item.href} onClick={close} className={itemClass}>
+                {item.label}
+              </Link>
+              {/* Children are laid out flat and indented — a sheet this size does not
+                  need accordions, and every destination stays one tap away. */}
+              {item.children?.length ? (
+                <div className="ml-3 flex flex-col border-l border-outline-variant/40 pl-3">
+                  {item.children.map((child) => (
+                    <Link
+                      key={`${child.href}-${child.label}`}
+                      href={child.href}
+                      onClick={close}
+                      className={`${itemClass} text-caption`}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           ))}
         </nav>
 
         <div className="mt-6 flex items-center justify-between gap-4 border-t border-outline-variant/40 pt-6">
           <LocaleSwitcher />
-          <ButtonLink href={cta?.href ?? '/booking'} onClick={close} variant="navy" size="sm">
+          <ButtonLink href={cta?.href ?? '/tours/daily'} onClick={close} variant="navy" size="sm">
             {cta?.label || t('bookNow')}
           </ButtonLink>
         </div>
