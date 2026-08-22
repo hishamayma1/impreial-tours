@@ -1,0 +1,13 @@
+/* Dashboard skin — aligns the Payload admin with the Imperial Tours brand navy. */
+:root {
+  --theme-elevation-0: #ffffff;
+}
+
+html[data-theme='light'] {
+  --theme-success-500: #10223b;
+}
+
+.payload-logo,
+.graphic-logo {
+  color: #10223b;
+}

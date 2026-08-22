@@ -1,0 +1,51 @@
+{
+  "name": "imperial-tours",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Imperial Tours — luxury Egypt travel platform. Next.js App Router + Payload CMS + MongoDB.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
+    "typecheck": "tsc --noEmit",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts"
+  },
+  "dependencies": {
+    "@payloadcms/db-mongodb": "^3.58.0",
+    "@payloadcms/email-nodemailer": "^3.88.0",
+    "@payloadcms/next": "^3.58.0",
+    "@payloadcms/richtext-lexical": "^3.58.0",
+    "@payloadcms/ui": "^3.58.0",
+    "clsx": "^2.1.1",
+    "graphql": "^16.9.0",
+    "next": "15.4.11",
+    "next-intl": "^4.3.4",
+    "payload": "^3.58.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "sharp": "0.34.2",
+    "tailwind-merge": "^2.5.4",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.0",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "15.4.11",
+    "postcss": "^8.4.49",
+    "sass": "^1.83.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "5.7.3"
+  }
+}

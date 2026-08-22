@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Imperial Tours - Premium Travel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#798aa8",
+                        "inverse-primary": "#b6c7e8",
+                        "on-surface-variant": "#44474d",
+                        "background": "#fcf9f8",
+                        "tertiary-container": "#321d00",
+                        "primary-fixed-dim": "#b6c7e8",
+                        "inverse-surface": "#313030",
+                        "outline-variant": "#c5c6ce",
+                        "primary-container": "#10223b",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#5d5f5d",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#5c421e",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#454746",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-secondary-fixed": "#1a1c1b",
+                        "on-primary-fixed": "#091c35",
+                        "outline": "#75777e",
+                        "on-surface": "#1c1b1b",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f0eded",
+                        "on-tertiary-fixed": "#2a1800",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffddb6",
+                        "surface": "#fcf9f8",
+                        "secondary-container": "#e2e3e1",
+                        "surface-container-low": "#f6f3f2",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#636563",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#dcd9d9",
+                        "secondary-fixed": "#e2e3e1",
+                        "primary": "#000b1f",
+                        "primary-fixed": "#d5e3ff",
+                        "secondary-fixed-dim": "#c6c7c5",
+                        "tertiary-fixed-dim": "#e7c092",
+                        "tertiary": "#130900",
+                        "on-background": "#1c1b1b",
+                        "surface-bright": "#fcf9f8",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#a58359",
+                        "on-primary-fixed-variant": "#374762",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#eae7e7",
+                        "surface-tint": "#4e5f7b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-v-padding": "112px",
+                        "stack-md": "32px",
+                        "grid-gutter": "32px",
+                        "grid-margin": "48px",
+                        "stack-lg": "64px",
+                        "stack-sm": "16px"
+                    },
+                    "fontFamily": {
+                        "display-hero": ["Playfair Display"],
+                        "caption": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-section": ["Playfair Display"],
+                        "label-caps": ["Inter"],
+                        "display-hero-mobile": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "headline-card": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "display-hero": ["64px", { "lineHeight": "1.1", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "caption": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-section": ["32px", { "lineHeight": "1.3", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "label-caps": ["13px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "display-hero-mobile": ["40px", { "lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-card": ["24px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #fcf9f8; color: #1c1b1b; }
+        .section-break { background-color: #f6f3f2; }
+    </style>
+</head>
+<body class="antialiased">
+<!-- TopNavBar Component -->
+<header class="full-width top-0 sticky h-20 border-outline-variant dark:border-outline z-50 bg-transparent">
+<div class="flex justify-between items-center w-[calc(100%-48px)] max-w-6xl mx-auto mt-4 h-16 px-8 rounded-full bg-white/70 backdrop-blur-sm border border-white/20 shadow-lg transition-all duration-300">
+<a class="flex items-center gap-2" href="#">
+<img alt="Imperial Tours Logo" class="h-12 w-12 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLv2akPVcBr11P24MMt1QFewDwcHZmB_f_MEktBx9n-mq_eX6c0yETWRhqf-oGHwLtLaBYJFxlRP_l9FhG2yz86Yed3q9cD71MAe6sfJXB3mQ6UF1ugcSoY2dKA3kyfwT0VZUtH4yLbdZtjnw-dmS2lXMCQuvfDDzRC0Gp-qnLnfdTrYy97dpzERBt7tqxxyUmhDL8PbE3HkH0r1PfJo2OTlKtgEv68k_hWsfMiznF_q9GvoB6pO-P3QDlM"/>
+<span class="font-display-hero font-semibold text-primary dark:text-on-primary-fixed hover:opacity-80 transition-opacity text-xl" data-stitch-orig-opacity="0">IMPERIAL TOURS</span>
+</a>
+<nav class="hidden md:flex gap-8">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300 font-body-md text-body-md tracking-wider" href="#">Destinations</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300 font-body-md text-body-md tracking-wider" href="#">Tours</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300 font-body-md text-body-md tracking-wider" href="#">About</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-300 font-body-md text-body-md tracking-wider" href="#">Contact</a>
+</nav>
+<div class="flex items-center gap-6">
+<span class="text-sm font-medium text-on-surface-variant">EN | ES | DE</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="payments">payments</span>
+<button class="bg-[#10223B] text-white font-medium px-6 py-2 rounded-xl scale-100 hover:scale-[1.02] active:scale-95 transition-all">Book Now</button>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative w-full h-[90vh] min-h-[700px] flex items-center justify-center">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Breathtaking panoramic view of the Amalfi coast at sunset, vibrant colors, premium travel photography, sophisticated light mode aesthetic, crisp details." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD62f4kkvW5L17mcABEksG4PwHcwL0wuYGom2xIrBc0A_FcMISX-9vk47p_1AM9kqdZRwT83wmrVtUuxXzSNP13PMtnZiE35y7RWoBaYh8kyaG4S3o913qCWKd5ISw-i1IMzWePxuH608bxsWhOc22NBSm4EoaF4DbpGRWD_j2Ivy8KD_torcxsgIgapKvJtKMMUim-vP-3AyxZAX5UQ5-3Y0j5bjWG1v9nHkTqMft6kSRas795YXKodw')"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
+<div class="relative z-10 w-full px-grid-margin max-w-7xl mx-auto flex flex-col items-center mt-[-10vh]">
+<h1 class="font-display-hero text-display-hero-mobile md:text-[80px] leading-[1.1] text-white mb-6 drop-shadow-lg text-center max-w-5xl">Ancient Wonders, Modern Luxury: Discover Egypt with Imperial Tours</h1>
+<p class="text-white/90 text-body-lg font-body-lg mb-12 max-w-2xl text-center">Experience the world's most extraordinary destinations with unparalleled luxury and personalized service.</p>
+</div>
+<!-- Tour Search Widget -->
+<div class="absolute bottom-0 left-0 w-full translate-y-1/2 z-20 px-4">
+<div class="max-w-5xl mx-auto bg-surface p-4 md:p-8 rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] flex flex-col md:flex-row gap-4 items-end">
+<div class="w-full md:w-1/3">
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase">Destination</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">location_on</span>
+<input class="w-full pl-12 pr-4 py-4 rounded-xl border-outline-variant bg-transparent focus:ring-[#10223B] focus:border-[#10223B]" placeholder="Where to?" type="text" value="Cairo/Giza"/>
+</div>
+</div>
+<div class="w-full md:w-1/4">
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase">Select Date</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">calendar_month</span>
+<input class="w-full pl-12 pr-4 py-4 rounded-xl border-outline-variant bg-transparent focus:ring-[#10223B] focus:border-[#10223B]" type="date"/>
+</div>
+</div>
+<div class="w-full md:w-1/4">
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2 uppercase">Tour Type</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">sailing</span>
+<select class="w-full pl-12 pr-10 py-4 rounded-xl border-outline-variant bg-transparent focus:ring-[#10223B] focus:border-[#10223B] appearance-none">
+<option>Private</option>
+<option>Group</option>
+<option>Yacht</option>
+<option>Villa</option>
+</select>
+</div>
+</div>
+<button class="w-full md:w-auto bg-[#10223B] text-white px-8 py-4 rounded-xl font-medium hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2 h-[58px]">
+<span class="material-symbols-outlined">search</span>
+Search
+</button>
+</div>
+</div>
+</section>
+<!-- Our Services -->
+<section class="pt-[180px] pb-section-v-padding px-grid-margin max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<span class="font-label-caps text-label-caps text-[#10223B] uppercase tracking-widest block mb-4">Our Offerings</span>
+<h2 class="font-headline-section text-headline-section text-primary">Our Services</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-grid-gutter relative">
+<div class="flex flex-col bg-surface rounded-2xl overflow-hidden hover:shadow-lg transition-shadow border border-outline-variant/30"><div class="h-48 overflow-hidden"><img alt="Private guided tour at the Egyptian Museum" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe8bSCyXUibOEEoK6pFQiPP7qKsIcOf7G4xvc3AZ8q4jhRcoFPERicG4ymitaR5B_vHBOulc67bkeoMTx3TfQ2sBvgOspKKyLycais7_gb8X18L8uA-fICNyKlvxfyKuFuUhQj5Lr0UQ-Uvop36X4HPUhuKAAbGvt3tlKpADR5Bn-mUKnvCLYBiU1KvsID0PSae6WOgMk1rB5QptmjimvPztwvWEzfu7ErvxRYoaDNhXXDFRcOGtSzXg"/></div>
+<div class="p-8">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-6 text-[#10223B] shadow-sm">
+<span class="material-symbols-outlined text-3xl" data-icon="explore">explore</span>
+</div>
+<h3 class="font-headline-card text-headline-card text-primary mb-4">Daily Tours</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Private day excursions to the Giza Plateau, Saqqara, and the Egyptian Museum.</p>
+</div>
+</div>
+<div class="flex flex-col bg-surface rounded-2xl overflow-hidden hover:shadow-lg transition-shadow border border-outline-variant/30"><div class="h-48 overflow-hidden"><img alt="Luxury Egyptian journey collage" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAogNUePkXm56ht5O_GCr3567nr40-t2s0PeQFh2faSl-Nm9cPYxudewD9eDEauB4Ujb_c4R2vD6gNpmvdUOfu687QBI31ZYUBJF3t5rKcnAVLgUiLXvAOEDv67Xt2qsb05qNAkdjR-OeMJDo2nMf-A0hBHJCjz36FGEVJaXSTyDSXpikTVzgx3dHSxvnMROEodDTcLaPbzaMTHxbHod9rutrwnpkpBEcjNo469_HJvZtK-Q7CYN_EiZw"/></div>
+<div class="p-8">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-6 text-[#10223B] shadow-sm">
+<span class="material-symbols-outlined text-3xl" data-icon="all_inclusive">all_inclusive</span>
+</div>
+<h3 class="font-headline-card text-headline-card text-primary mb-4">Full Package Tours</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">All-inclusive multi-day journeys covering Cairo, Luxor, and Aswan.</p>
+</div>
+</div>
+<div class="flex flex-col bg-surface rounded-2xl overflow-hidden hover:shadow-lg transition-shadow border border-outline-variant/30">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Hotel Room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpJGzhMBbQhEjXwelsQX_OSrSvNFmp9vvU26BH_2g_EfsZEGKCouzZVwt77LEZE-W47-ESagya2eOr1HMOYSGMndj0hAzaSVwt1qkX2oAzjkvwiGt9OZ8hxWvU1DPsUoS2M2etHvuNMXJBPxgY0-1OR-rXrS8Mw2DknM7AzByto2D7pECKCGQ54Oix1EKK1XMYDNVtQFIiieIphjvPNX4h5GGar3ODgXj8Bcw5vrTHvVM3eEY08cxhJg"/>
+</div>
+<div class="p-8">
+<h3 class="font-headline-card text-headline-card text-primary mb-4">Hotel Reservations</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Stays at Egypt's most prestigious properties with Pyramid views.</p>
+</div>
+</div>
+<div class="flex flex-col bg-surface rounded-2xl overflow-hidden hover:shadow-lg transition-shadow border border-outline-variant/30">
+<div class="h-48 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Bicycles" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbNhGsPklqMEkyz_A3qAlXIhStV6TUv0DIsyfaFDFqD5mJZ6dEmCysXGiwx9EoNTmw0sAfxcjxgZlflycsJ_nQQ_v67K4O3z5TjUPqlZt8JoodIDleG9HTen387Z23CMnEgqruJf3furIevRrXiQADCXhBbcfpmcXBgkeGetroc8e05G_IZXHsNEh4nXKeXkwtZo7f_ujJs7qOAhhafhpSwLl2Yx0rKOCDF_st244BP5M1aABQ6mMGPQ"/>
+</div>
+<div class="p-8">
+<h3 class="font-headline-card text-headline-card text-primary mb-4">Bicycle Reservations</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Premium cycling tours through rural Egyptian paths and historic sites.</p>
+</div>
+</div>
+</div>
+</section><section class="bg-surface-container-low py-[120px] px-grid-margin">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-10 gap-grid-gutter items-center">
+<!-- Left Column (40%) -->
+<div class="md:col-span-4">
+<span class="font-label-caps text-label-caps text-[#10223B] uppercase tracking-widest block mb-4">Exclusivity</span>
+<h2 class="font-headline-section text-headline-section text-primary mb-6">Limited-Edition Offers</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-sm">
+        Discover our most prestigious seasonal journeys, curated for those who seek the extraordinary. These exclusive itineraries are available for a limited time only.
+      </p>
+</div>
+<!-- Right Column (60%) -->
+<div class="md:col-span-6"><div class="relative group/carousel">
+<div class="overflow-hidden rounded-2xl shadow-lg">
+<div class="flex transition-transform duration-700 ease-in-out">
+<!-- Slide 1: The Pharaohs' Private Voyage -->
+<div class="w-full flex-shrink-0 relative aspect-[16/9] group cursor-pointer overflow-hidden">
+<img alt="Luxury Nile Dahabiya" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida/AP1WRLtKbYUsuYlBTTxYNfEuVd7ElwiDvgXwLwWTKeyaZU4bDN-RZB2UcXvqeZcIsZvWOUyx9vB17FTkfAeysxGs4E7TwHjpVJfSxgUnGoubUlE6oIi2Eqp-huDdkWDlfPsUKhkMGr9sm6NCc3u8039nhj9LxlpPFUk4GcI6qWqkjAjlWYPfPEyQwPP--dWmBLVquhhHuZPJz-uDNG30w_QgptrPeYFTfalr_-L6vX_xTVZq8c5Bu0LJIEZ12qc"/>
+<div class="absolute inset-0 bg-gradient-to-r from-[#10223B]/80 via-[#10223B]/20 to-transparent"></div>
+<div class="absolute inset-y-0 left-0 w-2/3 p-8 md:p-12 flex flex-col justify-center">
+<div class="flex flex-wrap gap-3 mb-6">
+<span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full font-label-caps text-xs uppercase tracking-wider">7-Day All-Inclusive</span>
+<span class="bg-[#10223B] text-white px-3 py-1 rounded-full font-label-caps text-xs uppercase tracking-wider">Save 15% for Winter Bookings</span>
+</div>
+<h3 class="font-headline-card text-3xl md:text-4xl text-white mb-8 leading-tight">The Pharaohs' Private Voyage</h3>
+<div>
+<button class="border border-white text-white px-8 py-3 rounded-xl font-medium hover:bg-white hover:text-[#10223B] transition-colors font-body-md">View Offer Details</button>
+</div>
+</div>
+</div>
+<!-- Slide 2: Sahara Twilight Retreat -->
+<div class="w-full flex-shrink-0 relative aspect-[16/9] group cursor-pointer overflow-hidden">
+<img alt="Luxury Sahara Desert Camp" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCknXRMdJEqTBXLEVhfokire8odliB0h7X7OhfRm6oMe9w7Mwn2cJVEsR9lOMcgfg0jJmyh3VcnV8wu_i_JbY8P_zYk1ghY3iFSoVJHMX1OQWDKAAF1CuAMWjSpRcjFedrGomxaHyspOXD7PTEb1Tn0LMhQJol8d1tuCsHZ8IxTwJNaBfk7hm9Q1aqb9JduEqqkZBzOfVJ8PY1xRQcJY10GFq-oeJwqT9IZsqX7qX0A7CZXYOSDzUFNIA"/>
+<div class="absolute inset-0 bg-gradient-to-r from-[#10223B]/80 via-[#10223B]/20 to-transparent"></div>
+<div class="absolute inset-y-0 left-0 w-2/3 p-8 md:p-12 flex flex-col justify-center">
+<div class="flex flex-wrap gap-3 mb-6">
+<span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full font-label-caps text-xs uppercase tracking-wider">4-Day Private Expedition</span>
+<span class="bg-[#10223B] text-white px-3 py-1 rounded-full font-label-caps text-xs uppercase tracking-wider">Save 10% for Early Bookings</span>
+</div>
+<h3 class="font-headline-card text-3xl md:text-4xl text-white mb-8 leading-tight">Sahara Twilight Retreat</h3>
+<div>
+<button class="border border-white text-white px-8 py-3 rounded-xl font-medium hover:bg-white hover:text-[#10223B] transition-colors font-body-md">View Offer Details</button>
+</div>
+</div>
+</div>
+<!-- Slide 3: Eternal Luxor Sunrise -->
+<div class="w-full flex-shrink-0 relative aspect-[16/9] group cursor-pointer overflow-hidden">
+<img alt="Luxor Temple Sunrise" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe0Y_K4qvmGoAibtzddSW2g9enRxjVRqC95IBv8UEN38GYndBUu9nMxOD5B9gwQom-2D20eRP2wq8u2Z7hv1AQwExdIhN4P734_MbxINHRkufH79M6LHOKE0ywJ4RahXcytamrGrUCICoIcBj0xMTqKsWalwK36FrxTgEBzRfYuJproY1gOI0Cuez0PO6CUmuRCkv7x8ZVdb-FquZWCK0ad9QnUlxxVTnOZrGQYTP2NjxKU6T8OISo2Q"/>
+<div class="absolute inset-0 bg-gradient-to-r from-[#10223B]/80 via-[#10223B]/20 to-transparent"></div>
+<div class="absolute inset-y-0 left-0 w-2/3 p-8 md:p-12 flex flex-col justify-center">
+<div class="flex flex-wrap gap-3 mb-6">
+<span class="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full font-label-caps text-xs uppercase tracking-wider">3-Day Cultural Immersion</span>
+<span class="bg-[#10223B] text-white px-3 py-1 rounded-full font-label-caps text-xs uppercase tracking-wider">Exclusive Member Rate</span>
+</div>
+<h3 class="font-headline-card text-3xl md:text-4xl text-white mb-8 leading-tight">Eternal Luxor Sunrise</h3>
+<div>
+<button class="border border-white text-white px-8 py-3 rounded-xl font-medium hover:bg-white hover:text-[#10223B] transition-colors font-body-md">View Offer Details</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Navigation Controls -->
+<button class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-[#10223B]">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white hover:text-[#10223B]">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+<!-- Pagination Dots -->
+<div class="flex gap-2 justify-center mt-6">
+<button class="w-2 h-2 rounded-full bg-[#10223B]"></button>
+<button class="w-2 h-2 rounded-full bg-[#10223B]/20"></button>
+<button class="w-2 h-2 rounded-full bg-[#10223B]/20"></button>
+</div>
+</div></div>
+</div>
+</section>
+<!-- Featured Destinations -->
+<section class="section-break py-section-v-padding px-grid-margin">
+<div class="max-w-7xl mx-auto">
+<h2 class="font-headline-section text-headline-section text-primary mb-12 text-center">Featured Destinations</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-grid-gutter">
+<div class="group relative overflow-hidden rounded-2xl aspect-[4/5] cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Elegant view of a secluded luxury villa in Tuscany, Italy, surrounded by rolling hills and vineyards, premium editorial travel photography style, sunny bright daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFgjTk2VbZWFSv_LE6gAYO3lArpfnsvtmMcHjkZ0Wlvgym6aZuHJWC0aKQx0M3qRrS4pYy-DkwuAtfHnHJ6UvBJvXhVR0zs2IbHWPAPRkk9koO1u5eefDVLcDXeTY5dbLVWQlnhwta9iZWikg6aOSRuimw6G226Pwved9mWFSrtUkXYnTfmtnLXxSm-hxHfESAwb0bov8uTG5R3HJxrzKf1Ksn0vQiI8fHhDab3YH5pd_-KMj3HlrCsg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 flex items-center justify-between w-[calc(100%-48px)]">
+<h3 class="font-headline-card text-headline-card text-white">Cairo</h3>
+<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-2xl aspect-[4/5] cursor-pointer md:-translate-y-8">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Pristine white architecture of Santorini against the deep blue Aegean sea, luxurious travel destination, bright clear sky, high-end editorial photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnbtIns64F3oLDjaieppv1pwxXvs_8ahz52NMIOgUhslf5Jj1LIyesfhLBdod47mGwIfxmSdR_vBiPN2JjPj-J5DFb6eO8kf18eD-x0crkZwo2PPfHORa7um9eNpEVxZVXwHFz9Qr1iOsBLt1EMpS3hOdLXuptLTOSSBJHKRHjEX3rIb-Rh1iZt2W24pqsxcVhe_hA-Vi-zQziTG6kjegiqW48Rix15-NCG4tlLaGFo0Ood5P_VyzsZA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 flex items-center justify-between w-[calc(100%-48px)]">
+<h3 class="font-headline-card text-headline-card text-white">Luxor</h3>
+<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-2xl aspect-[4/5] cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Majestic view of the Swiss Alps with a luxurious wooden chalet in the foreground, crisp snow, clear blue sky, premium travel aesthetic, high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3UMvFwi1LCMv_3fjMGvQHWDI5ZpNxPPCtZ4SuyG6S-lguqAqZbGOAisWelZ5YDrG3MNJ0CDKsNwR6_HqFCV9pkDKNQvjX7m8Qci8qNlHTicQrB79ftDh-y6NJ85fEBQsw4LzuIR1nwx3fHrxUgrSFQ2dWTbxw8UazS_q9f-_ogpdrE7_3oibvBMy3pGnQVPxQl4HcFdOvzM-OB1oFRU20gUKNgsH1U8284o-ahTOaOCQgQD11ceZioA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 flex items-center justify-between w-[calc(100%-48px)]">
+<h3 class="font-headline-card text-headline-card text-white">Aswan</h3>
+<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="bg-[#10223B] py-section-v-padding px-grid-margin relative overflow-hidden">
+<!-- Decorative elements -->
+<span class="material-symbols-outlined absolute top-12 left-12 text-[120px] text-white/5" data-icon="format_quote">format_quote</span>
+<div class="max-w-4xl mx-auto text-center relative z-10">
+<span class="font-label-caps text-label-caps text-inverse-primary uppercase tracking-widest block mb-8">Client Testimonials</span>
+<h2 class="font-headline-section text-[40px] leading-tight text-white mb-12">"An absolutely flawless experience from start to finish. The attention to detail in our Egypt itinerary was simply unmatched. Imperial Tours redefined luxury travel for us."</h2>
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 rounded-full bg-surface-container-low mb-4 overflow-hidden">
+<img alt="Client Portrait" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJnE33jkZGw5WCxrtYLZvDlH8toi1mn_Ws-YQWKMLIK17KDop52T5_w13lNKNnglnlNlmzinYxc5lcfaNIJMQad7NhkNL2kXm0_Cz4ZTHID5tAraSiB83Gtl9NDHS5SdrH_-uYoQeI82sVGOdSikq2mE0hZgNNDovxIs-kMwQtT2J1Ih1PnhNBsq8_zZDsxYBkkJ0QAOGcQ0D3XpW4uO7f4o9dIS6TTf4eQjUhspQCr3XsKP9OJzAT_g"/>
+</div>
+<p class="font-headline-card text-white text-lg">James &amp; Eleanor Sterling</p>
+<p class="font-caption text-inverse-primary">London, UK</p>
+</div>
+<div class="flex gap-2 justify-center mt-8">
+<button class="w-3 h-3 rounded-full bg-white"></button>
+<button class="w-3 h-3 rounded-full bg-white/30"></button>
+<button class="w-3 h-3 rounded-full bg-white/30"></button>
+</div>
+</div>
+</section>
+<!-- Journal Section -->
+<section class="py-section-v-padding px-grid-margin max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12">
+<div>
+<span class="font-label-caps text-label-caps text-[#10223B] uppercase tracking-widest block mb-4">Insights</span>
+<h2 class="font-headline-section text-headline-section text-primary">Latest from the Journal</h2>
+</div>
+<button class="hidden md:block border border-[#10223B] text-[#10223B] px-6 py-2 rounded-xl font-medium hover:bg-[#10223B] hover:text-white transition-colors">Read All</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-grid-gutter">
+<article class="group cursor-pointer">
+<div class="rounded-2xl overflow-hidden aspect-[4/3] mb-6">
+<img alt="Kyoto temples" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-VdB71VeAdnxH0cOTsAT3dX7_pr_uPf3BjA7Llzzzxr3sPIMUdiowpLn0PxhCjPxkvdxeSUuZSGjTE-8KTkhUh6S_fpRzeTrs_wHBsR1gTNLXlVOfrFy95Ddp8f3ReXLgRJJVftnwCdSut4IIGzL42Y_QZ5iAeIoHFdjgivTxu6rfVvuKTnxroeIC4h3FFnplY9ykfY6DvzhvU5vk87gUckFnvLkL5QM114tA_66XlPsCZi5zjn_DfA"/>
+</div>
+<span class="font-label-caps text-on-surface-variant uppercase tracking-widest text-xs mb-3 block">Cultural Immersion • Oct 12, 2024</span>
+<h3 class="font-headline-card text-xl text-primary mb-3 group-hover:text-[#10223B] transition-colors">A Night under the Stars in the White Desert</h3>
+<p class="font-body-md text-on-surface-variant line-clamp-2">Discover the secret gardens, exclusive tea houses, and private artisanal workshops reserved for those in the know.</p>
+</article>
+<article class="group cursor-pointer">
+<div class="rounded-2xl overflow-hidden aspect-[4/3] mb-6">
+<img alt="Gourmet dining" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZbOM9ZFTYCJsO-fhsy9-3so6DKAuXe25pIi6DnBBTeNNb1sa2UsqlWwzPeg0glQoz6Jm5NO0MnrlWgnL6uK42CSIVuLHX4stN_xqPsLYbsoZ5c_bjDi7SEiw2FcQiSNydP4i8DSwqFqX3aYnqAPx1Lj30HcBBetgw0Z5v7UI8qioPfHmoM3nty2CtoQHa1IDF7LWiG2NIHDHqP9h7VgpMesXq6eA2AkT2X9zN2RoLtnoBCv_CIwKu1Q"/>
+</div>
+<span class="font-label-caps text-on-surface-variant uppercase tracking-widest text-xs mb-3 block">Gastronomy • Sep 28, 2024</span>
+<h3 class="font-headline-card text-xl text-primary mb-3 group-hover:text-[#10223B] transition-colors">Private viewing of King Tut's mask</h3>
+<p class="font-body-md text-on-surface-variant line-clamp-2">A curated guide to the most exceptional culinary experiences overlooking the Mediterranean Sea.</p>
+</article>
+<article class="group cursor-pointer hidden lg:block">
+<div class="rounded-2xl overflow-hidden aspect-[4/3] mb-6">
+<img alt="Safari luxury" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN7W6tWfj-Zqkpwf4gn_DY-BZcSRcRaXLzhG9e_zwEYbirPmwSqh9jc-cnlaSjE0VG_d8ozlcR1lLcZlgf_fK9JxrHJGjEQY8YNsEkoLDrHak48XY1_NILCVxUxv70ZbVwrEZDkFe44wALIRGjvcucZ6VjtzLYJh66BGU_4C9hakl3yYq7oRbSmwHrjl9eiCtKl3dZcmfa6UVtKNuKMRl78uhHzt1PTGfKOybaApFgtPoyYnU9nH0CRQ"/>
+</div>
+<span class="font-label-caps text-on-surface-variant uppercase tracking-widest text-xs mb-3 block">Adventure • Sep 15, 2024</span>
+<h3 class="font-headline-card text-xl text-primary mb-3 group-hover:text-[#10223B] transition-colors">Sailing the Nile on a Private Dahabiya</h3>
+<p class="font-body-md text-on-surface-variant line-clamp-2">How we design low-impact, high-luxury wildlife encounters in the heart of the Okavango Delta.</p>
+</article>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="bg-surface-container-low dark:bg-surface-container-highest full-width py-section-v-padding">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-grid-gutter px-grid-margin max-w-7xl mx-auto">
+<div class="col-span-1 md:col-span-2">
+<span class="font-display-hero text-headline-card text-primary dark:text-on-primary-fixed block mb-4 flex items-center gap-2">
+<img alt="Imperial Tours Logo" class="h-8 w-8 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLv2akPVcBr11P24MMt1QFewDwcHZmB_f_MEktBx9n-mq_eX6c0yETWRhqf-oGHwLtLaBYJFxlRP_l9FhG2yz86Yed3q9cD71MAe6sfJXB3mQ6UF1ugcSoY2dKA3kyfwT0VZUtH4yLbdZtjnw-dmS2lXMCQuvfDDzRC0Gp-qnLnfdTrYy97dpzERBt7tqxxyUmhDL8PbE3HkH0r1PfJo2OTlKtgEv68k_hWsfMiznF_q9GvoB6pO-P3QDlM"/>
+IMPERIAL TOURS
+</span>
+<p class="font-body-md text-body-md text-on-surface dark:text-on-surface mb-6 max-w-sm">Curated journeys for the discerning traveler. Uncompromising quality in every aspect of your experience.</p>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface">© 2024 Imperial Tours. All rights reserved.</p>
+</div>
+<div class="col-span-1">
+<h4 class="font-headline-card text-lg text-primary mb-4">Legal</h4>
+<ul class="space-y-3">
+<li class=""><a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-[#10223B] dark:hover:text-primary-fixed transition-colors" href="#">Privacy Policy</a></li>
+<li class=""><a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-[#10223B] dark:hover:text-primary-fixed transition-colors" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h4 class="font-headline-card text-lg text-primary mb-4">Resources</h4>
+<ul class="space-y-3">
+<li class=""><a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-[#10223B] dark:hover:text-primary-fixed transition-colors" href="#">Travel Insurance</a></li>
+<li class=""><a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-[#10223B] dark:hover:text-primary-fixed transition-colors" href="#">Sitemap</a></li>
+<li class=""><a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-[#10223B] dark:hover:text-primary-fixed transition-colors" href="#">Agent Portal</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</body></html>

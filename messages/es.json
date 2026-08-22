@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "siteName": "Imperial Tours",
+    "tagline": "Viajes de lujo",
+    "defaultDescription": "Viajes de lujo por Egipto y más allá: tours privados, cruceros por el Nilo y alojamientos seleccionados."
+  },
+  "nav": {
+    "destinations": "Destinos",
+    "tours": "Circuitos",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "bookNow": "Reservar",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "skipToContent": "Ir al contenido"
+  },
+  "currency": {
+    "label": "Moneda",
+    "select": "Seleccionar moneda"
+  },
+  "locale": {
+    "label": "Idioma",
+    "select": "Seleccionar idioma"
+  },
+  "search": {
+    "destination": "Destino",
+    "destinationPlaceholder": "¿A dónde vamos?",
+    "date": "Fecha",
+    "tourType": "Tipo de circuito",
+    "submit": "Buscar",
+    "types": {
+      "private": "Privado",
+      "group": "En grupo",
+      "yacht": "Yate",
+      "villa": "Villa"
+    },
+    "resultsFor": "Mostrando viajes a {destination}"
+  },
+  "services": {
+    "eyebrow": "Nuestra oferta",
+    "title": "Nuestros servicios"
+  },
+  "offers": {
+    "eyebrow": "Exclusividad",
+    "title": "Ofertas de edición limitada",
+    "body": "Descubre nuestros viajes de temporada más prestigiosos, diseñados para quienes buscan lo extraordinario. Estos itinerarios exclusivos están disponibles por tiempo limitado.",
+    "cta": "Ver detalles de la oferta",
+    "previous": "Oferta anterior",
+    "next": "Siguiente oferta",
+    "goTo": "Ir a la oferta {index}",
+    "empty": "Estamos preparando nuevas ofertas. Vuelve pronto."
+  },
+  "destinations": {
+    "title": "Destinos destacados",
+    "explore": "Descubrir {name}"
+  },
+  "testimonials": {
+    "eyebrow": "Opiniones de clientes",
+    "goTo": "Ir al testimonio {index}"
+  },
+  "journal": {
+    "eyebrow": "Inspiración",
+    "title": "Lo último del diario",
+    "readAll": "Ver todo"
+  },
+  "footer": {
+    "blurb": "Viajes cuidadosamente diseñados para el viajero exigente. Calidad sin concesiones en cada detalle de tu experiencia.",
+    "rights": "© {year} Imperial Tours. Todos los derechos reservados.",
+    "legal": "Legal",
+    "resources": "Recursos"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "error": "Algo ha salido mal.",
+    "retry": "Reintentar"
+  },
+  "notFound": {
+    "title": "Esta página se ha salido del mapa.",
+    "body": "Puede que el viaje que buscas se haya movido o retirado.",
+    "cta": "Volver al inicio"
+  }
+}

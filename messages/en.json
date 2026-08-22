@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "siteName": "Imperial Tours",
+    "tagline": "Premium Travel",
+    "defaultDescription": "Curated luxury journeys through Egypt and beyond — private tours, Nile cruises and hand-picked stays."
+  },
+  "nav": {
+    "destinations": "Destinations",
+    "tours": "Tours",
+    "about": "About",
+    "contact": "Contact",
+    "bookNow": "Book Now",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "skipToContent": "Skip to content"
+  },
+  "currency": {
+    "label": "Currency",
+    "select": "Select currency"
+  },
+  "locale": {
+    "label": "Language",
+    "select": "Select language"
+  },
+  "search": {
+    "destination": "Destination",
+    "destinationPlaceholder": "Where to?",
+    "date": "Select Date",
+    "tourType": "Tour Type",
+    "submit": "Search",
+    "types": {
+      "private": "Private",
+      "group": "Group",
+      "yacht": "Yacht",
+      "villa": "Villa"
+    },
+    "resultsFor": "Showing journeys for {destination}"
+  },
+  "services": {
+    "eyebrow": "Our Offerings",
+    "title": "Our Services"
+  },
+  "offers": {
+    "eyebrow": "Exclusivity",
+    "title": "Limited-Edition Offers",
+    "body": "Discover our most prestigious seasonal journeys, curated for those who seek the extraordinary. These exclusive itineraries are available for a limited time only.",
+    "cta": "View Offer Details",
+    "previous": "Previous offer",
+    "next": "Next offer",
+    "goTo": "Go to offer {index}",
+    "empty": "New offers are being curated. Please check back shortly."
+  },
+  "destinations": {
+    "title": "Featured Destinations",
+    "explore": "Explore {name}"
+  },
+  "testimonials": {
+    "eyebrow": "Client Testimonials",
+    "goTo": "Go to testimonial {index}"
+  },
+  "journal": {
+    "eyebrow": "Insights",
+    "title": "Latest from the Journal",
+    "readAll": "Read All"
+  },
+  "footer": {
+    "blurb": "Curated journeys for the discerning traveler. Uncompromising quality in every aspect of your experience.",
+    "rights": "© {year} Imperial Tours. All rights reserved.",
+    "legal": "Legal",
+    "resources": "Resources"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "title": "This page has wandered off the map.",
+    "body": "The journey you are looking for may have been moved or retired.",
+    "cta": "Back to home"
+  }
+}

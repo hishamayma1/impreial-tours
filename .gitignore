@@ -1,0 +1,11 @@
+node_modules
+.next
+.env
+.env*.local
+/media
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+# Atlas credentials handed over by the operator — never commit
+atlas-credentials.env

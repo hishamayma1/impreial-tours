@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "siteName": "Imperial Tours",
+    "tagline": "Premium-Reisen",
+    "defaultDescription": "Kuratierte Luxusreisen durch Ägypten und darüber hinaus – private Touren, Nilkreuzfahrten und handverlesene Unterkünfte."
+  },
+  "nav": {
+    "destinations": "Reiseziele",
+    "tours": "Touren",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "bookNow": "Jetzt buchen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "skipToContent": "Zum Inhalt springen"
+  },
+  "currency": {
+    "label": "Währung",
+    "select": "Währung wählen"
+  },
+  "locale": {
+    "label": "Sprache",
+    "select": "Sprache wählen"
+  },
+  "search": {
+    "destination": "Reiseziel",
+    "destinationPlaceholder": "Wohin darf es gehen?",
+    "date": "Datum wählen",
+    "tourType": "Tourart",
+    "submit": "Suchen",
+    "types": {
+      "private": "Privat",
+      "group": "Gruppe",
+      "yacht": "Yacht",
+      "villa": "Villa"
+    },
+    "resultsFor": "Reisen nach {destination}"
+  },
+  "services": {
+    "eyebrow": "Unser Angebot",
+    "title": "Unsere Leistungen"
+  },
+  "offers": {
+    "eyebrow": "Exklusivität",
+    "title": "Angebote in limitierter Auflage",
+    "body": "Entdecken Sie unsere exklusivsten Saisonreisen – kuratiert für alle, die das Außergewöhnliche suchen. Diese Reiserouten sind nur für kurze Zeit verfügbar.",
+    "cta": "Angebotsdetails ansehen",
+    "previous": "Vorheriges Angebot",
+    "next": "Nächstes Angebot",
+    "goTo": "Zu Angebot {index}",
+    "empty": "Neue Angebote werden gerade zusammengestellt. Schauen Sie bald wieder vorbei."
+  },
+  "destinations": {
+    "title": "Ausgewählte Reiseziele",
+    "explore": "{name} entdecken"
+  },
+  "testimonials": {
+    "eyebrow": "Kundenstimmen",
+    "goTo": "Zu Kundenstimme {index}"
+  },
+  "journal": {
+    "eyebrow": "Einblicke",
+    "title": "Neues aus dem Journal",
+    "readAll": "Alle lesen"
+  },
+  "footer": {
+    "blurb": "Kuratierte Reisen für anspruchsvolle Gäste. Kompromisslose Qualität in jedem Detail Ihres Erlebnisses.",
+    "rights": "© {year} Imperial Tours. Alle Rechte vorbehalten.",
+    "legal": "Rechtliches",
+    "resources": "Ressourcen"
+  },
+  "common": {
+    "loading": "Wird geladen…",
+    "error": "Etwas ist schiefgelaufen.",
+    "retry": "Erneut versuchen"
+  },
+  "notFound": {
+    "title": "Diese Seite ist von der Landkarte verschwunden.",
+    "body": "Die gesuchte Reise wurde möglicherweise verschoben oder eingestellt.",
+    "cta": "Zurück zur Startseite"
+  }
+}

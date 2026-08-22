@@ -1,0 +1,40 @@
+import type { CollectionConfig } from 'payload'
+import { anyone, isEditor } from '../access'
+
+export const Media: CollectionConfig = {
+  slug: 'media',
+  admin: { group: 'Content' },
+  access: {
+    read: anyone,
+    create: isEditor,
+    update: isEditor,
+    delete: isEditor,
+  },
+  upload: {
+    staticDir: 'media',
+    mimeTypes: ['image/*'],
+    focalPoint: true,
+    formatOptions: {
+      format: 'webp',
+      options: { quality: 82 },
+    },
+    imageSizes: [
+      { name: 'thumbnail', width: 400, height: 300, position: 'centre' },
+      { name: 'card', width: 768, height: 576, position: 'centre' },
+      { name: 'portrait', width: 800, height: 1000, position: 'centre' },
+      { name: 'wide', width: 1600, height: 900, position: 'centre' },
+      { name: 'hero', width: 2400, height: undefined, position: 'centre' },
+      { name: 'og', width: 1200, height: 630, position: 'centre' },
+    ],
+  },
+  fields: [
+    {
+      name: 'alt',
+      type: 'text',
+      required: true,
+      localized: true,
+      admin: { description: 'Describe the image for screen readers and search engines.' },
+    },
+    { name: 'credit', type: 'text' },
+  ],
+}
