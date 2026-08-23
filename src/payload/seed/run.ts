@@ -101,26 +101,24 @@ const wipe = async (payload: Payload) => {
   payload.logger.info('Cleared previously seeded content')
 }
 
-const ensureAdmin = async (payload: Payload) => {
-  const email = process.env.SEED_ADMIN_EMAIL || 'admin@imperialtours.com'
-  const password = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe123!'
+/**
+ * The seed deliberately creates NO admin account.
+ *
+ * With an empty `users` collection, Payload serves its own "create first user" screen
+ * at /admin, and whoever signs up there becomes the first administrator. That is safer
+ * than shipping a known email and password: a seeded credential pair tends to survive
+ * into production, and anyone who has read this repository would know it.
+ *
+ * The seed only reports which state the database is in.
+ */
+const reportAdminState = async (payload: Payload) => {
+  const { totalDocs } = await payload.count({ collection: 'users' })
 
-  const existing = await payload.find({
-    collection: 'users',
-    where: { email: { equals: email } },
-    limit: 1,
-  })
-
-  if (existing.totalDocs > 0) {
-    payload.logger.info(`Admin ${email} already exists`)
+  if (totalDocs === 0) {
+    payload.logger.info('No users yet — open /admin and create the first administrator.')
     return
   }
-
-  await payload.create({
-    collection: 'users',
-    data: { email, password, name: 'Imperial Tours Admin', roles: ['admin'] },
-  })
-  payload.logger.info(`Created admin ${email}`)
+  payload.logger.info(`${totalDocs} user(s) already exist; leaving them untouched.`)
 }
 
 /** Creates the default-locale document, then patches each translation onto it. */
@@ -296,7 +294,7 @@ const seed = async () => {
   const payload = await getPayload({ config })
 
   payload.logger.info('--- Imperial Tours seed ---')
-  await ensureAdmin(payload)
+  await reportAdminState(payload)
   await wipe(payload)
 
   payload.logger.info('Uploading design assets...')

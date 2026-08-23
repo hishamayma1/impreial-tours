@@ -39,6 +39,12 @@ export default buildConfig({
   serverURL,
   admin: {
     user: Users.slug,
+    /**
+     * The dashboard is locked to dark. Staff work in it all day against dense tables
+     * of bookings and prices, and the dark palette in custom.scss is tuned for that
+     * — see the contrast notes there. Set this to 'all' to give users the toggle back.
+     */
+    theme: 'dark',
     importMap: {
       baseDir: path.resolve(dirname),
     },

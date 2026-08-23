@@ -1,13 +1,119 @@
-/* Dashboard skin — aligns the Payload admin with the Imperial Tours brand navy. */
-:root {
-  --theme-elevation-0: #ffffff;
+/**
+ * Imperial Tours dashboard skin — dark.
+ *
+ * The panel is locked to dark in payload.config.ts (`admin.theme: 'dark'`), so this
+ * file only needs to tune Payload's dark palette rather than handle both themes.
+ *
+ * Two rules shaped the colours below:
+ *
+ *  1. Every text colour clears 7:1 against its background (WCAG AAA), measured
+ *     rather than eyeballed, because staff read dense booking tables for long
+ *     stretches. Body text 16.1:1, headings 17.6:1, muted labels 7.4:1. The only
+ *     deliberate exception is --theme-elevation-500 (4.0:1), which is used for
+ *     borders and dividers, never for text.
+ *  2. The brand navy (#10223b) is far too dark to act as an accent ON a dark
+ *     surface — it disappears. The design system's own light tint, #b6c7e8
+ *     (`inverse-primary`), is used instead, so the panel still reads as Imperial
+ *     Tours without sacrificing legibility. Navy returns only as text ON that
+ *     light tint, where the contrast runs the other way.
+ */
+
+$brand-navy: #10223b;
+$brand-tint: #b6c7e8;
+$brand-tint-strong: #d5e3ff;
+
+html[data-theme='dark'] {
+  /* Base surfaces: a near-black with a slight blue cast, so it sits in the same
+     family as the brand rather than reading as pure grey. */
+  --theme-bg: #0d1117;
+  --theme-input-bg: #161b22;
+
+  /* Elevation ramp, dark -> light. Payload uses these for cards, borders, muted
+     text and headings, so the whole panel follows from these ten values. */
+  --theme-elevation-0: #0d1117;
+  --theme-elevation-50: #12171f;
+  --theme-elevation-100: #161b22;
+  --theme-elevation-150: #1c232d;
+  --theme-elevation-200: #222b37;
+  --theme-elevation-250: #2a3441;
+  --theme-elevation-300: #33404f;
+  --theme-elevation-400: #47566a;
+  --theme-elevation-500: #64748b;
+  --theme-elevation-600: #94a3b8;  /* muted labels — 7.4:1 on bg, 7.0:1 on cards */
+  --theme-elevation-700: #aebbcc;
+  --theme-elevation-800: #cdd7e3;
+  --theme-elevation-900: #e4eaf1;
+  --theme-elevation-1000: #f4f7fa; /* headings — 17.6:1 */
+
+  --theme-text: #e8edf3;
+
+  /* Accents. Success doubles as Payload's primary action colour. */
+  --theme-success-50: #16202e;
+  --theme-success-100: #1b2a3d;
+  --theme-success-500: #{$brand-tint};
+  --theme-success-550: #{$brand-tint-strong};
+  --theme-success-600: #{$brand-tint-strong};
+  --theme-success-900: #{$brand-tint-strong};
+
+  /* Errors: lifted well off the default red, which is unreadable on dark. */
+  --theme-error-50: #2a1416;
+  --theme-error-100: #3a1a1e;
+  --theme-error-500: #ff8a80;
+  --theme-error-900: #ffb4ab;
+
+  --theme-warning-500: #e7c092;
+  --theme-warning-900: #ffddb6;
 }
 
-html[data-theme='light'] {
-  --theme-success-500: #10223b;
-}
+/* Primary buttons: brand tint behind, navy text on top — the one place the real
+   brand navy is legible on this panel. */
+html[data-theme='dark'] {
+  .btn--style-primary {
+    --color: #{$brand-navy};
 
-.payload-logo,
-.graphic-logo {
-  color: #10223b;
+    background-color: $brand-tint;
+    color: $brand-navy;
+
+    &:hover,
+    &:focus-visible {
+      background-color: $brand-tint-strong;
+      color: $brand-navy;
+    }
+  }
+
+  .payload-logo,
+  .graphic-logo {
+    color: $brand-tint;
+  }
+
+  /* Table rows: a visible separator and a hover state, so a wide booking row is
+     easy to track across the screen. */
+  .table {
+    tbody tr {
+      border-bottom: 1px solid var(--theme-elevation-150);
+
+      &:hover {
+        background-color: var(--theme-elevation-100);
+      }
+    }
+
+    thead th {
+      color: var(--theme-elevation-700);
+    }
+  }
+
+  /* Inputs need a border that survives against the panel background — Payload's
+     default is nearly invisible once the surfaces darken. */
+  input,
+  textarea,
+  select,
+  .rs__control {
+    border-color: var(--theme-elevation-250);
+  }
+
+  /* Keyboard focus must never be lost against a dark field. */
+  :focus-visible {
+    outline: 2px solid $brand-tint;
+    outline-offset: 1px;
+  }
 }
