@@ -12,7 +12,15 @@
     "bookNow": "Reservar",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
-    "skipToContent": "Ir al contenido"
+    "skipToContent": "Ir al contenido",
+    "dailyTours": "Excursiones de un día",
+    "fullExperiences": "Experiencias completas",
+    "hotels": "Hoteles",
+    "transfers": "Traslados",
+    "airportTransfer": "Traslado al aeropuerto",
+    "cityToCity": "Entre ciudades",
+    "customTrip": "Viaje a medida",
+    "bicycles": "Bicicletas"
   },
   "currency": {
     "label": "Moneda",
@@ -38,7 +46,66 @@
   },
   "services": {
     "eyebrow": "Nuestra oferta",
-    "title": "Nuestros servicios"
+    "title": "Nuestros servicios",
+    "from": "Desde",
+    "priceOnRequest": "Precio a consultar",
+    "empty": "Aún no hay nada que mostrar. Vuelva a consultarlo en breve.",
+    "pagination": "Paginación",
+    "badge": {
+      "bestseller": "Más vendido",
+      "new": "Novedad"
+    },
+    "amenities": {
+      "wifi": "Wi-Fi",
+      "pool": "Piscina",
+      "spa": "Spa",
+      "parking": "Aparcamiento",
+      "breakfast": "Desayuno",
+      "gym": "Gimnasio",
+      "ac": "Aire acondicionado",
+      "restaurant": "Restaurante",
+      "airportShuttle": "Traslado al aeropuerto",
+      "petFriendly": "Admite mascotas"
+    },
+    "difficulty": {
+      "easy": "Fácil",
+      "moderate": "Moderado",
+      "hard": "Exigente"
+    },
+    "included": "Qué incluye",
+    "notIncluded": "No incluido",
+    "highlights": "Lo más destacado",
+    "itinerary": "Itinerario",
+    "meetingPoint": "Punto de encuentro",
+    "day": "Día",
+    "rooms": "Habitaciones y tarifas",
+    "perPerson": "por persona y noche",
+    "single": "Individual",
+    "double": "Doble",
+    "triple": "Triple",
+    "amenitiesTitle": "Servicios",
+    "policies": "Políticas",
+    "checkIn": "Entrada",
+    "checkOut": "Salida",
+    "route": "Ruta",
+    "stops": "Por el camino",
+    "vehicles": "Flota",
+    "zones": "Zonas y precios",
+    "routes": "Rutas y precios",
+    "passengers": "pasajeros",
+    "luggage": "maletas",
+    "duration": "Duración",
+    "deposit": "Fianza",
+    "accessories": "Incluido",
+    "specs": "Ficha técnica",
+    "bookNow": "Reservar",
+    "enquire": "Solicitar presupuesto",
+    "notFound": "No hemos encontrado esa página.",
+    "difficultyLabel": "Dificultad",
+    "groupSize": "Grupo máx.",
+    "startTimes": "Salidas",
+    "nights": "Noches",
+    "days": "Días"
   },
   "offers": {
     "eyebrow": "Exclusividad",
@@ -72,11 +139,140 @@
   "common": {
     "loading": "Cargando…",
     "error": "Algo ha salido mal.",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "comingSoon": "Esta sección forma parte de una fase posterior del desarrollo. La ruta, sus metadatos y su navegación ya están listos."
   },
   "notFound": {
     "title": "Esta página se ha salido del mapa.",
     "body": "Puede que el viaje que buscas se haya movido o retirado.",
     "cta": "Volver al inicio"
+  },
+  "tours": {
+    "eyebrow": "Tours",
+    "daily": {
+      "title": "Excursiones de un día",
+      "description": "Viajes de un solo día con salidas fijas: descubra los lugares más extraordinarios de Egipto y regrese al anochecer."
+    },
+    "experiences": {
+      "title": "Experiencias completas",
+      "description": "Paquetes de varios días con itinerario día a día, alojamiento y guía privado durante todo el viaje."
+    }
+  },
+  "hotels": {
+    "title": "Hoteles",
+    "description": "Alojamientos seleccionados, con precio por persona según la ocupación: individual, doble o triple."
+  },
+  "transfers": {
+    "title": "Traslados",
+    "description": "Coches privados con conductores profesionales: recogidas en el aeropuerto, rutas entre ciudades o un viaje diseñado a su medida.",
+    "airport": {
+      "title": "Traslado al aeropuerto",
+      "description": "Recepción personalizada en llegadas y salidas entre el aeropuerto y su hotel, con precio fijo por zona y vehículo."
+    },
+    "intercity": {
+      "title": "Entre ciudades",
+      "description": "Rutas directas entre ciudades con precio fijo por clase de vehículo, sin extras ocultos."
+    },
+    "custom": {
+      "title": "Viaje a medida",
+      "description": "Díganos a dónde quiere ir y le enviaremos un presupuesto personalizado por WhatsApp."
+    }
+  },
+  "bicycles": {
+    "title": "Bicicletas",
+    "description": "Alquile por horas o por días, o únase a una ruta guiada previamente planificada."
+  },
+  "booking": {
+    "title": "Su reserva",
+    "description": "Revise su selección, añada sus datos y confirme.",
+    "confirmation": {
+      "title": "Reserva confirmada",
+      "description": "Gracias: le enviaremos por correo electrónico una confirmación con su número de referencia.",
+      "reference": "Referencia de la reserva",
+      "emailNote": "Le hemos enviado una confirmación por correo electrónico. Nuestro equipo se pondrá en contacto en breve para concretar los detalles.",
+      "backHome": "Volver al inicio"
+    },
+    "steps": {
+      "details": "Su viaje",
+      "contact": "Sus datos",
+      "review": "Revisión"
+    },
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "travellers": "Viajeros",
+    "adults": "Adultos",
+    "children": "Niños",
+    "infants": "Bebés",
+    "estimatedTotal": "Total estimado",
+    "estimateNote": "Se trata de una estimación. Le confirmaremos el precio final al confirmar su reserva.",
+    "back": "Atrás",
+    "continue": "Continuar",
+    "confirm": "Confirmar reserva",
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "country": "País",
+      "notes": "¿Algo que debamos saber?"
+    }
+  },
+  "pages": {
+    "about": {
+      "title": "Sobre Imperial Tours",
+      "description": "Viajes seleccionados para el viajero exigente, gestionados por un equipo que vive y trabaja en Egipto."
+    },
+    "contact": {
+      "title": "Contacto",
+      "description": "Preguntas sobre un viaje, una reserva o un presupuesto: respondemos en español, inglés y alemán."
+    }
+  },
+  "forms": {
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Introduzca un correo electrónico válido",
+    "invalidPhone": "Introduzca un número de teléfono válido",
+    "submit": "Enviar",
+    "submitting": "Enviando…",
+    "success": "Gracias: hemos recibido su solicitud.",
+    "genericError": "Algo ha salido mal. Inténtelo de nuevo."
+  },
+  "errors": {
+    "generic": "Algo ha salido mal.",
+    "tryAgain": "Reintentar",
+    "loadFailed": "No hemos podido cargar este contenido."
+  },
+  "filters": {
+    "any": "Cualquiera",
+    "stars": "Estrellas",
+    "maxPrice": "Precio máx.",
+    "sortBy": "Ordenar por",
+    "newest": "Más recientes",
+    "priceAsc": "Precio: de menor a mayor",
+    "priceDesc": "Precio: de mayor a menor",
+    "ratingDesc": "Mejor valorados",
+    "clear": "Borrar filtros"
+  },
+  "quote": {
+    "submit": "Solicitar presupuesto",
+    "addStop": "Añadir parada",
+    "removeStop": "Quitar",
+    "successTitle": "Gracias: hemos recibido su solicitud",
+    "successBody": "Su referencia de presupuesto es {reference}. Estamos abriendo WhatsApp para que pueda enviarla directamente a nuestro equipo; si no se ha abierto, utilice el botón de abajo.",
+    "openWhatsapp": "Abrir WhatsApp",
+    "disabled": "Los presupuestos a medida no están disponibles temporalmente. Póngase en contacto con nosotros directamente.",
+    "fields": {
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "pickupLocation": "Recogida",
+      "dropoffLocation": "Destino",
+      "stops": "Paradas adicionales",
+      "date": "Fecha",
+      "time": "Hora",
+      "passengers": "Pasajeros",
+      "luggage": "Equipaje",
+      "vehiclePreference": "Vehículo preferido",
+      "specialRequests": "Peticiones especiales"
+    }
   }
 }

@@ -19,6 +19,7 @@ export const localeLabels: Record<Locale, { label: string; short: string; hrefla
 export const routing = defineRouting({
   locales,
   defaultLocale,
-  // `/` -> English, `/es` and `/de` for the rest. Keeps the canonical URL clean.
-  localePrefix: 'as-needed',
+  // Spec Section 2.3: the locale prefix is ALWAYS visible, so `/en/tours`,
+  // `/es/tours`, `/de/tours`. `/` redirects to `/en` via the middleware.
+  localePrefix: 'always',
 })

@@ -2,7 +2,7 @@
   "name": "imperial-tours",
   "version": "1.0.0",
   "private": true,
-  "description": "Imperial Tours — luxury Egypt travel platform. Next.js App Router + Payload CMS + MongoDB.",
+  "description": "Imperial Tours \u2014 luxury Egypt travel platform. Next.js App Router + Payload CMS + MongoDB.",
   "type": "module",
   "engines": {
     "node": ">=20.9.0"
@@ -16,9 +16,14 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts"
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts",
+    "test:pricing": "node --experimental-strip-types tests/pricing.test.ts",
+    "test": "npm run test:pricing && npm run test:whatsapp && npm run test:access",
+    "test:whatsapp": "node --experimental-strip-types tests/whatsapp.test.ts",
+    "test:access": "node --experimental-strip-types tests/access.test.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
     "@payloadcms/db-mongodb": "^3.58.0",
     "@payloadcms/email-nodemailer": "^3.88.0",
     "@payloadcms/next": "^3.58.0",
@@ -31,8 +36,10 @@
     "payload": "^3.58.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hook-form": "^7.86.0",
     "sharp": "0.34.2",
     "tailwind-merge": "^2.5.4",
+    "zod": "^4.4.3",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

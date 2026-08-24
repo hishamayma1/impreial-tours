@@ -144,6 +144,12 @@ export const toFooter = (doc: Doc): FooterVM => ({
 
 export const toSiteSettings = (doc: Doc): SiteSettingsVM => ({
   brandName: str(doc.brandName, 'IMPERIAL TOURS'),
+  whatsappNumber: str(doc.contact?.whatsappNumber),
+  // Absent settings mean "everything on" — a fresh install should not hide the site.
+  enabledServices: Array.isArray(doc.enabledServices)
+    ? doc.enabledServices.map((service: unknown) => String(service))
+    : ['tours', 'hotels', 'transfers', 'bicycles'],
+  enableCustomQuote: doc.enableCustomQuote !== false,
   logo: toImage(doc.logo, 'thumbnail'),
   currencies: Array.isArray(doc.currencies)
     ? doc.currencies

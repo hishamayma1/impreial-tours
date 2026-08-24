@@ -201,6 +201,10 @@ export const getSiteSettings = cachedByLocale<SiteSettingsVM>(
     logo: null,
     currencies: [],
     defaultSeo: { title: '', description: '', image: null },
+    whatsappNumber: '',
+    // With settings unreadable, keep every service visible rather than blanking the nav.
+    enabledServices: ['tours', 'hotels', 'transfers', 'bicycles'],
+    enableCustomQuote: true,
   },
   async (locale) => {
   const payload = await getPayloadClient()

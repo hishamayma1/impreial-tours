@@ -17,6 +17,7 @@ import {
   getTestimonials,
 } from '@/lib/payload/queries'
 import { firstFilled } from '@/lib/utils'
+import { buildAlternates } from '@/lib/seo'
 import type { SectionHeadingVM } from '@/types/content'
 
 type PageProps = { params: Promise<{ locale: Locale }> }
@@ -25,12 +26,19 @@ export const generateMetadata = async ({ params }: PageProps): Promise<Metadata>
   const { locale } = await params
   const [home, t] = await Promise.all([getHomePage(locale), getTranslations({ locale, namespace: 'meta' })])
 
-  const title = firstFilled(home.seo.title, home.hero.title)
+  /**
+   * The translated tagline is the last resort deliberately: `firstFilled` returning ''
+   * would override the layout's title template with an empty string, and the page
+   * would render with no <title> element at all — costing both SEO and screen-reader
+   * users their only page label.
+   */
+  const title = firstFilled(home.seo.title, home.hero.title, t('tagline'))
   const description = firstFilled(home.seo.description, home.hero.subtitle, t('defaultDescription'))
 
   return {
     title,
     description,
+    alternates: buildAlternates(locale),
     openGraph: {
       title,
       description,

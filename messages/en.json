@@ -12,7 +12,15 @@
     "bookNow": "Book Now",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "dailyTours": "Daily Tours",
+    "fullExperiences": "Full Experiences",
+    "hotels": "Hotels",
+    "transfers": "Transfers",
+    "airportTransfer": "Airport Transfer",
+    "cityToCity": "City to City",
+    "customTrip": "Custom Trip",
+    "bicycles": "Bicycles"
   },
   "currency": {
     "label": "Currency",
@@ -38,7 +46,66 @@
   },
   "services": {
     "eyebrow": "Our Offerings",
-    "title": "Our Services"
+    "title": "Our Services",
+    "from": "From",
+    "priceOnRequest": "Price on request",
+    "empty": "Nothing to show here yet. Please check back shortly.",
+    "pagination": "Pagination",
+    "badge": {
+      "bestseller": "Bestseller",
+      "new": "New"
+    },
+    "amenities": {
+      "wifi": "Wi-Fi",
+      "pool": "Pool",
+      "spa": "Spa",
+      "parking": "Parking",
+      "breakfast": "Breakfast",
+      "gym": "Gym",
+      "ac": "Air conditioning",
+      "restaurant": "Restaurant",
+      "airportShuttle": "Airport shuttle",
+      "petFriendly": "Pet friendly"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "moderate": "Moderate",
+      "hard": "Hard"
+    },
+    "included": "What is included",
+    "notIncluded": "Not included",
+    "highlights": "Highlights",
+    "itinerary": "Itinerary",
+    "meetingPoint": "Meeting point",
+    "day": "Day",
+    "rooms": "Rooms and rates",
+    "perPerson": "per person, per night",
+    "single": "Single",
+    "double": "Double",
+    "triple": "Triple",
+    "amenitiesTitle": "Amenities",
+    "policies": "Policies",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "route": "Route",
+    "stops": "Along the way",
+    "vehicles": "Fleet",
+    "zones": "Zones and prices",
+    "routes": "Routes and prices",
+    "passengers": "passengers",
+    "luggage": "bags",
+    "duration": "Duration",
+    "deposit": "Deposit",
+    "accessories": "Included",
+    "specs": "Specification",
+    "bookNow": "Book now",
+    "enquire": "Request a quote",
+    "notFound": "We could not find that page.",
+    "difficultyLabel": "Difficulty",
+    "groupSize": "Max group",
+    "startTimes": "Departures",
+    "nights": "Nights",
+    "days": "Days"
   },
   "offers": {
     "eyebrow": "Exclusivity",
@@ -72,11 +139,140 @@
   "common": {
     "loading": "Loading…",
     "error": "Something went wrong.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "comingSoon": "This section is part of a later build phase. The route, its metadata and its navigation are already in place."
   },
   "notFound": {
     "title": "This page has wandered off the map.",
     "body": "The journey you are looking for may have been moved or retired.",
     "cta": "Back to home"
+  },
+  "tours": {
+    "eyebrow": "Tours",
+    "daily": {
+      "title": "Daily Tours",
+      "description": "Single-day journeys with fixed departures — see the most extraordinary sights of Egypt and be back by evening."
+    },
+    "experiences": {
+      "title": "Full Experiences",
+      "description": "Multi-day packages with a day-by-day itinerary, accommodation and a private guide throughout."
+    }
+  },
+  "hotels": {
+    "title": "Hotels",
+    "description": "Handpicked stays, priced per person by occupancy — single, double or triple."
+  },
+  "transfers": {
+    "title": "Transfers",
+    "description": "Private cars with professional drivers — airport pickups, city-to-city routes, or a trip built entirely around you.",
+    "airport": {
+      "title": "Airport Transfer",
+      "description": "Meet-and-greet arrivals and departures between the airport and your hotel, at a fixed price by zone and vehicle."
+    },
+    "intercity": {
+      "title": "City to City",
+      "description": "Direct routes between cities at a fixed price per vehicle class — no hidden extras."
+    },
+    "custom": {
+      "title": "Custom Trip",
+      "description": "Tell us where you want to go and we will send you a personal quote on WhatsApp."
+    }
+  },
+  "bicycles": {
+    "title": "Bicycles",
+    "description": "Rent by the hour or by the day, or join a guided ride along a planned route."
+  },
+  "booking": {
+    "title": "Your booking",
+    "description": "Review your selection, add your details and confirm.",
+    "confirmation": {
+      "title": "Booking confirmed",
+      "description": "Thank you — a confirmation with your reference number is on its way to your inbox.",
+      "reference": "Booking reference",
+      "emailNote": "We have emailed you a confirmation. Our team will be in touch shortly to finalise the details.",
+      "backHome": "Back to home"
+    },
+    "steps": {
+      "details": "Your trip",
+      "contact": "Your details",
+      "review": "Review"
+    },
+    "startDate": "Start date",
+    "endDate": "End date",
+    "travellers": "Travellers",
+    "adults": "Adults",
+    "children": "Children",
+    "infants": "Infants",
+    "estimatedTotal": "Estimated total",
+    "estimateNote": "This is an estimate. We confirm the final price when we confirm your booking.",
+    "back": "Back",
+    "continue": "Continue",
+    "confirm": "Confirm booking",
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone",
+      "country": "Country",
+      "notes": "Anything we should know?"
+    }
+  },
+  "pages": {
+    "about": {
+      "title": "About Imperial Tours",
+      "description": "Curated journeys for the discerning traveler, run by a team that lives and works in Egypt."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Questions about a journey, a booking or a quote — we answer in English, Spanish and German."
+    }
+  },
+  "forms": {
+    "required": "This field is required",
+    "invalidEmail": "Enter a valid email address",
+    "invalidPhone": "Enter a valid phone number",
+    "submit": "Send",
+    "submitting": "Sending…",
+    "success": "Thank you — we have received your request.",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "errors": {
+    "generic": "Something went wrong.",
+    "tryAgain": "Try again",
+    "loadFailed": "We could not load this content."
+  },
+  "filters": {
+    "any": "Any",
+    "stars": "Stars",
+    "maxPrice": "Max price",
+    "sortBy": "Sort by",
+    "newest": "Newest",
+    "priceAsc": "Price: low to high",
+    "priceDesc": "Price: high to low",
+    "ratingDesc": "Highest rated",
+    "clear": "Clear filters"
+  },
+  "quote": {
+    "submit": "Request a quote",
+    "addStop": "Add a stop",
+    "removeStop": "Remove",
+    "successTitle": "Thank you — we have your request",
+    "successBody": "Your quote reference is {reference}. We are opening WhatsApp so you can send it straight to our team; if it did not open, use the button below.",
+    "openWhatsapp": "Open WhatsApp",
+    "disabled": "Custom quotes are temporarily unavailable. Please contact us directly.",
+    "fields": {
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "pickupLocation": "Pick-up",
+      "dropoffLocation": "Drop-off",
+      "stops": "Extra stops",
+      "date": "Date",
+      "time": "Time",
+      "passengers": "Passengers",
+      "luggage": "Luggage",
+      "vehiclePreference": "Preferred vehicle",
+      "specialRequests": "Special requests"
+    }
   }
 }

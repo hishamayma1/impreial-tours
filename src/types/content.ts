@@ -88,7 +88,12 @@ export type HomePageVM = {
   }
 }
 
-export type NavItemVM = { label: string; href: string }
+export type NavItemVM = {
+  label: string
+  href: string
+  /** Present on hub items that open a dropdown (Tours, Transfers). */
+  children?: NavItemVM[]
+}
 
 export type HeaderVM = {
   navItems: NavItemVM[]
@@ -107,4 +112,8 @@ export type SiteSettingsVM = {
   logo: ImageVM | null
   currencies: CurrencyVM[]
   defaultSeo: { title: string; description: string; image: ImageVM | null }
+  /** Spec Section 3 additions. */
+  whatsappNumber: string
+  enabledServices: string[]
+  enableCustomQuote: boolean
 }

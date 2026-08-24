@@ -16,12 +16,19 @@ import { Destinations } from './payload/collections/Destinations'
 import { Testimonials } from './payload/collections/Testimonials'
 import { Posts } from './payload/collections/Posts'
 import { Bookings } from './payload/collections/Bookings'
+import { Tours } from './payload/collections/Tours'
+import { Hotels } from './payload/collections/Hotels'
+import { Transfers } from './payload/collections/Transfers'
+import { Bicycles } from './payload/collections/Bicycles'
+import { QuoteRequests } from './payload/collections/QuoteRequests'
+import { Pages } from './payload/collections/Pages'
 
 import { emailAdapter } from './payload/email'
 import { Header } from './payload/globals/Header'
 import { Footer } from './payload/globals/Footer'
 import { HomePage } from './payload/globals/HomePage'
 import { SiteSettings } from './payload/globals/SiteSettings'
+import { Navigation } from './payload/globals/Navigation'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -32,13 +39,22 @@ export default buildConfig({
   serverURL,
   admin: {
     user: Users.slug,
+    /**
+     * The dashboard is locked to dark. Staff work in it all day against dense tables
+     * of bookings and prices, and the dark palette in custom.scss is tuned for that
+     * — see the contrast notes there. Set this to 'all' to give users the toggle back.
+     */
+    theme: 'dark',
     importMap: {
       baseDir: path.resolve(dirname),
     },
     meta: {
       titleSuffix: ' — Imperial Tours',
     },
-    components: {},
+    components: {
+      // Section 4: the stats row above the dashboard's collection list.
+      beforeDashboard: ['@/payload/components/Dashboard#Dashboard'],
+    },
   },
 
   /**
@@ -55,17 +71,28 @@ export default buildConfig({
   },
 
   collections: [
+    // Services (spec Section 3)
+    Tours,
+    Hotels,
+    Transfers,
+    Bicycles,
+    // Sales
+    Bookings,
+    QuoteRequests,
+    // Content
+    Pages,
+    Destinations,
+    Media,
+    // Pre-existing content collections, kept alongside the spec's model
     Services,
     Offers,
-    Destinations,
     Testimonials,
     Posts,
     Categories,
-    Bookings,
-    Media,
+    // Settings
     Users,
   ],
-  globals: [HomePage, Header, Footer, SiteSettings],
+  globals: [HomePage, Header, Navigation, Footer, SiteSettings],
 
   editor: lexicalEditor(),
   email: emailAdapter,
@@ -74,6 +101,13 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
     connectOptions: {
       maxPoolSize: 20,
+      /**
+       * Fail fast when the cluster is unreachable. The driver's 30s default means a
+       * page that makes several reads stacks up minutes of waiting before any of them
+       * reports the outage — long enough for a request to be abandoned rather than
+       * degrade to the empty state the front end is written to handle.
+       */
+      serverSelectionTimeoutMS: 8000,
     },
   }),
   sharp,

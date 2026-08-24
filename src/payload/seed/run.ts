@@ -4,6 +4,8 @@ import { locales, defaultLocale, type Locale } from '../../i18n/routing'
 import assets from './assets.json' with { type: 'json' }
 import { destinations, homeCopy, offers, posts, services, testimonials } from './data'
 import { altText } from './alt-text'
+import { seedServices } from './seed-services'
+import { seedNavigation } from './seed-navigation'
 
 type AssetKey = keyof typeof assets
 type MediaIds = Record<string, string>
@@ -73,6 +75,12 @@ const withRetry = async <T>(operation: () => Promise<T>, attempts = 4): Promise<
 
 const wipe = async (payload: Payload) => {
   const collections = [
+    // Spec Section 3 services first: they hold relationships into destinations/media.
+    'tours',
+    'hotels',
+    'transfers',
+    'bicycles',
+    'pages',
     'services',
     'offers',
     'destinations',
@@ -81,6 +89,8 @@ const wipe = async (payload: Payload) => {
     'categories',
     'media',
   ] as const
+  // Bookings, quote-requests and users are deliberately never wiped — they are
+  // customer data, not seed content.
 
   for (const collection of collections) {
     const { totalDocs } = await payload.count({ collection })
@@ -91,26 +101,24 @@ const wipe = async (payload: Payload) => {
   payload.logger.info('Cleared previously seeded content')
 }
 
-const ensureAdmin = async (payload: Payload) => {
-  const email = process.env.SEED_ADMIN_EMAIL || 'admin@imperialtours.com'
-  const password = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe123!'
+/**
+ * The seed deliberately creates NO admin account.
+ *
+ * With an empty `users` collection, Payload serves its own "create first user" screen
+ * at /admin, and whoever signs up there becomes the first administrator. That is safer
+ * than shipping a known email and password: a seeded credential pair tends to survive
+ * into production, and anyone who has read this repository would know it.
+ *
+ * The seed only reports which state the database is in.
+ */
+const reportAdminState = async (payload: Payload) => {
+  const { totalDocs } = await payload.count({ collection: 'users' })
 
-  const existing = await payload.find({
-    collection: 'users',
-    where: { email: { equals: email } },
-    limit: 1,
-  })
-
-  if (existing.totalDocs > 0) {
-    payload.logger.info(`Admin ${email} already exists`)
+  if (totalDocs === 0) {
+    payload.logger.info('No users yet — open /admin and create the first administrator.')
     return
   }
-
-  await payload.create({
-    collection: 'users',
-    data: { email, password, name: 'Imperial Tours Admin', roles: ['admin'] },
-  })
-  payload.logger.info(`Created admin ${email}`)
+  payload.logger.info(`${totalDocs} user(s) already exist; leaving them untouched.`)
 }
 
 /** Creates the default-locale document, then patches each translation onto it. */
@@ -167,13 +175,14 @@ const seedContent = async (payload: Payload, media: MediaIds) => {
   }
   payload.logger.info(`Seeded ${offers.length} offers`)
 
+  const destinationIds: string[] = []
   for (const destination of destinations) {
-    await createLocalized(
+    destinationIds.push(await createLocalized(
       payload,
       'destinations',
       { order: destination.order, featured: true, image: media[destination.asset] },
       { en: destination.copy.en, es: destination.copy.es, de: destination.copy.de },
-    )
+    ))
   }
   payload.logger.info(`Seeded ${destinations.length} destinations`)
 
@@ -219,6 +228,9 @@ const seedContent = async (payload: Payload, media: MediaIds) => {
     )
   }
   payload.logger.info(`Seeded ${posts.length} journal posts`)
+
+  // Spec Section 3: three sample records per service, in all three languages.
+  await seedServices(payload, media, destinationIds)
 }
 
 const seedGlobals = async (payload: Payload, media: MediaIds) => {
@@ -274,6 +286,7 @@ const seedGlobals = async (payload: Payload, media: MediaIds) => {
     },
   })
 
+  await seedNavigation(payload)
   payload.logger.info('Seeded globals for all locales')
 }
 
@@ -281,7 +294,7 @@ const seed = async () => {
   const payload = await getPayload({ config })
 
   payload.logger.info('--- Imperial Tours seed ---')
-  await ensureAdmin(payload)
+  await reportAdminState(payload)
   await wipe(payload)
 
   payload.logger.info('Uploading design assets...')

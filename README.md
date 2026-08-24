@@ -24,11 +24,15 @@ npm run seed              # optional: loads the design's content in all 3 langua
 npm run dev
 ```
 
-- Site: http://localhost:3000 (`/` English, `/es`, `/de`)
+- Site: http://localhost:3000 (`/en`, `/es`, `/de` — the locale prefix is always shown)
 - Dashboard: http://localhost:3000/admin
 
-`npm run seed` **replaces** all content collections. It leaves users untouched and
-creates the admin account from `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` if missing.
+**First run:** there is no seeded admin account. Open `/admin` and Payload will show
+its "create first user" screen — whoever signs up there becomes the first
+administrator, and can then invite the rest of the team under Settings → Users.
+
+`npm run seed` **replaces** all content collections. It never touches users, bookings
+or quote requests — those are people's data, not seed content.
 
 ## Scripts
 
