@@ -1,24 +1,20 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
-import { Hero } from '@/components/sections/Hero'
-import { Services } from '@/components/sections/Services'
-import { Offers } from '@/components/sections/Offers'
-import { FeaturedDestinations } from '@/components/sections/FeaturedDestinations'
-import { Testimonials } from '@/components/sections/Testimonials'
-import { Journal } from '@/components/sections/Journal'
-import type { Locale } from '@/i18n/routing'
 import {
-  getFeaturedDestinations,
-  getHomePage,
-  getLatestPosts,
-  getOffers,
-  getServices,
-  getTestimonials,
-} from '@/lib/payload/queries'
+  HeroSection,
+  ServicesSection,
+  OffersSection,
+  DestinationsSection,
+  TestimonialsSection,
+  JournalSection,
+} from '@/components/home/sections'
+import { HeroSkeleton, SectionSkeleton } from '@/components/home/section-skeletons'
+import type { Locale } from '@/i18n/routing'
+import { getHomePage } from '@/lib/payload/queries'
 import { firstFilled } from '@/lib/utils'
 import { buildAlternates } from '@/lib/seo'
-import type { SectionHeadingVM } from '@/types/content'
 
 type PageProps = { params: Promise<{ locale: Locale }> }
 
@@ -52,69 +48,35 @@ const HomePage = async ({ params }: PageProps) => {
   setRequestLocale(locale)
 
   /**
-   * Every read is cache-tagged, so these six calls collapse to zero database work
-   * between CMS edits. Fetching them in parallel keeps the cold path fast too.
+   * Each section streams independently, so the hero paints as soon as its own query
+   * resolves rather than waiting on the five sections below it. The skeletons hold
+   * each band's height, so filling them in shifts nothing.
    */
-  const [home, services, offers, destinations, testimonials, posts, t] = await Promise.all([
-    getHomePage(locale),
-    getServices(locale),
-    getOffers(locale),
-    getFeaturedDestinations(locale),
-    getTestimonials(locale),
-    getLatestPosts(locale),
-    getTranslations(),
-  ])
-
-  /** CMS copy wins; the translated string is the fallback when an editor leaves it blank. */
-  const heading = (
-    section: SectionHeadingVM,
-    keys: { eyebrow?: string; title: string; body?: string },
-  ): SectionHeadingVM => ({
-    eyebrow: firstFilled(section.eyebrow, keys.eyebrow ? t(keys.eyebrow) : ''),
-    title: firstFilled(section.title, t(keys.title)),
-    body: firstFilled(section.body, keys.body ? t(keys.body) : ''),
-  })
-
   return (
     <>
-      <Hero hero={home.hero} />
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroSection locale={locale} />
+      </Suspense>
 
-      <Services
-        heading={heading(home.sections.services, {
-          eyebrow: 'services.eyebrow',
-          title: 'services.title',
-        })}
-        services={services}
-      />
+      <Suspense fallback={<SectionSkeleton columns={3} />}>
+        <ServicesSection locale={locale} />
+      </Suspense>
 
-      <Offers
-        heading={heading(home.sections.offers, {
-          eyebrow: 'offers.eyebrow',
-          title: 'offers.title',
-          body: 'offers.body',
-        })}
-        offers={offers}
-      />
+      <Suspense fallback={<SectionSkeleton columns={2} />}>
+        <OffersSection locale={locale} />
+      </Suspense>
 
-      <FeaturedDestinations
-        heading={heading(home.sections.destinations, { title: 'destinations.title' })}
-        destinations={destinations}
-        exploreLabel={(name) => t('destinations.explore', { name })}
-      />
+      <Suspense fallback={<SectionSkeleton columns={3} />}>
+        <DestinationsSection locale={locale} />
+      </Suspense>
 
-      <Testimonials
-        heading={heading(home.sections.testimonials, { eyebrow: 'testimonials.eyebrow', title: 'testimonials.eyebrow' })}
-        testimonials={testimonials}
-      />
+      <Suspense fallback={<SectionSkeleton columns={3} />}>
+        <TestimonialsSection locale={locale} />
+      </Suspense>
 
-      <Journal
-        heading={heading(home.sections.journal, {
-          eyebrow: 'journal.eyebrow',
-          title: 'journal.title',
-        })}
-        posts={posts}
-        readAllLabel={t('journal.readAll')}
-      />
+      <Suspense fallback={<SectionSkeleton columns={3} />}>
+        <JournalSection locale={locale} />
+      </Suspense>
     </>
   )
 }

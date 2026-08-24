@@ -1,19 +1,46 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { useTranslations, useLocale } from 'next-intl'
 import { useShallow } from 'zustand/react/shallow'
 
 import { Button } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
+import { Skeleton } from '@/components/ui/Skeleton'
 import { useBookingStore, selectEstimatedTotal, TOTAL_STEPS } from '@/stores'
 import { formatPrice, usePreferencesStore } from '@/stores'
 import type { CurrencyVM } from '@/types/content'
 import { cn } from '@/lib/utils'
 
-import { TravellersStep } from './TravellersStep'
-import { ContactStep } from './ContactStep'
-import { ReviewStep } from './ReviewStep'
+/**
+ * Steps are code-split and loaded on demand: a visitor on step 1 should not pay to
+ * download the review step's currency formatting or the contact step's field set.
+ * ssr:false is deliberate — the wizard renders a skeleton until its sessionStorage
+ * state hydrates anyway, so there is no server markup to preserve.
+ */
+const TravellersStep = dynamic(
+  () => import('./TravellersStep').then((m) => m.TravellersStep),
+  { ssr: false, loading: () => <StepFallback /> },
+)
+const ContactStep = dynamic(() => import('./ContactStep').then((m) => m.ContactStep), {
+  ssr: false,
+  loading: () => <StepFallback />,
+})
+const ReviewStep = dynamic(() => import('./ReviewStep').then((m) => m.ReviewStep), {
+  ssr: false,
+  loading: () => <StepFallback />,
+})
+
+/** Holds the step's height so advancing does not collapse the layout mid-transition. */
+const StepFallback = () => (
+  <div className="space-y-4">
+    <Skeleton className="h-7 w-40" />
+    <Skeleton className="h-[42px] w-full" />
+    <Skeleton className="h-[42px] w-full" />
+    <Skeleton className="h-[42px] w-2/3" />
+  </div>
+)
 
 type BookingWizardProps = {
   serviceType: string
