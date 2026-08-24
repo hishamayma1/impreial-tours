@@ -135,6 +135,18 @@ const config: Config = {
           from: { opacity: '0', transform: 'translateY(12px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
+        /* Loader keyframes — transform/opacity only, so they stay off the main thread. */
+        'loader-spin': {
+          to: { transform: 'rotate(360deg)' },
+        },
+        'loader-bar': {
+          '0%, 100%': { transform: 'scaleY(0.35)', opacity: '0.5' },
+          '50%': { transform: 'scaleY(1)', opacity: '1' },
+        },
+        'loader-sweep': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(400%)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.5s ease-out both',

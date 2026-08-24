@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { PageHeader } from '@/components/layout/PageHeader'
-import { ServiceGrid } from '@/components/services/ServiceGrid'
+import { ServiceResults } from '@/components/services/ServiceResults'
+import { ServiceGridSkeleton } from '@/components/services/ServiceSkeletons'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
-import { getSiteSettings } from '@/lib/payload/queries'
-import { getBicycles } from '@/lib/payload/services'
 
 const PATH = '/bicycles'
 
@@ -32,20 +32,14 @@ const BicyclesPage = async ({
   searchParams,
 }: {
   params: Promise<{ locale: string }>
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) => {
   const { locale } = await params
-  // The URL is the source of truth for paging and filters (spec Section 6), so the
-  // page reads searchParams rather than any client store.
-  const { page } = await searchParams
   setRequestLocale(locale)
 
+  // The URL is the source of truth for paging and filters (spec Section 6).
+  const query = await searchParams
   const t = await getTranslations('bicycles')
-
-  const [data, settings] = await Promise.all([
-    getBicycles(locale as Locale, undefined, { page: Number(page) || 1 }),
-    getSiteSettings(locale as Locale),
-  ])
 
   return (
     <>
@@ -53,7 +47,14 @@ const BicyclesPage = async ({
         title={t('title')}
         description={t('description')}
       />
-      <ServiceGrid data={data} basePath="/bicycles" currencies={settings.currencies} />
+
+      {/*
+        Keyed on the query so changing a filter shows the skeleton again rather than
+        leaving stale results on screen while the new ones load.
+      */}
+      <Suspense key={JSON.stringify(query)} fallback={<ServiceGridSkeleton />}>
+        <ServiceResults kind="bicycles" locale={locale as Locale} query={query} />
+      </Suspense>
     </>
   )
 }

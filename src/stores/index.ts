@@ -18,3 +18,8 @@ export { useFilterStore, filtersToSearchParams, type FilterState } from './filte
  * aliased rather than duplicated — two stores owning the same value would drift.
  */
 export { usePreferencesStore as useCurrencyStore } from './preferences-store'
+export {
+  useResourceStore,
+  resourceKey,
+  type ResourceKind,
+} from './resource-store'
