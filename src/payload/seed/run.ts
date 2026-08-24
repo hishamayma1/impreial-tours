@@ -300,8 +300,18 @@ const seed = async () => {
   payload.logger.info('Uploading design assets...')
   const media = await uploadAssets(payload)
 
-  await seedContent(payload, media)
-  await seedGlobals(payload, media)
+  const mediaProxy = new Proxy(media, {
+    get(target, prop) {
+      const key = String(prop)
+      if (target[key]) return target[key]
+      const fallback = target.hero || Object.values(target)[0]
+      payload.logger.warn(`Asset "${key}" was not uploaded, falling back to ID "${fallback}"`)
+      return fallback
+    }
+  })
+
+  await seedContent(payload, mediaProxy)
+  await seedGlobals(payload, mediaProxy)
 
   payload.logger.info('Seed complete.')
   process.exit(0)
