@@ -112,7 +112,7 @@ export const TestimonialsSection = async ({ locale }: Props) => {
     <Testimonials
       heading={buildHeading(t, home.sections.testimonials, {
         eyebrow: 'testimonials.eyebrow',
-        title: 'testimonials.eyebrow',
+        title: 'testimonials.title',
       })}
       testimonials={testimonials}
     />

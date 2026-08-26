@@ -38,21 +38,33 @@ export const Testimonials = ({ heading, testimonials }: TestimonialsProps) => {
           {firstFilled(heading.eyebrow, t('eyebrow'))}
         </span>
 
-        <blockquote id="testimonials-heading" className="mb-12">
-          <p className="font-headline-section text-[28px] leading-tight text-white md:text-[40px]">
-            &ldquo;{active.quote}&rdquo;
-          </p>
-        </blockquote>
+        {/*
+          The band is labelled by a real heading rather than by the blockquote it used
+          to point at: aria-labelledby on a quote made the section's accessible name the
+          entire testimonial, and left the page outline with no h2 between Destinations
+          and Journal. The design shows no visible title here, so it is screen-reader only.
+        */}
+        <h2 id="testimonials-heading" className="sr-only">
+          {firstFilled(heading.title, t('title'))}
+        </h2>
 
-        <figcaption className="flex flex-col items-center">
-          <span className="mb-4 block h-16 w-16 overflow-hidden rounded-full bg-surface-container-low">
-            <CmsImage image={active.portrait} alt={active.author} sizes="64px" />
-          </span>
-          <p className="font-headline-card text-lg text-white">{active.author}</p>
-          {active.location ? (
-            <p className="font-caption text-caption text-inverse-primary">{active.location}</p>
-          ) : null}
-        </figcaption>
+        <figure>
+          <blockquote className="mb-12">
+            <p className="font-headline-section text-[28px] leading-tight text-white md:text-[40px]">
+              &ldquo;{active.quote}&rdquo;
+            </p>
+          </blockquote>
+
+          <figcaption className="flex flex-col items-center">
+            <span className="relative mb-4 block h-16 w-16 overflow-hidden rounded-full bg-surface-container-low">
+              <CmsImage image={active.portrait} alt={active.author} sizes="64px" />
+            </span>
+            <p className="font-headline-card text-lg text-white">{active.author}</p>
+            {active.location ? (
+              <p className="font-caption text-caption text-inverse-primary">{active.location}</p>
+            ) : null}
+          </figcaption>
+        </figure>
 
         {testimonials.length > 1 ? (
           <div className="mt-8 flex justify-center gap-2">

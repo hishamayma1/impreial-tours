@@ -43,7 +43,10 @@ export const SectionHeading = ({
       <p
         className={cn(
           'font-body-lg text-body-lg mt-6',
-          align === 'center' && 'mx-auto',
+          // `mx-auto` centres nothing without a width to centre within, so the measure cap
+          // and the auto margins have to travel together. Callers that want a different
+          // measure override it with a `[&>p]:max-w-*` class, which wins on specificity.
+          align === 'center' && 'mx-auto max-w-2xl',
           tone === 'dark' ? 'text-on-surface-variant' : 'text-white/85',
         )}
       >

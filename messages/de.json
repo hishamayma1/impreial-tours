@@ -123,6 +123,7 @@
   },
   "testimonials": {
     "eyebrow": "Kundenstimmen",
+    "title": "Was unsere Reisenden sagen",
     "goTo": "Zu Kundenstimme {index}"
   },
   "journal": {

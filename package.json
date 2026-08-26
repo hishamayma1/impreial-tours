@@ -2,7 +2,7 @@
   "name": "imperial-tours",
   "version": "1.0.0",
   "private": true,
-  "description": "Imperial Tours \u2014 luxury Egypt travel platform. Next.js App Router + Payload CMS + MongoDB.",
+  "description": "Imperial Tours — luxury Egypt travel platform. Next.js App Router + Payload CMS + MongoDB.",
   "type": "module",
   "engines": {
     "node": ">=20.9.0"
@@ -18,10 +18,12 @@
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts",
     "test:pricing": "node --experimental-strip-types tests/pricing.test.ts",
-    "test": "npm run test:pricing && npm run test:whatsapp && npm run test:access && npm run test:i18n",
+    "test": "npm run test:pricing && npm run test:whatsapp && npm run test:access && npm run test:i18n && npm run test:twmerge",
     "test:whatsapp": "node --experimental-strip-types tests/whatsapp.test.ts",
     "test:access": "node --experimental-strip-types tests/access.test.ts",
-    "test:i18n": "node --experimental-strip-types tests/i18n-namespaces.test.ts"
+    "test:i18n": "node --experimental-strip-types tests/i18n-namespaces.test.ts",
+    "media:restore": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/restore-media.ts",
+    "test:twmerge": "node --experimental-strip-types tests/tailwind-merge.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
