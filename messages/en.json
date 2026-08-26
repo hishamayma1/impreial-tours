@@ -105,7 +105,23 @@
     "groupSize": "Max group",
     "startTimes": "Departures",
     "nights": "Nights",
-    "days": "Days"
+    "days": "Days",
+    "emptyTitle": "No journeys match",
+    "resultCount": "{count} journeys",
+    "perPersonShort": "per person",
+    "viewItinerary": "View itinerary",
+    "fact": {
+      "hours": "{count} hours",
+      "maxPeople": "Max {count}",
+      "languages": "{count} languages",
+      "durationLabel": "Duration",
+      "daysLabel": "Days",
+      "nightsLabel": "Nights",
+      "difficultyLabel": "Difficulty",
+      "groupSizeLabel": "Group size",
+      "languagesLabel": "Languages",
+      "ratingLabel": "Rating"
+    }
   },
   "offers": {
     "eyebrow": "Exclusivity",

@@ -6,6 +6,7 @@ import type { Where } from 'payload'
 import type { Locale } from '@/i18n/routing'
 import { locales } from '@/i18n/routing'
 import type {
+  CardFact,
   ServiceCardVM,
   PaginatedVM,
   TourDetailVM,
@@ -67,12 +68,39 @@ const emptyPage = <T>(): PaginatedVM<T> => ({ items: [], page: 1, totalPages: 0,
 
 const tourCard = (doc: Doc): ServiceCardVM => {
   const isDaily = doc.tourType === 'daily'
+
   const meta: string[] = []
   if (isDaily && doc.durationHours) meta.push(`${doc.durationHours}h`)
   if (!isDaily && doc.durationDays) meta.push(`${doc.durationDays}d`)
   if (doc.difficulty) meta.push(str(doc.difficulty))
 
+  /**
+   * Facts are emitted as raw values with a stable `label` key; the card translates
+   * the label and formats the value, so a number never has to be re-parsed out of a
+   * localized string.
+   */
+  const facts: CardFact[] = []
+  if (isDaily && doc.durationHours) {
+    facts.push({ icon: 'clock', value: `${doc.durationHours}`, label: 'duration' })
+  }
+  if (!isDaily && doc.durationDays) {
+    facts.push({ icon: 'calendar', value: `${doc.durationDays}`, label: 'days' })
+  }
+  if (!isDaily && typeof doc.nights === 'number') {
+    facts.push({ icon: 'moon', value: `${doc.nights}`, label: 'nights' })
+  }
+  if (doc.difficulty) {
+    facts.push({ icon: 'signal', value: str(doc.difficulty), label: 'difficulty' })
+  }
+  if (doc.groupSizeMax) {
+    facts.push({ icon: 'users', value: `${doc.groupSizeMax}`, label: 'groupSize' })
+  }
+  if (Array.isArray(doc.languages) && doc.languages.length) {
+    facts.push({ icon: 'globe', value: String(doc.languages.length), label: 'languages' })
+  }
+
   return {
+    facts,
     id: String(doc.id),
     slug: str(doc.slug),
     title: str(doc.title),
@@ -197,7 +225,8 @@ export const getTours = cached(
       overrideAccess: true,
       select: {
         slug: true, title: true, shortDescription: true, heroImage: true,
-        tourType: true, durationHours: true, durationDays: true, difficulty: true,
+        tourType: true, durationHours: true, durationDays: true, nights: true,
+        difficulty: true, groupSizeMax: true, languages: true,
         pricePerPerson: true, pricing: true, badge: true, rating: true,
       },
     })

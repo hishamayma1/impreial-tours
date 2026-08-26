@@ -3,6 +3,7 @@ import { getSiteSettings } from '@/lib/payload/queries'
 import { getTours, getHotels, getBicycles, type ListingFilters } from '@/lib/payload/services'
 
 import { ServiceGrid } from './ServiceGrid'
+import { TourResultsGrid } from './TourResultsGrid'
 import { ResourceRecorder } from './ResourceRecorder'
 
 type SearchQuery = Record<string, string | string[] | undefined>
@@ -74,9 +75,22 @@ export const ServiceResults = async ({
     getSiteSettings(locale),
   ])
 
+  // Tours and experiences have their own layouts; hotels and bicycles keep the
+  // shared grid until they get the same treatment.
+  const isTourListing = kind === 'daily' || kind === 'experience'
+
   return (
     <>
-      <ServiceGrid data={data} basePath={BASE_PATH[kind]} currencies={settings.currencies} />
+      {isTourListing ? (
+        <TourResultsGrid
+          data={data}
+          basePath={BASE_PATH[kind]}
+          currencies={settings.currencies}
+          variant={kind === 'daily' ? 'daily' : 'experience'}
+        />
+      ) : (
+        <ServiceGrid data={data} basePath={BASE_PATH[kind]} currencies={settings.currencies} />
+      )}
       {/* Seeds the client cache so a back-navigation to this listing repaints at once. */}
       <ResourceRecorder
         kind={CACHE_KIND[kind]}

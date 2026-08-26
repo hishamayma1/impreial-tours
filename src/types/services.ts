@@ -1,6 +1,20 @@
 import type { ImageVM } from './content'
 import type { Locale } from '@/i18n/routing'
 
+/**
+ * One structured fact about a listing — a duration, a difficulty, a group size.
+ *
+ * Kept as {icon, value} pairs rather than a pre-joined string so each card design
+ * decides how to present them: the daily-tour card renders an icon row, the
+ * experience card renders a labelled stat block from the same data.
+ */
+export type CardFact = {
+  icon: 'clock' | 'calendar' | 'signal' | 'users' | 'globe' | 'moon' | 'route'
+  value: string
+  /** Screen-reader label, since the icon alone carries no meaning. */
+  label: string
+}
+
 /** Shared by every service card so one grid component can render any of them. */
 export type ServiceCardVM = {
   id: string
@@ -10,7 +24,10 @@ export type ServiceCardVM = {
   image: ImageVM | null
   /** Pre-formatted "from" price, or null when the record carries no price. */
   priceFrom: number | null
+  /** Legacy joined strings, still used by the hotel and bicycle cards. */
   meta: string[]
+  /** Structured facts used by the redesigned tour and experience cards. */
+  facts?: CardFact[]
   badge?: string | null
   rating?: number | null
 }

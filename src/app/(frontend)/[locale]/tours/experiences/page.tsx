@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
-import { PageHeader } from '@/components/layout/PageHeader'
+import { ListingHero } from '@/components/services/ListingHero'
 import { ListingFilters } from '@/components/services/ListingFilters'
 import { ServiceResults } from '@/components/services/ServiceResults'
 import { ServiceGridSkeleton } from '@/components/services/ServiceSkeletons'
@@ -45,7 +45,7 @@ const ExperiencesPage = async ({
 
   return (
     <>
-      <PageHeader
+      <ListingHero
         eyebrow={eyebrow('eyebrow')}
         title={t('title')}
         description={t('description')}

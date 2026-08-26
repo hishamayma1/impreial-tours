@@ -105,7 +105,23 @@
     "groupSize": "Grupo máx.",
     "startTimes": "Salidas",
     "nights": "Noches",
-    "days": "Días"
+    "days": "Días",
+    "emptyTitle": "Ningún viaje coincide",
+    "resultCount": "{count} viajes",
+    "perPersonShort": "por persona",
+    "viewItinerary": "Ver itinerario",
+    "fact": {
+      "hours": "{count} horas",
+      "maxPeople": "Máx. {count}",
+      "languages": "{count} idiomas",
+      "durationLabel": "Duración",
+      "daysLabel": "Días",
+      "nightsLabel": "Noches",
+      "difficultyLabel": "Dificultad",
+      "groupSizeLabel": "Tamaño del grupo",
+      "languagesLabel": "Idiomas",
+      "ratingLabel": "Valoración"
+    }
   },
   "offers": {
     "eyebrow": "Exclusividad",

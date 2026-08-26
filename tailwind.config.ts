@@ -80,10 +80,14 @@ const config: Config = {
         hairline: '#c5c6ce',
       },
       borderColor: {
+        /**
+         * `border-hairline` is a COLOUR utility. There was briefly a matching
+         * borderWidth.hairline too, which silently won the `border-{key}` namespace:
+         * every `border-hairline` set a 1px border on all four sides and no colour, so
+         * `border-t border-hairline` drew a full box instead of a single rule.
+         * Widths come from Tailwind's own scale — border, border-t, border-y.
+         */
         hairline: '#c5c6ce',
-      },
-      borderWidth: {
-        hairline: '1px',
       },
       borderRadius: {
         DEFAULT: '0.25rem',

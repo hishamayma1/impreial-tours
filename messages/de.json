@@ -105,7 +105,23 @@
     "groupSize": "Max. Gruppe",
     "startTimes": "Abfahrten",
     "nights": "Nächte",
-    "days": "Tage"
+    "days": "Tage",
+    "emptyTitle": "Keine passenden Reisen",
+    "resultCount": "{count} Reisen",
+    "perPersonShort": "pro Person",
+    "viewItinerary": "Reiseverlauf ansehen",
+    "fact": {
+      "hours": "{count} Stunden",
+      "maxPeople": "Max. {count}",
+      "languages": "{count} Sprachen",
+      "durationLabel": "Dauer",
+      "daysLabel": "Tage",
+      "nightsLabel": "Nächte",
+      "difficultyLabel": "Schwierigkeit",
+      "groupSizeLabel": "Gruppengröße",
+      "languagesLabel": "Sprachen",
+      "ratingLabel": "Bewertung"
+    }
   },
   "offers": {
     "eyebrow": "Exklusivität",

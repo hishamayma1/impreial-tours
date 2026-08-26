@@ -13,8 +13,15 @@ type ListingFiltersProps = {
   variant: 'tours' | 'hotels'
 }
 
-const selectClass =
-  'rounded-lg border border-hairline bg-surface-container-lowest px-3 py-2.5 font-body-md text-body-md text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand'
+/**
+ * Controls are 44px tall — the minimum comfortable touch target — and share one
+ * height so the row aligns on a single baseline regardless of control type.
+ */
+const controlClass =
+  'focus-card h-11 rounded-xl border border-hairline bg-surface-container-lowest px-3.5 font-body-md text-body-md text-primary transition-colors duration-200 hover:border-brand/40'
+
+const labelClass =
+  'font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant'
 
 /**
  * Filter controls. These write to the store; `useFilterUrlSync` debounces that into
@@ -43,17 +50,20 @@ export const ListingFilters = ({ variant }: ListingFiltersProps) => {
     Boolean(difficulty) || starRating !== null || minPrice !== null || maxPrice !== null
 
   return (
-    <div className="border-b border-hairline bg-surface-container-low">
-      <Container className="flex flex-wrap items-end gap-4 py-6">
+    /**
+     * Sticky under the header so filters stay reachable while scrolling a long list.
+     * `top-20` clears the 5rem header; the backdrop blur keeps the row legible over
+     * content passing beneath it without hiding that content entirely.
+     */
+    <div className="sticky top-20 z-30 border-y border-hairline bg-surface-container-low/85 backdrop-blur-md">
+      <Container className="flex flex-wrap items-end gap-x-4 gap-y-3 py-4">
         {variant === 'tours' ? (
           <label className="flex flex-col gap-1.5">
-            <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
-              {t('difficultyLabel')}
-            </span>
+            <span className={labelClass}>{t('difficultyLabel')}</span>
             <select
               value={difficulty}
               onChange={(event) => set({ difficulty: event.target.value })}
-              className={selectClass}
+              className={controlClass}
             >
               <option value="">{filters('any')}</option>
               <option value="easy">{t('difficulty.easy')}</option>
@@ -63,15 +73,13 @@ export const ListingFilters = ({ variant }: ListingFiltersProps) => {
           </label>
         ) : (
           <label className="flex flex-col gap-1.5">
-            <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
-              {filters('stars')}
-            </span>
+            <span className={labelClass}>{filters('stars')}</span>
             <select
               value={starRating ?? ''}
               onChange={(event) =>
                 set({ starRating: event.target.value ? Number(event.target.value) : null })
               }
-              className={selectClass}
+              className={controlClass}
             >
               <option value="">{filters('any')}</option>
               {[5, 4, 3].map((stars) => (
@@ -84,29 +92,26 @@ export const ListingFilters = ({ variant }: ListingFiltersProps) => {
         )}
 
         <label className="flex flex-col gap-1.5">
-          <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
-            {filters('maxPrice')}
-          </span>
+          <span className={labelClass}>{filters('maxPrice')}</span>
           <input
             type="number"
             min={0}
             step={50}
+            inputMode="numeric"
             value={maxPrice ?? ''}
             onChange={(event) =>
               set({ maxPrice: event.target.value ? Number(event.target.value) : null })
             }
-            className={`${selectClass} w-32`}
+            className={`${controlClass} w-32`}
           />
         </label>
 
-        <label className="flex flex-col gap-1.5">
-          <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
-            {filters('sortBy')}
-          </span>
+        <label className="ml-auto flex flex-col gap-1.5">
+          <span className={labelClass}>{filters('sortBy')}</span>
           <select
             value={sortBy}
             onChange={(event) => set({ sortBy: event.target.value })}
-            className={selectClass}
+            className={controlClass}
           >
             <option value="newest">{filters('newest')}</option>
             <option value="priceAsc">{filters('priceAsc')}</option>
@@ -116,7 +121,7 @@ export const ListingFilters = ({ variant }: ListingFiltersProps) => {
         </label>
 
         {hasFilters ? (
-          <Button type="button" variant="ghost" onClick={reset}>
+          <Button type="button" variant="ghost" onClick={reset} className="h-11 self-end">
             {filters('clear')}
           </Button>
         ) : null}
