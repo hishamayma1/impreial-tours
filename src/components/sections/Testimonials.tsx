@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 
 import { CmsImage } from '@/components/ui/CmsImage'
 import { Container } from '@/components/ui/Container'
+import { SectionCta } from '@/components/ui/SectionCta'
 import type { SectionHeadingVM, TestimonialVM } from '@/types/content'
 import { cn, firstFilled } from '@/lib/utils'
 
@@ -66,8 +67,19 @@ export const Testimonials = ({ heading, testimonials }: TestimonialsProps) => {
           </figcaption>
         </figure>
 
+        {/*
+          The strongest point on the page to ask: the visitor has just read someone
+          else vouching for the trip. Light tone, because this band is navy.
+        */}
+        <SectionCta
+          tone="light"
+          primary={{ label: t('ctaPrimary'), href: '#plan' }}
+          secondary={{ label: t('ctaSecondary'), href: '/tours/experiences' }}
+          className="mt-12"
+        />
+
         {testimonials.length > 1 ? (
-          <div className="mt-8 flex justify-center gap-2">
+          <div className="mt-10 flex justify-center gap-2">
             {testimonials.map((testimonial, dotIndex) => (
               <button
                 key={testimonial.id}

@@ -38,6 +38,7 @@ export const Services: CollectionConfig = {
         { label: 'Bed (hotels)', value: 'hotel' },
         { label: 'Bicycle', value: 'bike' },
         { label: 'Sailing', value: 'sailing' },
+        { label: 'Map pin (transfers)', value: 'transfer' },
       ],
       admin: { description: 'Optional badge shown above the card title.' },
     },

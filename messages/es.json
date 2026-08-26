@@ -105,7 +105,8 @@
     "groupSize": "Grupo máx.",
     "startTimes": "Salidas",
     "nights": "Noches",
-    "days": "Días"
+    "days": "Días",
+    "explore": "Explorar"
   },
   "offers": {
     "eyebrow": "Exclusividad",
@@ -119,7 +120,8 @@
   },
   "destinations": {
     "title": "Destinos destacados",
-    "explore": "Descubrir {name}"
+    "explore": "Descubrir {name}",
+    "body": "Desde el campo de pirámides de Guiza hasta las islas de granito de Asuán: los lugares que nuestros guías conocen calle a calle."
   },
   "testimonials": {
     "eyebrow": "Opiniones de clientes",
@@ -244,6 +246,7 @@
   },
   "filters": {
     "any": "Cualquiera",
+    "destination": "Destino",
     "stars": "Estrellas",
     "maxPrice": "Precio máx.",
     "sortBy": "Ordenar por",

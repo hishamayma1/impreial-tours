@@ -18,12 +18,15 @@
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts",
     "test:pricing": "node --experimental-strip-types tests/pricing.test.ts",
-    "test": "npm run test:pricing && npm run test:whatsapp && npm run test:access && npm run test:i18n && npm run test:twmerge",
+    "test": "npm run test:pricing && npm run test:whatsapp && npm run test:access && npm run test:i18n && npm run test:twmerge && npm run test:links",
     "test:whatsapp": "node --experimental-strip-types tests/whatsapp.test.ts",
     "test:access": "node --experimental-strip-types tests/access.test.ts",
     "test:i18n": "node --experimental-strip-types tests/i18n-namespaces.test.ts",
     "media:restore": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/restore-media.ts",
-    "test:twmerge": "node --experimental-strip-types tests/tailwind-merge.test.ts"
+    "test:twmerge": "node --experimental-strip-types tests/tailwind-merge.test.ts",
+    "test:links": "node --experimental-strip-types tests/links.test.ts",
+    "demo:offers": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/demo-offers.ts",
+    "services:backfill-transfers": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-transfers-service.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

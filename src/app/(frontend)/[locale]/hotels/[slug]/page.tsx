@@ -11,6 +11,8 @@ import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
 import { getHotelBySlug, getAllSlugs, getAlternateSlugs } from '@/lib/payload/services'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { breadcrumbNode, hotelNode } from '@/lib/structured-data'
 
 const PATH = '/hotels'
 type PageParams = { locale: string; slug: string }
@@ -58,6 +60,15 @@ const HotelDetailPage = async ({ params }: { params: Promise<PageParams> }) => {
 
   return (
     <>
+      <JsonLd
+        data={[
+          hotelNode(hotel, locale as Locale),
+          breadcrumbNode(locale as Locale, [
+            { name: hotelsT('title'), path: PATH },
+            { name: hotel.name, path: `${PATH}/${hotel.slug}` },
+          ]),
+        ]}
+      />
       <DetailHero
         eyebrow={hotelsT('title')}
         title={hotel.name}

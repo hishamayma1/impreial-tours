@@ -150,6 +150,57 @@ export const Tours: CollectionConfig = {
       ],
     },
 
+    /**
+     * The home page's Limited-Edition Offers carousel is driven from here.
+     *
+     * An offer is a property of the tour it discounts, not a document of its own:
+     * that way the carousel slide and the page it sends you to can never describe
+     * different things, and the "Discover" button lands on a real, bookable tour
+     * instead of a marketing URL with no page behind it.
+     */
+    {
+      name: 'offer',
+      type: 'group',
+      label: 'Home page offer',
+      admin: {
+        position: 'sidebar',
+        description: 'Feature this tour in the offers carousel on the home page.',
+      },
+      fields: [
+        {
+          name: 'active',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Show in the offers carousel',
+        },
+        {
+          name: 'label',
+          type: 'text',
+          localized: true,
+          admin: {
+            condition: (_data, siblingData) => Boolean(siblingData?.active),
+            description: 'Badge shown on the slide, e.g. "Save 20%" or "Limited dates".',
+          },
+        },
+        {
+          name: 'activeFrom',
+          type: 'date',
+          admin: {
+            condition: (_data, siblingData) => Boolean(siblingData?.active),
+            description: 'Optional. Leave blank to start immediately.',
+          },
+        },
+        {
+          name: 'activeUntil',
+          type: 'date',
+          admin: {
+            condition: (_data, siblingData) => Boolean(siblingData?.active),
+            description: 'Optional. Leave blank to run until switched off.',
+          },
+        },
+      ],
+    },
+
     // --- Daily only -----------------------------------------------------------
     {
       type: 'collapsible',

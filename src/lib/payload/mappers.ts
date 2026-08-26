@@ -22,11 +22,28 @@ const str = (value: unknown, fallback = ''): string =>
  * document. Only the latter can be rendered, so anything else becomes null and the
  * component decides how to degrade.
  */
+/**
+ * Uploads are served straight out of `public/media` (see Media.upload.staticDir), so
+ * the front end wants `/media/<filename>` rather than the `/api/media/file/<filename>`
+ * URL Payload stores. That keeps image reads off Payload's REST layer entirely, and
+ * makes the path local as far as `next/image` is concerned — no HTTP round trip back
+ * into this server just to optimize our own file.
+ *
+ * Falls back to whatever Payload recorded when a document predates this and carries no
+ * filename, so an older row degrades to the slower URL instead of to a broken image.
+ */
+const publicUrl = (filename: string, fallback: string): string =>
+  filename ? `/media/${filename}` : fallback
+
 export const toImage = (value: unknown, sizePreference?: string): ImageVM | null => {
   if (!value || typeof value !== 'object') return null
   const doc = value as Doc
   const size = sizePreference ? doc.sizes?.[sizePreference] : undefined
-  const url = str(size?.url) || str(doc.url)
+
+  // Size variant first, then the original — mirroring the old `size.url || doc.url`
+  // chain, so a variant that was never generated still falls back to the full image.
+  const url =
+    publicUrl(str(size?.filename), str(size?.url)) || publicUrl(str(doc.filename), str(doc.url))
   if (!url) return null
 
   return {
@@ -39,19 +56,68 @@ export const toImage = (value: unknown, sizePreference?: string): ImageVM | null
 
 const toId = (doc: Doc): string => String(doc.id ?? doc._id ?? '')
 
+/**
+ * Legacy CMS paths, remapped onto the routes that actually exist.
+ *
+ * `href` on Services and Offers is a free-text field, and the seeded content was
+ * authored against an earlier route plan: `/tours/packages`, `/stays` and
+ * `/tours/cycling` were renamed to `/tours/experiences`, `/hotels` and `/bicycles`,
+ * and `/offers/<slug>` never shipped a route at all. Six of the seven home-page CTAs
+ * were 404ing as a result.
+ *
+ * Fixing it here rather than only in the seed means live documents are corrected
+ * without a re-seed (`npm run seed` replaces every content collection, which is not a
+ * thing to do to a database over a broken link), and a typo of an old path by an
+ * editor still lands somewhere real. `seed/data.ts` carries the correct paths too, so
+ * a fresh install never depends on this.
+ *
+ * Delete an entry once no document uses it.
+ */
+const LEGACY_PATHS: Record<string, string> = {
+  '/tours/packages': '/tours/experiences',
+  '/stays': '/hotels',
+  '/tours/cycling': '/bicycles',
+  '/tours/bicycles': '/bicycles',
+  '/offers': '/tours/experiences',
+  // Hub paths that were never routes: `/tours` and `/destinations` are nav labels,
+  // and destinations are a filter over the tours listing rather than pages of
+  // their own, so both resolve to the day-tours listing.
+  '/tours': '/tours/daily',
+  '/destinations': '/tours/daily',
+  /**
+   * The checkout route is `/booking/[type]`; bare `/booking` has no page, and the
+   * Header global's "Book Now" CTA pointed at it — so the primary call to action
+   * 404'd on every page of the site.
+   *
+   * It resolves to the day-tours listing rather than to `/booking/tour` because the
+   * wizard opens from an item snapshot: sent to checkout with nothing selected, a
+   * visitor gets an empty form. Browse first is also what `buildDefaultCta` already
+   * does, so the CMS value and the code default now agree.
+   */
+  '/booking': '/tours/daily',
+}
+
+export const normalizePath = (href: string, fallback: string): string => {
+  const path = href.trim() || fallback
+  if (LEGACY_PATHS[path]) return LEGACY_PATHS[path]
+  // `/offers/<anything>`: the collection is real, the route family is not.
+  if (path === '/offers' || path.startsWith('/offers/')) return LEGACY_PATHS['/offers']
+  return path
+}
+
 export const toService = (doc: Doc): ServiceVM => ({
   id: toId(doc),
   title: str(doc.title),
   description: str(doc.description),
   icon: str(doc.icon) || null,
-  href: str(doc.href, '/tours'),
+  href: normalizePath(str(doc.href), '/tours/daily'),
   image: toImage(doc.image, 'card'),
 })
 
 export const toOffer = (doc: Doc): OfferVM => ({
   id: toId(doc),
   title: str(doc.title),
-  href: str(doc.href, '/offers'),
+  href: normalizePath(str(doc.href), '/tours/experiences'),
   badges: Array.isArray(doc.badges)
     ? doc.badges
         .filter((badge: Doc) => str(badge?.text))
@@ -110,7 +176,7 @@ export const toHomePage = (doc: Doc): HomePageVM => ({
     offers: toHeading(doc.offersSection),
     destinations: toHeading(doc.destinationsSection),
     testimonials: toHeading(doc.testimonialsSection),
-    journal: toHeading(doc.journalSection),
+    plan: toHeading(doc.planSection),
   },
   seo: {
     title: str(doc.seoTitle),
@@ -119,14 +185,30 @@ export const toHomePage = (doc: Doc): HomePageVM => ({
   },
 })
 
+/**
+ * Chrome links go through the same normalizer as the content ones. The Header global
+ * shipped with `/booking`, `/tours` and `/destinations` — none of them routes — so the
+ * nav and the "Book Now" CTA were dead on every page.
+ */
 export const toHeader = (doc: Doc): HeaderVM => ({
   navItems: Array.isArray(doc.navItems)
     ? doc.navItems
         .filter((item: Doc) => str(item?.label))
-        .map((item: Doc) => ({ label: str(item.label), href: str(item.href, '/') }))
+        .map((item: Doc) => ({
+          label: str(item.label),
+          href: normalizePath(str(item.href), '/'),
+          children: Array.isArray(item.children)
+            ? item.children
+                .filter((child: Doc) => str(child?.label))
+                .map((child: Doc) => ({
+                  label: str(child.label),
+                  href: normalizePath(str(child.href), '/'),
+                }))
+            : undefined,
+        }))
     : [],
   cta: str(doc.cta?.label)
-    ? { label: str(doc.cta.label), href: str(doc.cta.href, '/booking') }
+    ? { label: str(doc.cta.label), href: normalizePath(str(doc.cta.href), '/tours/daily') }
     : null,
 })
 
@@ -136,7 +218,10 @@ export const toFooter = (doc: Doc): FooterVM => ({
     ? doc.columns.map((column: Doc) => ({
         title: str(column.title),
         links: Array.isArray(column.links)
-          ? column.links.map((link: Doc) => ({ label: str(link.label), href: str(link.href, '/') }))
+          ? column.links.map((link: Doc) => ({
+              label: str(link.label),
+              href: normalizePath(str(link.href), '/'),
+            }))
           : [],
       }))
     : [],
@@ -145,6 +230,18 @@ export const toFooter = (doc: Doc): FooterVM => ({
 export const toSiteSettings = (doc: Doc): SiteSettingsVM => ({
   brandName: str(doc.brandName, 'IMPERIAL TOURS'),
   whatsappNumber: str(doc.contact?.whatsappNumber),
+  contact: {
+    email: str(doc.contact?.contactEmail),
+    phone: str(doc.contact?.phone),
+    whatsappNumber: str(doc.contact?.whatsappNumber),
+    address: str(doc.contact?.address),
+    businessHours: str(doc.contact?.businessHours),
+  },
+  socialLinks: Array.isArray(doc.socialLinks)
+    ? doc.socialLinks
+        .filter((link: Doc) => str(link?.url))
+        .map((link: Doc) => ({ platform: str(link.platform), url: str(link.url) }))
+    : [],
   // Absent settings mean "everything on" — a fresh install should not hide the site.
   enabledServices: Array.isArray(doc.enabledServices)
     ? doc.enabledServices.map((service: unknown) => String(service))

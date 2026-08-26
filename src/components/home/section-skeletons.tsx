@@ -2,14 +2,51 @@ import { Container } from '@/components/ui/Container'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 
-/** Holds the hero's exact height so nothing below it moves when it resolves. */
+/**
+ * Holds the hero's exact height so nothing below it moves when it resolves.
+ *
+ * The `-mt-20` must match Hero's: this is the Suspense fallback the hero replaces, so
+ * any difference in offset is a layout shift on the LCP element itself.
+ */
 export const HeroSkeleton = () => (
-  <section className="relative flex h-[90vh] min-h-[700px] w-full items-center justify-center">
+  <section className="relative -mt-20 flex h-[92vh] min-h-[720px] w-full items-center justify-center">
     <Skeleton className="absolute inset-0 rounded-none" />
-    <div className="relative z-10 mx-auto mt-[-10vh] flex w-full max-w-7xl flex-col items-center px-6 md:px-grid-margin">
+    <div className="relative z-10 mx-auto mt-[-6vh] flex w-full max-w-7xl flex-col items-center px-6 md:px-grid-margin">
       <Skeleton className="mb-6 h-16 w-full max-w-3xl" />
-      <Skeleton className="h-6 w-full max-w-xl" />
+      <Skeleton className="mb-10 h-6 w-full max-w-xl" />
+      {/* The two hero CTAs and the trust strip below them. */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+        <Skeleton className="h-14 w-52" />
+        <Skeleton className="h-14 w-52" />
+      </div>
+      <Skeleton className="mt-10 h-4 w-72" />
     </div>
+  </section>
+)
+
+/**
+ * Mirrors the Services bento: a two-column feature card followed by one-up cards, at
+ * the same aspect ratios and breakpoints. The generic SectionSkeleton no longer fits
+ * that band — it would hold a two-up grid of 4:3 cards and then shift on resolve.
+ */
+export const ServicesSkeleton = ({ count = 5 }: { count?: number }) => (
+  <section className="pb-section-v-padding pt-[180px]">
+    <Container>
+      <Skeleton className="mx-auto mb-4 h-3 w-28" />
+      <Skeleton className="mx-auto mb-16 h-8 w-72" />
+      <div className="grid grid-cols-1 gap-grid-gutter md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: count }, (_, index) => (
+          <div key={index} className={index === 0 ? 'md:col-span-2 lg:col-span-2' : undefined}>
+            <Skeleton
+              className={cn(
+                'w-full rounded-2xl',
+                index === 0 ? 'aspect-[4/5] md:aspect-[16/10]' : 'aspect-[4/5]',
+              )}
+            />
+          </div>
+        ))}
+      </div>
+    </Container>
   </section>
 )
 
@@ -62,6 +99,37 @@ export const OffersSkeleton = () => (
       </div>
       <div className="md:col-span-6">
         <Skeleton className="aspect-[4/3] w-full rounded-2xl" />
+      </div>
+    </Container>
+  </section>
+)
+
+/**
+ * The enquiry band: a copy column beside a form card, on the navy surface. Sized to
+ * the real thing rather than reused from the generic band, because this one is the
+ * page's last section — anything it shifts on resolve, it shifts under a reader who
+ * has already scrolled all the way down to it.
+ */
+export const PlanJourneySkeleton = () => (
+  <section className="bg-brand py-section-v-padding">
+    <Container className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-grid-gutter">
+      <div className="lg:col-span-6 xl:col-span-5">
+        <Skeleton className="mb-5 h-8 w-40 rounded-full bg-white/15" />
+        <Skeleton className="mb-4 h-10 w-full max-w-md bg-white/15" />
+        <Skeleton className="mb-8 h-5 w-3/4 max-w-sm bg-white/15" />
+        <div className="space-y-3">
+          <Skeleton className="h-5 w-64 bg-white/10" />
+          <Skeleton className="h-5 w-72 bg-white/10" />
+          <Skeleton className="h-5 w-56 bg-white/10" />
+        </div>
+        <div className="mt-10 grid grid-cols-3 gap-4 border-t border-white/15 pt-8">
+          <Skeleton className="h-12 bg-white/10" />
+          <Skeleton className="h-12 bg-white/10" />
+          <Skeleton className="h-12 bg-white/10" />
+        </div>
+      </div>
+      <div className="lg:col-span-6 xl:col-span-7">
+        <Skeleton className="h-[34rem] w-full rounded-3xl bg-white/15" />
       </div>
     </Container>
   </section>

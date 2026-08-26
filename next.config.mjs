@@ -9,6 +9,17 @@ const nextConfig = {
   poweredByHeader: false,
   images: {
     formats: ['image/avif', 'image/webp'],
+    /**
+     * Next's default is 60 seconds, which means the optimizer re-encodes the same
+     * hero photograph roughly once a minute on a low-traffic site — sharp CPU spent
+     * to produce a byte-identical file.
+     *
+     * 30 days is safe here because Payload never overwrites an upload in place: a
+     * replaced image is stored under a new filename (`hero-2.webp`), so a new URL
+     * misses this cache by construction. The cache only ever holds derivatives of a
+     * source that cannot have changed.
+     */
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
       ...[process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'].map((url) => {

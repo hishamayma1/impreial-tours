@@ -23,6 +23,8 @@ export type SeedTour = {
   difficulty: 'easy' | 'moderate' | 'hard'
   rating: number
   badge: 'none' | 'bestseller' | 'new'
+  /** Present on tours that should appear in the home page offers carousel. */
+  offer?: { label: Translated<string> }
   groupSizeMax: number
   daily?: {
     durationHours: number
@@ -50,6 +52,7 @@ export const tourSeeds: SeedTour[] = [
     difficulty: 'easy',
     rating: 4.9,
     badge: 'bestseller',
+    offer: { label: { en: 'Save 15%', es: 'Ahorra un 15%', de: '15% sparen' } },
     groupSizeMax: 12,
     daily: {
       durationHours: 8,
@@ -175,6 +178,7 @@ export const tourSeeds: SeedTour[] = [
     difficulty: 'easy',
     rating: 4.9,
     badge: 'bestseller',
+    offer: { label: { en: 'Limited dates', es: 'Fechas limitadas', de: 'Begrenzte Termine' } },
     groupSizeMax: 16,
     experience: {
       durationDays: 8,
@@ -249,6 +253,7 @@ export const tourSeeds: SeedTour[] = [
     difficulty: 'moderate',
     rating: 4.8,
     badge: 'none',
+    offer: { label: { en: 'Two places left', es: 'Quedan dos plazas', de: 'Noch zwei Plaetze' } },
     groupSizeMax: 8,
     experience: {
       durationDays: 5,

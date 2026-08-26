@@ -2,10 +2,13 @@ node_modules
 .next
 .env
 .env*.local
-/media
+/public/media
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
 
 # Atlas credentials handed over by the operator — never commit
 atlas-credentials.env
+
+# Optimization tooling, not part of the app
+/optimize-web

@@ -23,6 +23,13 @@ export const generateMetadata = async ({
     title: t('title'),
     description: t('description'),
     alternates: buildAlternates(locale as Locale, PATH),
+    /**
+     * Still a placeholder. Indexing a heading over a "coming soon" note spends crawl
+     * budget on nothing and drags on site-wide quality signals, so it stays out of
+     * the index until it has real content. The page remains fully reachable to
+     * visitors; delete this block and restore the sitemap entry when it does.
+     */
+    robots: { index: false, follow: true },
   }
 }
 

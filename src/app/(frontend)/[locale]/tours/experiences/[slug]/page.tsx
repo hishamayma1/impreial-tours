@@ -13,6 +13,8 @@ import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
 import { getTourBySlug, getAllSlugs, getAlternateSlugs } from '@/lib/payload/services'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { breadcrumbNode, tourNode } from '@/lib/structured-data'
 
 const PATH = '/tours/experiences'
 type PageParams = { locale: string; slug: string }
@@ -60,6 +62,15 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
 
   return (
     <>
+      <JsonLd
+        data={[
+          tourNode(tour, locale as Locale, PATH),
+          breadcrumbNode(locale as Locale, [
+            { name: eyebrow('experiences.title'), path: PATH },
+            { name: tour.title, path: `${PATH}/${tour.slug}` },
+          ]),
+        ]}
+      />
       <DetailHero
         eyebrow={eyebrow('experiences.title')}
         title={tour.title}
@@ -93,9 +104,11 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
       {tour.itinerary.length ? (
         <DetailSection title={t('itinerary')}>
           <ol className="space-y-8">
-            {tour.itinerary.map((day) => (
+            {tour.itinerary.map((day, index) => (
               <li
-                key={day.dayNumber}
+                // Position, not dayNumber: two rows can carry the same number (or
+                // none at all), and duplicate keys make React reuse the wrong node.
+                key={`${day.dayNumber}-${index}`}
                 className="grid gap-6 border-l-2 border-hairline pl-6 md:grid-cols-[1fr_auto]"
               >
                 <div>

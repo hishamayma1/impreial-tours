@@ -113,8 +113,14 @@ is ~139 kB for the whole homepage.
 
 ## Notes
 
-- Media is stored on the local filesystem under `media/` (gitignored). Swap in
-  `@payloadcms/storage-s3` or similar before deploying to serverless hosting.
+- Media is stored on the local filesystem under `public/media/` (gitignored), so Next
+  serves uploads as static files. Reads never touch Payload's `/api/media/file/` route,
+  which boots the REST layer and runs access control once per image *and* once per size
+  variant. Swap in `@payloadcms/storage-s3` or similar before deploying to serverless
+  hosting.
+- Emails are written to the server log unless `SMTP_PASS` is set. Add `EMAIL_PREVIEW=1`
+  to route them through a throwaway ethereal.email inbox instead — that opens a test
+  account over the network on every server boot, so leave it off by default.
 - `atlas-credentials.env` holds live database credentials and is gitignored.
 - Seeded imagery is downloaded from the Stitch design at seed time; `alt` text is
   authored in English and falls back for ES/DE until translated in the dashboard.

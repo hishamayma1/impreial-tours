@@ -52,7 +52,7 @@ export const CurrencySwitcher = ({ currencies, className }: CurrencySwitcherProp
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={t('select')}
-        className="flex items-center gap-1.5 text-on-surface-variant transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-lg px-1"
+        className="flex items-center gap-1.5 rounded-lg px-1 opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current"
       >
         <Icon name="wallet" className="h-5 w-5" />
         <span className="text-sm font-medium">{label}</span>

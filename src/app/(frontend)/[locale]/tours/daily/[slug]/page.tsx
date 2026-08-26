@@ -12,6 +12,8 @@ import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
 import { getTourBySlug, getAllSlugs, getAlternateSlugs } from '@/lib/payload/services'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { breadcrumbNode, tourNode } from '@/lib/structured-data'
 
 const PATH = '/tours/daily'
 type PageParams = { locale: string; slug: string }
@@ -62,6 +64,15 @@ const DailyTourDetailPage = async ({ params }: { params: Promise<PageParams> }) 
 
   return (
     <>
+      <JsonLd
+        data={[
+          tourNode(tour, locale as Locale, PATH),
+          breadcrumbNode(locale as Locale, [
+            { name: eyebrow('daily.title'), path: PATH },
+            { name: tour.title, path: `${PATH}/${tour.slug}` },
+          ]),
+        ]}
+      />
       <DetailHero
         eyebrow={eyebrow('daily.title')}
         title={tour.title}

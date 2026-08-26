@@ -10,12 +10,14 @@ import {
   OffersSection,
   DestinationsSection,
   TestimonialsSection,
-  JournalSection,
+  PlanJourneySection,
 } from '@/components/home/sections'
 import {
   HeroSkeleton,
   OffersSkeleton,
+  PlanJourneySkeleton,
   SectionSkeleton,
+  ServicesSkeleton,
   TestimonialsSkeleton,
 } from '@/components/home/section-skeletons'
 import { routing, type Locale } from '@/i18n/routing'
@@ -74,11 +76,23 @@ const HomePage = async ({ params }: PageProps) => {
    */
   return (
     <>
-      <Suspense fallback={<HeroSkeleton />}>
-        <HeroSection locale={locale as Locale} />
-      </Suspense>
+      {/*
+        Marks the region the header may render transparently over. HeaderShell looks
+        for this element on every route: finding it puts the bar in its overlay state
+        until the hero's foot passes underneath, and finding none — every inner page —
+        keeps it solid white from the first paint.
 
-      <Suspense fallback={<SectionSkeleton columns={2} />}>
+        It wraps the Suspense boundary rather than sitting inside it so the element
+        survives the swap from skeleton to hero; a marker inside would be torn out of
+        the DOM at exactly the moment the observer needs it.
+      */}
+      <div data-hero-zone>
+        <Suspense fallback={<HeroSkeleton />}>
+          <HeroSection locale={locale as Locale} />
+        </Suspense>
+      </div>
+
+      <Suspense fallback={<ServicesSkeleton />}>
         <ServicesSection locale={locale as Locale} />
       </Suspense>
 
@@ -94,8 +108,8 @@ const HomePage = async ({ params }: PageProps) => {
         <TestimonialsSection locale={locale as Locale} />
       </Suspense>
 
-      <Suspense fallback={<SectionSkeleton columns={3} />}>
-        <JournalSection locale={locale as Locale} />
+      <Suspense fallback={<PlanJourneySkeleton />}>
+        <PlanJourneySection locale={locale as Locale} />
       </Suspense>
     </>
   )

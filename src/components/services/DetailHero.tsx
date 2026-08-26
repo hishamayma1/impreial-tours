@@ -13,7 +13,10 @@ export const DetailHero = ({
   summary?: string
   image: ImageVM | null
 }) => (
-  <header>
+  // -mt-20 for the same reason as the home hero: the sticky header reserves its
+  // height in flow, which otherwise sits as a band of page background above a
+  // full-bleed image meant to start at the top of the viewport. See Hero.tsx.
+  <header className="-mt-20">
     <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container md:aspect-[21/9]">
       <CmsImage
         image={image}

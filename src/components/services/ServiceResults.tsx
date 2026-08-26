@@ -2,20 +2,14 @@ import type { Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/payload/queries'
 import { getTours, getHotels, getBicycles, type ListingFilters } from '@/lib/payload/services'
 
+import { JsonLd } from '@/components/seo/JsonLd'
+import { itemListNode } from '@/lib/structured-data'
+
 import { ServiceGrid } from './ServiceGrid'
-import { ResourceRecorder } from './ResourceRecorder'
 
 type SearchQuery = Record<string, string | string[] | undefined>
 
 export type ResultsKind = 'daily' | 'experience' | 'hotels' | 'bicycles'
-
-/** Maps a listing to the resource-cache bucket it belongs in. */
-const CACHE_KIND = {
-  daily: 'tours',
-  experience: 'tours',
-  hotels: 'hotels',
-  bicycles: 'bicycles',
-} as const
 
 const BASE_PATH: Record<ResultsKind, string> = {
   daily: '/tours/daily',
@@ -37,6 +31,10 @@ const positive = (query: SearchQuery, key: string): number | undefined => {
 
 export const parseFilters = (query: SearchQuery): ListingFilters => ({
   page: Number(one(query, 'page')) || 1,
+  // The store, the URL serializer and both queries already carried `destination`;
+  // this parser was the one link that dropped it, so `?destination=cairo` reached the
+  // page and was silently discarded before it ever became a where clause.
+  destination: one(query, 'destination'),
   difficulty: one(query, 'difficulty'),
   starRating: positive(query, 'starRating'),
   minPrice: positive(query, 'minPrice'),
@@ -57,10 +55,13 @@ export const ServiceResults = async ({
   kind,
   locale,
   query,
+  listName,
 }: {
   kind: ResultsKind
   locale: Locale
   query: SearchQuery
+  /** Page title, reused as the name of the emitted schema.org ItemList. */
+  listName: string
 }) => {
   const filters = parseFilters(query)
 
@@ -76,14 +77,15 @@ export const ServiceResults = async ({
 
   return (
     <>
+      {/*
+        Lets an answer engine enumerate what this listing offers without crawling
+        every detail page first. Only the current page of results is described, which
+        is what the URL actually returns.
+      */}
+      {data.items.length > 0 ? (
+        <JsonLd data={itemListNode(data.items, locale, BASE_PATH[kind], listName)} />
+      ) : null}
       <ServiceGrid data={data} basePath={BASE_PATH[kind]} currencies={settings.currencies} />
-      {/* Seeds the client cache so a back-navigation to this listing repaints at once. */}
-      <ResourceRecorder
-        kind={CACHE_KIND[kind]}
-        locale={locale}
-        filters={{ ...filters, kind }}
-        data={data}
-      />
     </>
   )
 }

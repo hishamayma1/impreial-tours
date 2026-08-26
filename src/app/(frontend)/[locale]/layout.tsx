@@ -7,6 +7,8 @@ import { notFound } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { RoutePrefetcher } from '@/components/system/RoutePrefetcher'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { organizationNode, websiteNode } from '@/lib/structured-data'
 import { routing, locales, localeLabels, type Locale } from '@/i18n/routing'
 import { pickClientMessages } from '@/i18n/client-namespaces'
 import { getSiteSettings } from '@/lib/payload/queries'
@@ -58,6 +60,14 @@ export const generateMetadata = async ({
 
   const siteName = firstFilled(settings.brandName, t('siteName'))
   const description = firstFilled(settings.defaultSeo.description, t('defaultDescription'))
+
+  /**
+   * One share image for the whole site, inherited by every route that does not set
+   * its own. Without it the root, the listings and both static pages shared to social
+   * or pasted into a chat render as a bare link with no card.
+   */
+  const ogImage = settings.defaultSeo.image?.url ?? settings.logo?.url
+
   return {
     metadataBase: new URL(siteUrl),
     title: {
@@ -71,6 +81,26 @@ export const generateMetadata = async ({
       siteName,
       description,
       locale,
+      images: ogImage ? [{ url: ogImage }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${siteName} — ${t('tagline')}`,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        // Without this, a travel result gets a thumbnail instead of the photography
+        // the whole design is built around.
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
     },
   }
 }
@@ -88,7 +118,11 @@ const LocaleLayout = async ({
   // Opts every page under this layout into static rendering.
   setRequestLocale(locale)
 
-  const [t, messages] = await Promise.all([getTranslations('nav'), getMessages()])
+  const [t, messages, settings] = await Promise.all([
+    getTranslations('nav'),
+    getMessages(),
+    getSiteSettings(locale as Locale),
+  ])
 
   return (
     <html lang={locale} className={`${display.variable} ${body.variable}`} suppressHydrationWarning>
@@ -106,6 +140,17 @@ const LocaleLayout = async ({
           <Footer locale={locale as Locale} />
           {/* Warms the other service routes once this page is idle. Renders nothing. */}
           <RoutePrefetcher />
+          {/*
+            Site-wide schema.org graph, present on every page. Routes that describe a
+            specific thing — a tour, a hotel, a listing — add their own node and refer
+            back to this organization by @id rather than restating it.
+          */}
+          <JsonLd
+            data={[
+              organizationNode(settings, locale as Locale),
+              websiteNode(settings, locale as Locale),
+            ]}
+          />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -9,7 +9,7 @@ import { altText } from './alt-text'
  * Re-downloads the binaries behind existing Media documents.
  *
  * The database and the uploaded files live in two different places: documents go to
- * MongoDB, but `Media.upload.staticDir` writes the actual images to `media/` on local
+ * MongoDB, but `Media.upload.staticDir` writes the actual images to `public/media/` on local
  * disk, and that directory is gitignored. So a machine that clones the repo and points
  * at an already-seeded database gets every Media document and none of the files —
  * `/api/media/file/<name>` then 500s and the whole site renders with broken imagery
@@ -36,7 +36,7 @@ const restore = async () => {
   payload.logger.info(`--- restoring binaries for ${docs.length} media documents ---`)
 
   const force = process.argv.includes('--force')
-  const staticDir = path.resolve(process.cwd(), 'media')
+  const staticDir = path.resolve(process.cwd(), 'public', 'media')
 
   let restored = 0
   let skipped = 0

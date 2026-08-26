@@ -124,6 +124,15 @@ export const seedServices = async (payload: Payload, media: MediaIds, destinatio
             meals: i === 0 ? ['dinner'] : ['breakfast', 'lunch', 'dinner'],
           }))
         }
+        /**
+         * Written per locale rather than into `base`, because `offer.label` is
+         * localized: the group is sent whole on every locale, so putting `active` in
+         * `base` and the label here would have the per-locale write replace the group
+         * and drop the flag.
+         */
+        if (tour.offer) {
+          data.offer = { active: true, label: tour.offer.label[locale] }
+        }
         return [locale, data]
       }),
     ) as unknown as Record<Locale, Record<string, unknown>>

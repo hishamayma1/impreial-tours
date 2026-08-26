@@ -11,6 +11,15 @@ import { useFilterUrlSync } from '@/hooks/use-filter-url-sync'
 type ListingFiltersProps = {
   /** Which controls this listing needs — hotels filter by stars, tours by difficulty. */
   variant: 'tours' | 'hotels'
+  /**
+   * Every destination a record can be tagged with, resolved on the server.
+   *
+   * Passed in rather than fetched here: this is a client component, and the options
+   * are identical for every visitor on the route, so paying for a client fetch would
+   * buy nothing. An empty list hides the control entirely instead of rendering a
+   * select with only "Any" in it.
+   */
+  destinations?: Array<{ name: string; slug: string }>
 }
 
 const selectClass =
@@ -21,14 +30,15 @@ const selectClass =
  * the URL, and the server page re-renders from `searchParams`. The store never renders
  * results itself — the URL is the source of truth.
  */
-export const ListingFilters = ({ variant }: ListingFiltersProps) => {
+export const ListingFilters = ({ variant, destinations = [] }: ListingFiltersProps) => {
   const t = useTranslations('services')
   const filters = useTranslations('filters')
 
   useFilterUrlSync()
 
-  const { difficulty, starRating, sortBy, minPrice, maxPrice } = useFilterStore(
+  const { destination, difficulty, starRating, sortBy, minPrice, maxPrice } = useFilterStore(
     useShallow((state) => ({
+      destination: state.destination,
       difficulty: state.difficulty,
       starRating: state.starRating,
       sortBy: state.sortBy,
@@ -40,11 +50,35 @@ export const ListingFilters = ({ variant }: ListingFiltersProps) => {
   const reset = useFilterStore((state) => state.reset)
 
   const hasFilters =
-    Boolean(difficulty) || starRating !== null || minPrice !== null || maxPrice !== null
+    Boolean(destination) ||
+    Boolean(difficulty) ||
+    starRating !== null ||
+    minPrice !== null ||
+    maxPrice !== null
 
   return (
     <div className="border-b border-hairline bg-surface-container-low">
       <Container className="flex flex-wrap items-end gap-4 py-6">
+        {destinations.length > 0 ? (
+          <label className="flex flex-col gap-1.5">
+            <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+              {filters('destination')}
+            </span>
+            <select
+              value={destination}
+              onChange={(event) => set({ destination: event.target.value })}
+              className={selectClass}
+            >
+              <option value="">{filters('any')}</option>
+              {destinations.map((option) => (
+                <option key={option.slug} value={option.slug}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+
         {variant === 'tours' ? (
           <label className="flex flex-col gap-1.5">
             <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
