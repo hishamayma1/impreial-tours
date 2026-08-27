@@ -2,12 +2,17 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
-import { DetailHero } from '@/components/services/DetailHero'
-import { DetailSection, CheckList, FactRow } from '@/components/services/DetailSection'
+import { TourHero } from '@/components/tour/TourHero'
+import { SectionNav } from '@/components/tour/SectionNav'
+import { BookingPanel } from '@/components/tour/BookingPanel'
+import { TourSection } from '@/components/tour/TourSection'
+import {
+  HighlightList,
+  InclusionColumns,
+  GalleryGrid,
+} from '@/components/tour/TourContentBlocks'
 import { RichText } from '@/components/ui/RichText'
-import { ButtonLink } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
-import { Price } from '@/components/ui/Price'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
@@ -16,7 +21,6 @@ import { getTourBySlug, getAllSlugs, getAlternateSlugs } from '@/lib/payload/ser
 const PATH = '/tours/daily'
 type PageParams = { locale: string; slug: string }
 
-/** Section 8: pre-render every locale x slug. */
 export const generateStaticParams = async () => {
   const params: PageParams[] = []
   for (const locale of locales) {
@@ -35,8 +39,6 @@ export const generateMetadata = async ({
   const tour = await getTourBySlug(locale as Locale, slug, 'daily')
   if (!tour) return {}
 
-  // Each hreflang points at that language's own slug, so switching language keeps
-  // the visitor on the same tour.
   const alternates = await getAlternateSlugs('tours', locale as Locale, slug)
 
   return {
@@ -51,83 +53,112 @@ const DailyTourDetailPage = async ({ params }: { params: Promise<PageParams> }) 
   const { locale, slug } = await params
   setRequestLocale(locale)
 
-  const [tour, settings, t, eyebrow] = await Promise.all([
+  const [tour, settings, t] = await Promise.all([
     getTourBySlug(locale as Locale, slug, 'daily'),
     getSiteSettings(locale as Locale),
     getTranslations('services'),
-    getTranslations('tours'),
   ])
 
   if (!tour) notFound()
 
+  const difficulty = tour.difficulty ? t(`difficulty.${tour.difficulty}`) : ''
+
+  /** Facts shared by the hero rail and the booking panel, so the two never disagree. */
+  const facts = [
+    tour.durationHours
+      ? { icon: 'clock' as const, label: t('duration'), value: t('fact.hours', { count: String(tour.durationHours) }) }
+      : null,
+    difficulty ? { icon: 'signal' as const, label: t('difficultyLabel'), value: difficulty } : null,
+    tour.groupSizeMax
+      ? { icon: 'users' as const, label: t('groupSize'), value: String(tour.groupSizeMax) }
+      : null,
+    tour.languages.length
+      ? { icon: 'globe' as const, label: t('fact.languagesLabel'), value: tour.languages.map((code) => code.toUpperCase()).join(' · ') }
+      : null,
+  ].filter((fact): fact is NonNullable<typeof fact> => Boolean(fact))
+
+  // Only sections that actually have content get an anchor — a nav pointing at an
+  // empty section is worse than a shorter nav.
+  const sections = [
+    tour.overview ? { id: 'overview', label: t('overview') } : null,
+    tour.highlights.length ? { id: 'highlights', label: t('highlights') } : null,
+    tour.included.length || tour.notIncluded.length ? { id: 'included', label: t('included') } : null,
+    tour.meetingPoint ? { id: 'meeting-point', label: t('meetingPoint') } : null,
+    tour.gallery.length ? { id: 'gallery', label: t('gallery') } : null,
+  ].filter((section): section is NonNullable<typeof section> => Boolean(section))
+
+  const panel = (
+    <BookingPanel
+      price={tour.pricePerPerson}
+      priceNote={t('perPersonShort')}
+      secondaryPrice={
+        tour.childPrice ? { label: t('childPriceLabel'), amount: tour.childPrice } : null
+      }
+      facts={facts}
+      href={`/booking/tour?item=${tour.slug}`}
+      currencies={settings.currencies}
+      instantConfirmation={tour.instantConfirmation}
+      departures={tour.startTimes}
+    />
+  )
+
   return (
     <>
-      <DetailHero
-        eyebrow={eyebrow('daily.title')}
+      <TourHero
         title={tour.title}
         summary={tour.shortDescription}
         image={tour.heroImage}
+        badge={tour.badge}
+        rating={tour.rating}
+        facts={facts.slice(0, 4)}
+        breadcrumb={{ label: t('allTours'), href: PATH }}
       />
 
-      <DetailSection>
-        <FactRow
-          facts={[
-            { label: t('duration'), value: tour.durationHours ? `${tour.durationHours} h` : '' },
-            {
-              label: t('difficultyLabel'),
-              value: tour.difficulty ? t(`difficulty.${tour.difficulty}`) : '',
-            },
-            { label: t('meetingPoint'), value: tour.meetingPoint },
-            {
-              label: t('groupSize'),
-              value: tour.groupSizeMax ? String(tour.groupSizeMax) : '',
-            },
-            { label: t('startTimes'), value: tour.startTimes.join(', ') },
-          ]}
-        />
-      </DetailSection>
+      <SectionNav items={sections} label={t('onThisPage')} />
 
-      {tour.overview ? (
-        <DetailSection>
-          <RichText data={tour.overview} className="max-w-3xl" />
-        </DetailSection>
-      ) : null}
+      <Container className="py-10 md:py-14">
+        {/*
+          Two columns on desktop: content leads, the price card tracks alongside.
+          On mobile the panel comes first — the price is the question a reader has
+          before deciding whether to read on — and the grid order swaps it back on
+          large screens.
+        */}
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="lg:order-2 lg:col-span-4">{panel}</div>
 
-      {tour.highlights.length ? (
-        <DetailSection title={t('highlights')}>
-          <CheckList items={tour.highlights} />
-        </DetailSection>
-      ) : null}
+          <div className="lg:order-1 lg:col-span-8">
+            {tour.overview ? (
+              <TourSection id="overview" title={t('overview')}>
+                <RichText data={tour.overview} />
+              </TourSection>
+            ) : null}
 
-      {tour.included.length || tour.notIncluded.length ? (
-        <DetailSection title={t('included')}>
-          <CheckList items={tour.included} />
-          {tour.notIncluded.length ? (
-            <div className="mt-8">
-              <h3 className="mb-4 font-body-lg text-body-lg text-primary">{t('notIncluded')}</h3>
-              <CheckList items={tour.notIncluded} muted />
-            </div>
-          ) : null}
-        </DetailSection>
-      ) : null}
+            {tour.highlights.length ? (
+              <TourSection id="highlights" title={t('highlights')} className="border-t border-hairline">
+                <HighlightList items={tour.highlights} />
+              </TourSection>
+            ) : null}
 
-      <Container className="py-14">
-        <div className="flex flex-col items-start justify-between gap-6 rounded-xl border border-hairline bg-surface-container-low p-8 md:flex-row md:items-center">
-          {tour.pricePerPerson !== null ? (
-            <p className="font-body-md text-body-md text-on-surface-variant">
-              {t('from')}{' '}
-              <Price
-                amount={tour.pricePerPerson}
-                currencies={settings.currencies}
-                className="font-headline-section text-headline-section text-primary"
-              />
-            </p>
-          ) : (
-            <p className="font-body-lg text-body-lg text-primary">{t('priceOnRequest')}</p>
-          )}
-          <ButtonLink href={`/booking/tour?item=${tour.slug}`} variant="navy" size="lg">
-            {t('bookNow')}
-          </ButtonLink>
+            {tour.included.length || tour.notIncluded.length ? (
+              <TourSection id="included" title={t('whatToExpect')} className="border-t border-hairline">
+                <InclusionColumns included={tour.included} notIncluded={tour.notIncluded} />
+              </TourSection>
+            ) : null}
+
+            {tour.meetingPoint ? (
+              <TourSection id="meeting-point" title={t('meetingPoint')} className="border-t border-hairline">
+                <p className="max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
+                  {tour.meetingPoint}
+                </p>
+              </TourSection>
+            ) : null}
+
+            {tour.gallery.length ? (
+              <TourSection id="gallery" title={t('gallery')} className="border-t border-hairline">
+                <GalleryGrid images={tour.gallery} title={tour.title} />
+              </TourSection>
+            ) : null}
+          </div>
         </div>
       </Container>
     </>

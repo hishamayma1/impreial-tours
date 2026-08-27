@@ -121,6 +121,25 @@
       "groupSizeLabel": "Group size",
       "languagesLabel": "Languages",
       "ratingLabel": "Rating"
+    },
+    "breadcrumb": "Breadcrumb",
+    "onThisPage": "On this page",
+    "overview": "Overview",
+    "gallery": "Gallery",
+    "atAGlance": "At a glance",
+    "goodToKnow": "Good to know",
+    "instantConfirmation": "Instant confirmation",
+    "childPriceLabel": "Children from",
+    "priceTiersCaption": "Price per person by group size",
+    "groupPricing": "Group pricing",
+    "whatToExpect": "What to expect",
+    "allTours": "All daily tours",
+    "allExperiences": "All experiences",
+    "singleSupplementLabel": "Single supplement",
+    "meals": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner"
     }
   },
   "offers": {

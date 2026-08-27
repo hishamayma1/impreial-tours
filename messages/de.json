@@ -121,6 +121,25 @@
       "groupSizeLabel": "Gruppengröße",
       "languagesLabel": "Sprachen",
       "ratingLabel": "Bewertung"
+    },
+    "breadcrumb": "Navigationspfad",
+    "onThisPage": "Auf dieser Seite",
+    "overview": "Überblick",
+    "gallery": "Galerie",
+    "atAGlance": "Auf einen Blick",
+    "goodToKnow": "Gut zu wissen",
+    "instantConfirmation": "Sofortige Bestätigung",
+    "childPriceLabel": "Kinder ab",
+    "priceTiersCaption": "Preis pro Person nach Gruppengröße",
+    "groupPricing": "Gruppenpreise",
+    "whatToExpect": "Was Sie erwartet",
+    "allTours": "Alle Tagestouren",
+    "allExperiences": "Alle Erlebnisse",
+    "singleSupplementLabel": "Einzelzimmerzuschlag",
+    "meals": {
+      "breakfast": "Frühstück",
+      "lunch": "Mittagessen",
+      "dinner": "Abendessen"
     }
   },
   "offers": {
