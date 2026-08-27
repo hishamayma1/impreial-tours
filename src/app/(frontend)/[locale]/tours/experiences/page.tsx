@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { ListingHero } from '@/components/services/ListingHero'
-import { ListingFilters } from '@/components/services/ListingFilters'
+import { ListingFilterBar } from '@/components/services/ListingFilterBar'
 import { ServiceResults } from '@/components/services/ServiceResults'
 import { ServiceGridSkeleton, ListingFiltersSkeleton } from '@/components/services/ServiceSkeletons'
 import { locales, type Locale } from '@/i18n/routing'

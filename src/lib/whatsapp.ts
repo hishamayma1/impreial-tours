@@ -92,8 +92,7 @@ export const buildLeadMessage = (lead: LeadInput, reference: string, locale: Loc
   push(t.travellers, lead.travellers)
   push(t.notes, lead.message)
 
-  return lines.join('
-')
+  return lines.join('\n')
 }
 
 export const buildWhatsappUrl = (whatsappNumber: string, message: string): string | null => {

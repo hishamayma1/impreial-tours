@@ -1,4 +1,5 @@
 import { Link } from '@/i18n/navigation'
+import { CardCarousel } from '@/components/ui/CardCarousel'
 import { CmsImage } from '@/components/ui/CmsImage'
 import { Container } from '@/components/ui/Container'
 import { Icon, type IconName } from '@/components/ui/Icon'
@@ -73,7 +74,7 @@ export const Services = ({ heading, services, exploreLabel, cta }: ServicesProps
         className="mb-16"
       />
 
-      <ul className="grid grid-cols-1 gap-grid-gutter md:grid-cols-2 lg:grid-cols-3">
+      <CardCarousel className="md:grid-cols-2 lg:grid-cols-3">
         {services.map((service, index) => {
           const icon = iconFor(service.icon)
           const isFeature = index === 0
@@ -156,7 +157,7 @@ export const Services = ({ heading, services, exploreLabel, cta }: ServicesProps
             </li>
           )
         })}
-      </ul>
+      </CardCarousel>
 
       <SectionCta primary={cta.primary} secondary={cta.secondary} className="mt-14" />
     </Container>

@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 import {
   HeroSection,
   ServicesSection,
+  TopToursSection,
   OffersSection,
   DestinationsSection,
   TestimonialsSection,
@@ -15,6 +16,7 @@ import {
 import {
   HeroSkeleton,
   OffersSkeleton,
+  TopToursSkeleton,
   PlanJourneySkeleton,
   SectionSkeleton,
   ServicesSkeleton,
@@ -96,8 +98,16 @@ const HomePage = async ({ params }: PageProps) => {
         <ServicesSection locale={locale as Locale} />
       </Suspense>
 
+      <Suspense fallback={<TopToursSkeleton />}>
+        <TopToursSection locale={locale as Locale} />
+      </Suspense>
+
       <Suspense fallback={<OffersSkeleton />}>
         <OffersSection locale={locale as Locale} />
+      </Suspense>
+      
+      <Suspense fallback={<PlanJourneySkeleton />}>
+        <PlanJourneySection locale={locale as Locale} />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton columns={3} />}>
@@ -108,9 +118,6 @@ const HomePage = async ({ params }: PageProps) => {
         <TestimonialsSection locale={locale as Locale} />
       </Suspense>
 
-      <Suspense fallback={<PlanJourneySkeleton />}>
-        <PlanJourneySection locale={locale as Locale} />
-      </Suspense>
     </>
   )
 }

@@ -13,6 +13,7 @@ import type {
   TourDetailVM,
   HotelDetailVM,
   TransferDetailVM,
+  SpotlightTourVM,
   BicycleDetailVM,
   AlternateSlugs,
 } from '@/types/services'
@@ -40,11 +41,19 @@ const timeList = (v: unknown): string[] =>
  * Same contract as `cachedByLocale` in queries.ts: cache per locale, share one tag so
  * a single CMS save refreshes every language, and degrade to `fallback` on failure
  * rather than taking the page down.
+ *
+ * `key` is the cache identity and defaults to the tag. The tag alone is not enough
+ * once two different reads of the same collection take the same arguments:
+ * `getTourOffers` and `getSpotlightTours` are both tagged `tours` and both called with
+ * nothing but a locale, so keying on the tag handed them the identical entry
+ * `['tours', '"en"']` — whichever ran first served its shape to the other, and the
+ * offers carousel received a `{ new, top }` object where it expected an array.
  */
 const cached = <A extends unknown[], T>(
   tag: string,
   fallback: T,
   loader: (...args: A) => Promise<T>,
+  key: string = tag,
 ) => {
   return (...args: A): Promise<T> =>
     unstable_cache(
@@ -52,11 +61,11 @@ const cached = <A extends unknown[], T>(
         try {
           return await loader(...args)
         } catch (error) {
-          console.error(`[payload] "${tag}" read failed`, error)
+          console.error(`[payload] "${key}" read failed`, error)
           return fallback
         }
       },
-      [tag, ...args.map((a) => JSON.stringify(a))],
+      [key, ...args.map((a) => JSON.stringify(a))],
       { tags: [tag], revalidate: REVALIDATE_SECONDS },
     )()
 }
@@ -308,6 +317,83 @@ export const getTourOffers = cached('tours', [] as OfferVM[], async (locale: Loc
 
   return docs.map((doc) => tourOfferCard(doc as Doc))
 })
+
+/**
+ * The home page spotlight band: what is new, and what is rated highest.
+ *
+ * One query rather than two. The band shows at most six cards per group out of a
+ * catalogue that is only ever a few dozen tours, so pulling a single recent slice and
+ * splitting it in memory costs one round trip instead of two, and — unlike two
+ * `where`-filtered finds — it can never render an empty band just because no editor
+ * has ticked the "New" badge yet.
+ *
+ * Both groups are drawn from the same pool, so a tour can legitimately appear in both:
+ * the newest tour on the site may also be the best rated. The tabs are alternative
+ * views of the catalogue, not a partition of it.
+ */
+const SPOTLIGHT_POOL = 24
+const SPOTLIGHT_SIZE = 6
+
+const spotlightCard = (doc: Doc, spotlight: 'new' | 'top'): SpotlightTourVM => {
+  const tourType: 'daily' | 'experience' = doc.tourType === 'experience' ? 'experience' : 'daily'
+  const base = tourType === 'experience' ? '/tours/experiences' : '/tours/daily'
+
+  return {
+    ...tourCard(doc),
+    tourType,
+    href: `${base}/${str(doc.slug)}`,
+    spotlight,
+  }
+}
+
+export const getSpotlightTours = cached(
+  'tours',
+  { new: [] as SpotlightTourVM[], top: [] as SpotlightTourVM[] },
+  async (locale: Locale) => {
+    const payload = await getPayloadClient()
+
+    const { docs } = await payload.find({
+      collection: 'tours',
+      locale,
+      fallbackLocale: 'en',
+      depth: 1,
+      limit: SPOTLIGHT_POOL,
+      // The pool is the most recent slice, so "new" is already in order and "top" is
+      // sorted out of it below.
+      sort: '-createdAt',
+      where: { _status: { equals: 'published' } },
+      overrideAccess: true,
+      select: {
+        slug: true, title: true, shortDescription: true, heroImage: true,
+        tourType: true, durationHours: true, durationDays: true, nights: true,
+        difficulty: true, groupSizeMax: true, languages: true,
+        pricePerPerson: true, pricing: true, badge: true, rating: true,
+      },
+    })
+
+    const pool = docs as Doc[]
+
+    // An editor's explicit "New" badge outranks recency; within each half the
+    // `-createdAt` order the query returned is preserved.
+    const flagged = pool.filter((doc) => doc.badge === 'new')
+    const rest = pool.filter((doc) => doc.badge !== 'new')
+
+    const top = [...pool]
+      .filter((doc) => numOrNull(doc.rating) !== null)
+      .sort((a, b) => (numOrNull(b.rating) ?? 0) - (numOrNull(a.rating) ?? 0))
+
+    return {
+      new: [...flagged, ...rest].slice(0, SPOTLIGHT_SIZE).map((doc) => spotlightCard(doc, 'new')),
+      /**
+       * Falls back to the pool when nothing carries a rating yet. A band whose second
+       * tab is empty reads as broken; the same tours in a different order does not.
+       */
+      top: (top.length ? top : pool).slice(0, SPOTLIGHT_SIZE).map((doc) => spotlightCard(doc, 'top')),
+    }
+  },
+  // Its own cache identity: getTourOffers is also tagged `tours` and also takes just a locale.
+  'tours:spotlight',
+)
 
 export const getHotels = cached(
   'hotels',

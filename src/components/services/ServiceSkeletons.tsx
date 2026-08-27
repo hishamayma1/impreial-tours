@@ -41,16 +41,25 @@ export const ServiceGridSkeleton = ({ count = 6 }: { count?: number }) => (
   </Container>
 )
 
-/** Matches the filter bar's height so the grid below never jumps when it resolves. */
+/**
+ * Matches the filter bar's height so the grid below never jumps when it resolves:
+ * same 16px block padding, same 44px controls under a 12px label, and the widths
+ * follow the real row — destination, difficulty segments, price range, then sort
+ * pushed to the far end.
+ */
 export const ListingFiltersSkeleton = () => (
-  <div className="border-b border-hairline bg-surface-container-low">
-    <Container className="flex flex-wrap items-end gap-4 py-6">
-      {[0, 1, 2].map((index) => (
-        <div key={index} className="flex flex-col gap-1.5">
+  <div className="border-y border-hairline bg-surface-container-low">
+    <Container className="flex flex-wrap items-end gap-x-4 gap-y-4 py-4">
+      {['w-52', 'w-72', 'w-44'].map((width) => (
+        <div key={width} className="flex flex-col gap-1.5">
           <Skeleton className="h-3 w-20" />
-          <Skeleton className="h-[42px] w-32" />
+          <Skeleton className={`h-11 ${width}`} />
         </div>
       ))}
+      <div className="flex flex-col gap-1.5 md:ml-auto">
+        <Skeleton className="h-3 w-20" />
+        <Skeleton className="h-11 w-56" />
+      </div>
     </Container>
   </div>
 )

@@ -7,7 +7,6 @@ import { itemListNode } from '@/lib/structured-data'
 
 import { ServiceGrid } from './ServiceGrid'
 import { TourResultsGrid } from './TourResultsGrid'
-import { ResourceRecorder } from './ResourceRecorder'
 
 type SearchQuery = Record<string, string | string[] | undefined>
 
@@ -81,6 +80,15 @@ export const ServiceResults = async ({
   // shared grid until they get the same treatment.
   const isTourListing = kind === 'daily' || kind === 'experience'
 
+  // Paging and sort are excluded on purpose: neither removes a result, so neither
+  // explains an empty page.
+  const filtered =
+    Boolean(filters.destination) ||
+    Boolean(filters.difficulty) ||
+    filters.starRating !== undefined ||
+    filters.minPrice !== undefined ||
+    filters.maxPrice !== undefined
+
   return (
     <>
       {isTourListing ? (
@@ -89,17 +97,15 @@ export const ServiceResults = async ({
           basePath={BASE_PATH[kind]}
           currencies={settings.currencies}
           variant={kind === 'daily' ? 'daily' : 'experience'}
+          filtered={filtered}
         />
       ) : (
         <ServiceGrid data={data} basePath={BASE_PATH[kind]} currencies={settings.currencies} />
       )}
-      {/* Seeds the client cache so a back-navigation to this listing repaints at once. */}
-      <ResourceRecorder
-        kind={CACHE_KIND[kind]}
-        locale={locale}
-        filters={{ ...filters, kind }}
-        data={data}
-      />
+      {/* Crawlers and answer engines read the listing order from the initial HTML. */}
+      {data.items.length > 0 ? (
+        <JsonLd data={itemListNode(data.items, locale, BASE_PATH[kind], listName)} />
+      ) : null}
     </>
   )
 }

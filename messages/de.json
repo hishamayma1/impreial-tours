@@ -44,6 +44,15 @@
     },
     "resultsFor": "Reisen nach {destination}"
   },
+  "hero": {
+    "primaryCta": "Reisen entdecken",
+    "secondaryCta": "Gemeinsam planen",
+    "trust": {
+      "licensed": "Lizenzierter ägyptischer Reiseveranstalter",
+      "reply": "Antwort innerhalb von 24 Stunden",
+      "rated": "Bewertet von unseren Reisenden"
+    }
+  },
   "services": {
     "eyebrow": "Unser Angebot",
     "title": "Unsere Leistungen",
@@ -120,7 +129,9 @@
       "difficultyLabel": "Schwierigkeit",
       "groupSizeLabel": "Gruppengröße",
       "languagesLabel": "Sprachen",
-      "ratingLabel": "Bewertung"
+      "ratingLabel": "Bewertung",
+      "daysValue": "{count} Tage",
+      "nightsValue": "{count} Nächte"
     },
     "breadcrumb": "Navigationspfad",
     "onThisPage": "Auf dieser Seite",
@@ -140,7 +151,9 @@
       "breakfast": "Frühstück",
       "lunch": "Mittagessen",
       "dinner": "Abendessen"
-    }
+    },
+    "explore": "Entdecken",
+    "emptyFiltered": "Keine Reisen passen zu diesen Filtern. Erweitern Sie die Suche oder setzen Sie die Filter zurück."
   },
   "offers": {
     "eyebrow": "Exklusivität",
@@ -152,6 +165,20 @@
     "goTo": "Zu Angebot {index}",
     "empty": "Neue Angebote werden gerade zusammengestellt. Schauen Sie bald wieder vorbei."
   },
+  "topTours": {
+    "eyebrow": "Neu & Beliebt",
+    "title": "Neue und beliebteste Touren",
+    "body": "Die Reisen, die wir gerade aufgenommen haben, und die, die unsere Gäste am besten bewerten — private Guides, kleine Gruppen, kein Anstehen.",
+    "tablist": "Wählen Sie, welche Touren angezeigt werden",
+    "tabs": {
+      "new": "Neu dabei",
+      "top": "Top bewertet"
+    },
+    "ribbon": {
+      "new": "Neu",
+      "top": "Top bewertet"
+    }
+  },
   "destinations": {
     "title": "Ausgewählte Reiseziele",
     "explore": "{name} entdecken",
@@ -160,7 +187,57 @@
   "testimonials": {
     "eyebrow": "Kundenstimmen",
     "title": "Was unsere Reisenden sagen",
-    "goTo": "Zu Kundenstimme {index}"
+    "goTo": "Zu Kundenstimme {index}",
+    "ctaPrimary": "Planung starten",
+    "ctaSecondary": "Erlebnisse ansehen"
+  },
+  "plan": {
+    "eyebrow": "Planen Sie Ihre Reise",
+    "title": "Sagen Sie uns, was Ihnen vorschwebt",
+    "body": "Beschreiben Sie uns Ihre Reise, und wir entwerfen eine Route, die dazu passt — kein Pauschalpaket mit Ihrem Namen darauf.",
+    "benefits": {
+      "tailored": "Eine Route für Ihre Termine, Ihr Tempo und Ihre Interessen",
+      "local": "Guides, die dort leben, wohin sie Sie führen",
+      "noFee": "Keine Buchungsgebühr und keine Kosten für die Planung"
+    },
+    "stats": {
+      "yearsValue": "24 Std.",
+      "yearsLabel": "Durchschnittliche Antwortzeit",
+      "travellersValue": "100 %",
+      "travellersLabel": "Maßgeschneiderte Routen",
+      "ratingValue": "0",
+      "ratingLabel": "Buchungsgebühren"
+    },
+    "orReachUs": "Oder erreichen Sie uns direkt",
+    "channels": {
+      "whatsapp": "WhatsApp",
+      "call": "Anrufen",
+      "email": "E-Mail schreiben"
+    },
+    "formTitle": "Fordern Sie Ihre Reiseroute an",
+    "formNote": "Keine Buchungsgebühr. Wir antworten innerhalb von 24 Stunden.",
+    "submit": "Anfrage senden",
+    "privacy": "Ihre Angaben bleiben bei uns und werden nur zur Beantwortung dieser Anfrage verwendet.",
+    "successTitle": "Anfrage erhalten",
+    "successBody": "Vielen Dank — Ihre Referenz lautet {reference}. Eine unserer Reiseplanerinnen oder einer unserer Reiseplaner meldet sich innerhalb von 24 Stunden.",
+    "successBodyPlain": "Vielen Dank — wir melden uns innerhalb von 24 Stunden bei Ihnen.",
+    "openWhatsapp": "Auf WhatsApp fortfahren",
+    "fields": {
+      "name": "Vollständiger Name",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "interest": "Ich interessiere mich für",
+      "date": "Gewünschtes Startdatum",
+      "travellers": "Reisende",
+      "message": "Was wir wissen sollten",
+      "messagePlaceholder": "Orte, die Sie sehen möchten, wie Sie gern reisen, feste Termine …"
+    },
+    "interests": {
+      "tours": "Touren",
+      "hotels": "Hotels",
+      "transfers": "Transfers",
+      "bicycles": "Fahrräder"
+    }
   },
   "journal": {
     "eyebrow": "Einblicke",
@@ -178,6 +255,13 @@
     "error": "Etwas ist schiefgelaufen.",
     "retry": "Erneut versuchen",
     "comingSoon": "Dieser Bereich gehört zu einer späteren Entwicklungsphase. Route, Metadaten und Navigation stehen bereits."
+  },
+  "cta": {
+    "browseTours": "Alle Touren ansehen",
+    "planWithUs": "Gemeinsam planen",
+    "seeAllOffers": "Alle Angebote ansehen",
+    "askAboutOffer": "Nach einem Angebot fragen",
+    "allDestinations": "Alle Reiseziele"
   },
   "notFound": {
     "title": "Diese Seite ist von der Landkarte verschwunden.",
@@ -288,7 +372,17 @@
     "priceAsc": "Preis: aufsteigend",
     "priceDesc": "Preis: absteigend",
     "ratingDesc": "Beste Bewertung",
-    "clear": "Filter zurücksetzen"
+    "clear": "Filter zurücksetzen",
+    "title": "Filter",
+    "minPrice": "Mindestpreis",
+    "price": "Preis",
+    "from": "Min.",
+    "to": "Max.",
+    "remove": "Filter entfernen: {label}",
+    "active": "Aktive Filter",
+    "priceFrom": "Ab {value} USD",
+    "priceUpTo": "Bis {value} USD",
+    "starsValue": "Ab {count} Sternen"
   },
   "quote": {
     "submit": "Angebot anfordern",

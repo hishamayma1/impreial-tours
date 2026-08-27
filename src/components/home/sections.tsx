@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import { Hero } from '@/components/sections/Hero'
 import { Services } from '@/components/sections/Services'
 import { Offers } from '@/components/sections/Offers'
+import { TopTours } from '@/components/sections/TopTours'
 import { FeaturedDestinations } from '@/components/sections/FeaturedDestinations'
 import { Testimonials } from '@/components/sections/Testimonials'
 import { PlanJourney } from '@/components/sections/PlanJourney'
@@ -14,7 +15,7 @@ import {
   getSiteSettings,
   getTestimonials,
 } from '@/lib/payload/queries'
-import { getTourOffers } from '@/lib/payload/services'
+import { getSpotlightTours, getTourOffers } from '@/lib/payload/services'
 import { firstFilled } from '@/lib/utils'
 import type { SectionHeadingVM } from '@/types/content'
 
@@ -120,6 +121,51 @@ export const OffersSection = async ({ locale }: Props) => {
       cta={{
         primary: { label: t('cta.seeAllOffers'), href: '/tours/experiences' },
         secondary: { label: t('cta.askAboutOffer'), href: PLAN_ANCHOR },
+      }}
+    />
+  )
+}
+
+/**
+ * "New & Top Tours" — the band between Services and Offers.
+ *
+ * Reads the tours themselves rather than a CMS-curated list: "newest" and "best
+ * rated" are facts about the catalogue, so the band stays current on its own as
+ * editors publish, without anyone remembering to re-pick six tours every month.
+ *
+ * Currencies come from site settings because the cards print prices, and the visitor
+ * may have switched the currency in the header.
+ */
+export const TopToursSection = async ({ locale }: Props) => {
+  const [home, groups, settings, t] = await Promise.all([
+    getHomePage(locale),
+    getSpotlightTours(locale),
+    getSiteSettings(locale),
+    getTranslations(),
+  ])
+
+  return (
+    <TopTours
+      /*
+       * No CMS group behind this band yet, so the heading is translation-only. Adding
+       * `sections.topTours` to the Home global later is the one change needed to let an
+       * editor override it, exactly as every other band does.
+       */
+      heading={{
+        eyebrow: t('topTours.eyebrow'),
+        title: t('topTours.title'),
+        body: t('topTours.body'),
+      }}
+      groups={groups}
+      currencies={settings.currencies}
+      labels={{
+        tabNew: t('topTours.tabs.new'),
+        tabTop: t('topTours.tabs.top'),
+        tablist: t('topTours.tablist'),
+      }}
+      cta={{
+        primary: { label: t('cta.browseTours'), href: '/tours/daily' },
+        secondary: { label: t('cta.planWithUs'), href: PLAN_ANCHOR },
       }}
     />
   )

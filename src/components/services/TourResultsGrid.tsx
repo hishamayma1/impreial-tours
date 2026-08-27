@@ -15,6 +15,15 @@ type TourResultsGridProps = {
   currencies: CurrencyVM[]
   /** 'daily' lays out a 3-column card grid; 'experience' a single editorial column. */
   variant: 'daily' | 'experience'
+  /**
+   * Whether the visitor narrowed this list themselves.
+   *
+   * An empty result means two different things and needs two different answers: with
+   * no filters applied the collection genuinely has nothing in it yet, but with
+   * filters applied there is plenty here and this particular combination excluded it
+   * — so that case says so and offers the way back out.
+   */
+  filtered: boolean
 }
 
 /**
@@ -33,15 +42,34 @@ export const TourResultsGrid = async ({
   basePath,
   currencies,
   variant,
+  filtered,
 }: TourResultsGridProps) => {
-  const t = await getTranslations('services')
+  const [t, filters] = await Promise.all([
+    getTranslations('services'),
+    getTranslations('filters'),
+  ])
 
   if (!data.items.length) {
     return (
       <Container className="py-24">
         <div className="mx-auto max-w-md rounded-2xl border border-dashed border-hairline bg-surface-container-lowest p-12 text-center">
           <p className="font-headline-card text-headline-card text-primary">{t('emptyTitle')}</p>
-          <p className="mt-3 font-body-md text-body-md text-on-surface-variant">{t('empty')}</p>
+          <p className="mt-3 font-body-md text-body-md text-on-surface-variant">
+            {filtered ? t('emptyFiltered') : t('empty')}
+          </p>
+          {/*
+            A plain link to the unfiltered path rather than a button wired to the store:
+            this is a server component, and dropping the query string is exactly what
+            clearing the filters means.
+          */}
+          {filtered ? (
+            <Link
+              href={basePath}
+              className="focus-card mt-6 inline-flex h-11 items-center rounded-xl border border-brand px-5 font-body-md text-body-md text-brand transition-colors duration-200 hover:bg-brand hover:text-on-primary"
+            >
+              {filters('clear')}
+            </Link>
+          ) : null}
         </div>
       </Container>
     )

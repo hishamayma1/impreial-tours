@@ -44,6 +44,15 @@
     },
     "resultsFor": "Mostrando viajes a {destination}"
   },
+  "hero": {
+    "primaryCta": "Descubrir viajes",
+    "secondaryCta": "Planifica con nosotros",
+    "trust": {
+      "licensed": "Operador turístico autorizado en Egipto",
+      "reply": "Respuesta en 24 horas",
+      "rated": "Valorado por nuestros viajeros"
+    }
+  },
   "services": {
     "eyebrow": "Nuestra oferta",
     "title": "Nuestros servicios",
@@ -120,7 +129,9 @@
       "difficultyLabel": "Dificultad",
       "groupSizeLabel": "Tamaño del grupo",
       "languagesLabel": "Idiomas",
-      "ratingLabel": "Valoración"
+      "ratingLabel": "Valoración",
+      "daysValue": "{count} días",
+      "nightsValue": "{count} noches"
     },
     "breadcrumb": "Ruta de navegación",
     "onThisPage": "En esta página",
@@ -140,7 +151,9 @@
       "breakfast": "Desayuno",
       "lunch": "Almuerzo",
       "dinner": "Cena"
-    }
+    },
+    "explore": "Descubrir",
+    "emptyFiltered": "Ningún viaje coincide con estos filtros. Prueba a ampliar la búsqueda o a quitarlos."
   },
   "offers": {
     "eyebrow": "Exclusividad",
@@ -152,6 +165,20 @@
     "goTo": "Ir a la oferta {index}",
     "empty": "Estamos preparando nuevas ofertas. Vuelve pronto."
   },
+  "topTours": {
+    "eyebrow": "Novedades y favoritos",
+    "title": "Tours nuevos y mejor valorados",
+    "body": "Los viajes que acabamos de añadir y los que mejor valoran nuestros viajeros: guías privados, grupos reducidos y sin colas.",
+    "tablist": "Elige qué tours mostrar",
+    "tabs": {
+      "new": "Recién añadidos",
+      "top": "Mejor valorados"
+    },
+    "ribbon": {
+      "new": "Nuevo",
+      "top": "Mejor valorado"
+    }
+  },
   "destinations": {
     "title": "Destinos destacados",
     "explore": "Descubrir {name}",
@@ -160,7 +187,57 @@
   "testimonials": {
     "eyebrow": "Opiniones de clientes",
     "title": "Lo que dicen nuestros viajeros",
-    "goTo": "Ir al testimonio {index}"
+    "goTo": "Ir al testimonio {index}",
+    "ctaPrimary": "Empezar a planificar",
+    "ctaSecondary": "Ver experiencias"
+  },
+  "plan": {
+    "eyebrow": "Planifica tu viaje",
+    "title": "Cuéntanos qué tienes en mente",
+    "body": "Dinos cómo imaginas el viaje y te propondremos un itinerario hecho a su medida, no un paquete con tu nombre encima.",
+    "benefits": {
+      "tailored": "Un itinerario escrito para tus fechas, tu ritmo y tus intereses",
+      "local": "Guías que viven en los lugares que te muestran",
+      "noFee": "Sin gastos de reserva y sin coste por la planificación"
+    },
+    "stats": {
+      "yearsValue": "24 h",
+      "yearsLabel": "Tiempo medio de respuesta",
+      "travellersValue": "100 %",
+      "travellersLabel": "Itinerarios a medida",
+      "ratingValue": "0",
+      "ratingLabel": "Gastos de reserva"
+    },
+    "orReachUs": "O contáctanos directamente",
+    "channels": {
+      "whatsapp": "WhatsApp",
+      "call": "Llámanos",
+      "email": "Escríbenos"
+    },
+    "formTitle": "Solicita tu itinerario",
+    "formNote": "Sin gastos de reserva. Respondemos en 24 horas.",
+    "submit": "Enviar solicitud",
+    "privacy": "Tus datos se quedan con nosotros y solo se usan para responder a esta consulta.",
+    "successTitle": "Solicitud recibida",
+    "successBody": "Gracias: tu referencia es {reference}. Uno de nuestros planificadores te escribirá en menos de 24 horas.",
+    "successBodyPlain": "Gracias: uno de nuestros planificadores te escribirá en menos de 24 horas.",
+    "openWhatsapp": "Continuar por WhatsApp",
+    "fields": {
+      "name": "Nombre completo",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "interest": "Me interesa",
+      "date": "Fecha de inicio preferida",
+      "travellers": "Viajeros",
+      "message": "Algo que debamos saber",
+      "messagePlaceholder": "Lugares que quieres ver, cómo te gusta viajar, cualquier fecha fija…"
+    },
+    "interests": {
+      "tours": "Circuitos",
+      "hotels": "Hoteles",
+      "transfers": "Traslados",
+      "bicycles": "Bicicletas"
+    }
   },
   "journal": {
     "eyebrow": "Inspiración",
@@ -178,6 +255,13 @@
     "error": "Algo ha salido mal.",
     "retry": "Reintentar",
     "comingSoon": "Esta sección forma parte de una fase posterior del desarrollo. La ruta, sus metadatos y su navegación ya están listos."
+  },
+  "cta": {
+    "browseTours": "Ver todos los circuitos",
+    "planWithUs": "Planifica con nosotros",
+    "seeAllOffers": "Ver todas las ofertas",
+    "askAboutOffer": "Preguntar por una oferta",
+    "allDestinations": "Todos los destinos"
   },
   "notFound": {
     "title": "Esta página se ha salido del mapa.",
@@ -288,7 +372,17 @@
     "priceAsc": "Precio: de menor a mayor",
     "priceDesc": "Precio: de mayor a menor",
     "ratingDesc": "Mejor valorados",
-    "clear": "Borrar filtros"
+    "clear": "Borrar filtros",
+    "title": "Filtros",
+    "minPrice": "Precio mínimo",
+    "price": "Precio",
+    "from": "Mín.",
+    "to": "Máx.",
+    "remove": "Quitar filtro: {label}",
+    "active": "Filtros activos",
+    "priceFrom": "Desde {value} USD",
+    "priceUpTo": "Hasta {value} USD",
+    "starsValue": "{count}+ estrellas"
   },
   "quote": {
     "submit": "Solicitar presupuesto",

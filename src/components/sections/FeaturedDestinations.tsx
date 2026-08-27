@@ -1,5 +1,6 @@
 import { Link } from '@/i18n/navigation'
 import { CmsImage } from '@/components/ui/CmsImage'
+import { CardCarousel } from '@/components/ui/CardCarousel'
 import { Container } from '@/components/ui/Container'
 import { Icon } from '@/components/ui/Icon'
 import { SectionHeading } from '@/components/ui/SectionHeading'
@@ -46,7 +47,7 @@ export const FeaturedDestinations = ({
           as a broken grid rather than as deliberate rhythm once the cards carried
           copy of differing lengths.
         */}
-        <ul className="grid grid-cols-1 items-stretch gap-grid-gutter md:grid-cols-3">
+        <CardCarousel className="md:grid-cols-3 md:items-stretch">
           {destinations.map((destination) => (
             <li key={destination.id} className="h-full">
               {/*
@@ -99,7 +100,7 @@ export const FeaturedDestinations = ({
               </Link>
             </li>
           ))}
-        </ul>
+        </CardCarousel>
 
         <SectionCta primary={cta.primary} secondary={cta.secondary} className="mt-14" />
       </Container>

@@ -98,19 +98,19 @@ const CHROME_FILES = [
   join('src', 'lib', 'nav-defaults.ts'),
   join('src', 'components', 'layout', 'Footer.tsx'),
   join('src', 'components', 'sections', 'FeaturedDestinations.tsx'),
-  join('src', 'components', 'sections', 'Journal.tsx'),
+  join('src', 'components', 'sections', 'PlanJourney.tsx'),
+  join('src', 'components', 'home', 'sections.tsx'),
 ]
 
 /**
  * Links we know are dead and have deliberately not fixed yet.
  *
- * The blog is planned but unbuilt, so the Journal section on the home page still
- * points at routes that do not exist. Listing them here keeps the suite honest —
- * green because the gap is acknowledged, not because it is invisible — and the
- * assertion is inverted: once `/journal` ships, these start failing and the entry has
- * to be deleted. An allowlist that cannot go stale.
+ * Empty since the Journal section was replaced by PlanJourney: the three cards
+ * pointing at the unbuilt `/journal/<slug>` went with it, and nothing on the site
+ * links to a route that does not exist any more. Add an entry here only alongside a
+ * deliberate, temporary dead link.
  */
-const KNOWN_MISSING = new Set(['/journal', '/journal/x'])
+const KNOWN_MISSING = new Set<string>([])
 
 for (const file of CHROME_FILES) {
   const source = readFileSync(file, 'utf8')

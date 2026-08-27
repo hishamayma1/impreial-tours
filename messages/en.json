@@ -44,6 +44,15 @@
     },
     "resultsFor": "Showing journeys for {destination}"
   },
+  "hero": {
+    "primaryCta": "Explore Journeys",
+    "secondaryCta": "Plan With Us",
+    "trust": {
+      "licensed": "Licensed Egyptian tour operator",
+      "reply": "Answered within 24 hours",
+      "rated": "Rated by our travellers"
+    }
+  },
   "services": {
     "eyebrow": "Our Offerings",
     "title": "Our Services",
@@ -120,7 +129,9 @@
       "difficultyLabel": "Difficulty",
       "groupSizeLabel": "Group size",
       "languagesLabel": "Languages",
-      "ratingLabel": "Rating"
+      "ratingLabel": "Rating",
+      "daysValue": "{count} days",
+      "nightsValue": "{count} nights"
     },
     "breadcrumb": "Breadcrumb",
     "onThisPage": "On this page",
@@ -140,7 +151,9 @@
       "breakfast": "Breakfast",
       "lunch": "Lunch",
       "dinner": "Dinner"
-    }
+    },
+    "explore": "Explore",
+    "emptyFiltered": "No journeys match these filters. Try widening your search or clearing them."
   },
   "offers": {
     "eyebrow": "Exclusivity",
@@ -152,6 +165,20 @@
     "goTo": "Go to offer {index}",
     "empty": "New offers are being curated. Please check back shortly."
   },
+  "topTours": {
+    "eyebrow": "Fresh & Favourite",
+    "title": "New & Top Tours",
+    "body": "The journeys we have just added, and the ones our travellers rate highest — private guides, small groups, no queues.",
+    "tablist": "Choose which tours to show",
+    "tabs": {
+      "new": "Just Added",
+      "top": "Top Rated"
+    },
+    "ribbon": {
+      "new": "New",
+      "top": "Top Rated"
+    }
+  },
   "destinations": {
     "title": "Featured Destinations",
     "explore": "Explore {name}",
@@ -160,7 +187,57 @@
   "testimonials": {
     "eyebrow": "Client Testimonials",
     "title": "What Our Travellers Say",
-    "goTo": "Go to testimonial {index}"
+    "goTo": "Go to testimonial {index}",
+    "ctaPrimary": "Start Planning",
+    "ctaSecondary": "Browse Experiences"
+  },
+  "plan": {
+    "eyebrow": "Plan Your Journey",
+    "title": "Tell us what you have in mind",
+    "body": "Share the shape of the trip and we will come back with an itinerary built around it — not a package with your name on it.",
+    "benefits": {
+      "tailored": "An itinerary written for your dates, pace and interests",
+      "local": "Guides who live in the places they show you",
+      "noFee": "No booking fee, and no charge for planning"
+    },
+    "stats": {
+      "yearsValue": "24h",
+      "yearsLabel": "Average reply time",
+      "travellersValue": "100%",
+      "travellersLabel": "Tailor-made itineraries",
+      "ratingValue": "0",
+      "ratingLabel": "Booking fees"
+    },
+    "orReachUs": "Or reach us directly",
+    "channels": {
+      "whatsapp": "WhatsApp",
+      "call": "Call us",
+      "email": "Email us"
+    },
+    "formTitle": "Request your itinerary",
+    "formNote": "No booking fee. We reply within 24 hours.",
+    "submit": "Send Request",
+    "privacy": "Your details stay with us and are used only to answer this enquiry.",
+    "successTitle": "Request received",
+    "successBody": "Thank you — your reference is {reference}. One of our planners will be in touch within 24 hours.",
+    "successBodyPlain": "Thank you — one of our planners will be in touch within 24 hours.",
+    "openWhatsapp": "Continue on WhatsApp",
+    "fields": {
+      "name": "Full name",
+      "phone": "Phone",
+      "email": "Email",
+      "interest": "I am interested in",
+      "date": "Preferred start date",
+      "travellers": "Travellers",
+      "message": "Anything we should know",
+      "messagePlaceholder": "Places you want to see, how you like to travel, anything fixed in your dates…"
+    },
+    "interests": {
+      "tours": "Tours",
+      "hotels": "Hotels",
+      "transfers": "Transfers",
+      "bicycles": "Bicycles"
+    }
   },
   "journal": {
     "eyebrow": "Insights",
@@ -178,6 +255,13 @@
     "error": "Something went wrong.",
     "retry": "Try again",
     "comingSoon": "This section is part of a later build phase. The route, its metadata and its navigation are already in place."
+  },
+  "cta": {
+    "browseTours": "Browse All Tours",
+    "planWithUs": "Plan With Us",
+    "seeAllOffers": "See All Offers",
+    "askAboutOffer": "Ask About an Offer",
+    "allDestinations": "All Destinations"
   },
   "notFound": {
     "title": "This page has wandered off the map.",
@@ -288,7 +372,17 @@
     "priceAsc": "Price: low to high",
     "priceDesc": "Price: high to low",
     "ratingDesc": "Highest rated",
-    "clear": "Clear filters"
+    "clear": "Clear filters",
+    "title": "Filters",
+    "minPrice": "Min price",
+    "price": "Price",
+    "from": "Min",
+    "to": "Max",
+    "remove": "Remove filter: {label}",
+    "active": "Active filters",
+    "priceFrom": "From ${value}",
+    "priceUpTo": "Up to ${value}",
+    "starsValue": "{count}+ stars"
   },
   "quote": {
     "submit": "Request a quote",

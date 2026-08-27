@@ -32,6 +32,24 @@ export type ServiceCardVM = {
   rating?: number | null
 }
 
+/**
+ * A tour shaped for the home page spotlight band.
+ *
+ * Carries its own `href` because the band mixes daily tours and multi-day
+ * experiences in one grid: the card cannot derive `/tours/daily` from a single
+ * `basePath` the way a listing grid can.
+ *
+ * `spotlight` is the reason the tour is in the band — 'new' for a recent addition,
+ * 'top' for a highly-rated one — which the card prints as its ribbon. It is kept
+ * separate from the CMS `badge` field so an editor's flag and the band's own
+ * grouping can never contradict each other on the same card.
+ */
+export type SpotlightTourVM = ServiceCardVM & {
+  href: string
+  tourType: 'daily' | 'experience'
+  spotlight: 'new' | 'top'
+}
+
 export type PaginatedVM<T> = {
   items: T[]
   page: number

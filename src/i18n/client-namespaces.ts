@@ -22,6 +22,7 @@ export const CLIENT_NAMESPACES = [
   'booking', // BookingWizard + steps
   'forms', // form validation copy
   'quote', // CustomQuoteForm
+  'plan', // PlanJourneyForm
 ] as const
 
 export type ClientNamespace = (typeof CLIENT_NAMESPACES)[number]
