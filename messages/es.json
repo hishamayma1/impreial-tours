@@ -106,7 +106,41 @@
     "startTimes": "Salidas",
     "nights": "Noches",
     "days": "Días",
-    "explore": "Explorar"
+    "emptyTitle": "Ningún viaje coincide",
+    "resultCount": "{count} viajes",
+    "perPersonShort": "por persona",
+    "viewItinerary": "Ver itinerario",
+    "fact": {
+      "hours": "{count} horas",
+      "maxPeople": "Máx. {count}",
+      "languages": "{count} idiomas",
+      "durationLabel": "Duración",
+      "daysLabel": "Días",
+      "nightsLabel": "Noches",
+      "difficultyLabel": "Dificultad",
+      "groupSizeLabel": "Tamaño del grupo",
+      "languagesLabel": "Idiomas",
+      "ratingLabel": "Valoración"
+    },
+    "breadcrumb": "Ruta de navegación",
+    "onThisPage": "En esta página",
+    "overview": "Descripción",
+    "gallery": "Galería",
+    "atAGlance": "De un vistazo",
+    "goodToKnow": "Información útil",
+    "instantConfirmation": "Confirmación inmediata",
+    "childPriceLabel": "Niños desde",
+    "priceTiersCaption": "Precio por persona según el tamaño del grupo",
+    "groupPricing": "Precios por grupo",
+    "whatToExpect": "Qué esperar",
+    "allTours": "Todas las excursiones",
+    "allExperiences": "Todas las experiencias",
+    "singleSupplementLabel": "Suplemento individual",
+    "meals": {
+      "breakfast": "Desayuno",
+      "lunch": "Almuerzo",
+      "dinner": "Cena"
+    }
   },
   "offers": {
     "eyebrow": "Exclusividad",

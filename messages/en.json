@@ -106,7 +106,41 @@
     "startTimes": "Departures",
     "nights": "Nights",
     "days": "Days",
-    "explore": "Explore"
+    "emptyTitle": "No journeys match",
+    "resultCount": "{count} journeys",
+    "perPersonShort": "per person",
+    "viewItinerary": "View itinerary",
+    "fact": {
+      "hours": "{count} hours",
+      "maxPeople": "Max {count}",
+      "languages": "{count} languages",
+      "durationLabel": "Duration",
+      "daysLabel": "Days",
+      "nightsLabel": "Nights",
+      "difficultyLabel": "Difficulty",
+      "groupSizeLabel": "Group size",
+      "languagesLabel": "Languages",
+      "ratingLabel": "Rating"
+    },
+    "breadcrumb": "Breadcrumb",
+    "onThisPage": "On this page",
+    "overview": "Overview",
+    "gallery": "Gallery",
+    "atAGlance": "At a glance",
+    "goodToKnow": "Good to know",
+    "instantConfirmation": "Instant confirmation",
+    "childPriceLabel": "Children from",
+    "priceTiersCaption": "Price per person by group size",
+    "groupPricing": "Group pricing",
+    "whatToExpect": "What to expect",
+    "allTours": "All daily tours",
+    "allExperiences": "All experiences",
+    "singleSupplementLabel": "Single supplement",
+    "meals": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner"
+    }
   },
   "offers": {
     "eyebrow": "Exclusivity",

@@ -40,6 +40,79 @@
 }
 
 @layer components {
+  /* ---------------------------------------------------------------------------
+     Motion system
+     ---------------------------------------------------------------------------
+     Scroll-driven, not load-driven, and deliberately so.
+
+     A classic "fade up on load" starts content at opacity:0, which delays the
+     largest contentful paint by the length of the animation — the page scores worse
+     for looking livelier. `animation-timeline: view()` ties the reveal to the
+     element's position in the scrollport instead: anything already on screen is
+     rendered at its final state immediately, so the first row (and the LCP element
+     with it) never fades in at all.
+
+     It also runs entirely on the compositor — no scroll listener, no
+     IntersectionObserver, no JavaScript, and nothing on the main thread.
+
+     Browsers without support simply show the content. The @supports guard means the
+     un-animated state IS the default, so there is no flash-of-invisible-content and
+     no penalty for the browsers that miss out.
+  --------------------------------------------------------------------------- */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: reveal-in linear both;
+        animation-timeline: view();
+        /* Starts as the element's top edge nears the fold, finishes a third of the
+           way up — the motion is over before the reader's eye arrives. */
+        animation-range: entry 0% cover 22%;
+      }
+    }
+  }
+
+  /*
+    Insurance: a scroll-driven animation whose range never resolves would leave
+    content at opacity 0 forever. Print has no scrollport at all, and full-page
+    screenshot capture resizes the viewport in ways that can strand the range, so
+    both get the finished state unconditionally.
+  */
+  @media print {
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+      animation: none !important;
+    }
+  }
+
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Card hover: transform and box-shadow only, so it stays off the layout path. */
+  .card-lift {
+    @apply transition-[transform,box-shadow,border-color] duration-300 ease-out;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card-lift:hover {
+      transform: translateY(-4px);
+    }
+  }
+
+  /* One focus ring for every interactive card, drawn outside the rounded corner. */
+  .focus-card {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand
+      focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
   .skip-link {
     @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100]
       focus:rounded-xl focus:bg-brand focus:px-4 focus:py-2 focus:text-white;

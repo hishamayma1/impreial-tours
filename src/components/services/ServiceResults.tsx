@@ -6,6 +6,8 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { itemListNode } from '@/lib/structured-data'
 
 import { ServiceGrid } from './ServiceGrid'
+import { TourResultsGrid } from './TourResultsGrid'
+import { ResourceRecorder } from './ResourceRecorder'
 
 type SearchQuery = Record<string, string | string[] | undefined>
 
@@ -75,17 +77,29 @@ export const ServiceResults = async ({
     getSiteSettings(locale),
   ])
 
+  // Tours and experiences have their own layouts; hotels and bicycles keep the
+  // shared grid until they get the same treatment.
+  const isTourListing = kind === 'daily' || kind === 'experience'
+
   return (
     <>
-      {/*
-        Lets an answer engine enumerate what this listing offers without crawling
-        every detail page first. Only the current page of results is described, which
-        is what the URL actually returns.
-      */}
-      {data.items.length > 0 ? (
-        <JsonLd data={itemListNode(data.items, locale, BASE_PATH[kind], listName)} />
-      ) : null}
-      <ServiceGrid data={data} basePath={BASE_PATH[kind]} currencies={settings.currencies} />
+      {isTourListing ? (
+        <TourResultsGrid
+          data={data}
+          basePath={BASE_PATH[kind]}
+          currencies={settings.currencies}
+          variant={kind === 'daily' ? 'daily' : 'experience'}
+        />
+      ) : (
+        <ServiceGrid data={data} basePath={BASE_PATH[kind]} currencies={settings.currencies} />
+      )}
+      {/* Seeds the client cache so a back-navigation to this listing repaints at once. */}
+      <ResourceRecorder
+        kind={CACHE_KIND[kind]}
+        locale={locale}
+        filters={{ ...filters, kind }}
+        data={data}
+      />
     </>
   )
 }
