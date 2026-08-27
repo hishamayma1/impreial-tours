@@ -3,7 +3,7 @@ import type { Where } from 'payload'
 
 import { locales, defaultLocale, localeLabels } from '@/i18n/routing'
 import { siteUrl, localizedPath } from '@/lib/seo'
-import { getAllSlugs } from '@/lib/payload/services'
+import { getLocalizedSlugs } from '@/lib/payload/services'
 
 /**
  * Localized sitemap (spec Section 2.8).
@@ -14,6 +14,12 @@ import { getAllSlugs } from '@/lib/payload/services'
  * translated from English.
  */
 
+/**
+ * `/about` and `/contact` are deliberately absent: both still render a placeholder
+ * and carry `robots: { index: false }`. A sitemap that advertises a noindexed URL
+ * asks a crawler to fetch a page it has been told to discard. Add them back in the
+ * same commit that gives them real content.
+ */
 const STATIC_PATHS = [
   '',
   '/tours/daily',
@@ -24,8 +30,6 @@ const STATIC_PATHS = [
   '/transfers/intercity',
   '/transfers/custom',
   '/bicycles',
-  '/about',
-  '/contact',
 ]
 
 const languagesFor = (paths: Partial<Record<string, string>>): Record<string, string> => {
@@ -80,24 +84,38 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   // Fetched in parallel, not in sequence: twelve serial reads means twelve serial
   // timeouts if the database is unreachable, which is long enough for a crawler (or a
   // build) to give up on the request entirely.
-  const slugSets = await Promise.all(
-    collections.flatMap(({ collection, base, where }) =>
-      locales.map(async (locale) => ({
-        base,
-        locale,
-        slugs: await getAllSlugs(collection, locale, where),
-      })),
-    ),
+  const documentSets = await Promise.all(
+    collections.map(async ({ collection, base, where }) => ({
+      base,
+      documents: await getLocalizedSlugs(collection, where),
+    })),
   )
 
-  for (const { base, locale, slugs } of slugSets) {
-    for (const slug of slugs) {
-      entries.push({
-        url: `${siteUrl}${localizedPath(locale, `${base}/${slug}`)}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly',
-        priority: 0.7,
-      })
+  /**
+   * Detail URLs carry `hreflang` too. Slugs are localized, so the three language
+   * versions of one tour are three unrelated-looking URLs; without this they compete
+   * with each other in the index instead of being understood as one document.
+   */
+  for (const { base, documents } of documentSets) {
+    for (const slugByLocale of documents) {
+      const byLocale = Object.fromEntries(
+        locales
+          .filter((locale) => slugByLocale[locale])
+          .map((locale) => [locale, localizedPath(locale, `${base}/${slugByLocale[locale]}`)]),
+      )
+      const languages = languagesFor(byLocale)
+
+      for (const locale of locales) {
+        const path = byLocale[locale]
+        if (!path) continue
+        entries.push({
+          url: `${siteUrl}${path}`,
+          lastModified: new Date(),
+          changeFrequency: 'weekly',
+          priority: 0.7,
+          alternates: { languages },
+        })
+      }
     }
   }
 

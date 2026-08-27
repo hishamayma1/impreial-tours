@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
+import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { notFound } from 'next/navigation'
 
 import {
   HeroSection,
@@ -8,19 +10,37 @@ import {
   OffersSection,
   DestinationsSection,
   TestimonialsSection,
-  JournalSection,
+  PlanJourneySection,
 } from '@/components/home/sections'
-import { HeroSkeleton, SectionSkeleton } from '@/components/home/section-skeletons'
-import type { Locale } from '@/i18n/routing'
+import {
+  HeroSkeleton,
+  OffersSkeleton,
+  PlanJourneySkeleton,
+  SectionSkeleton,
+  ServicesSkeleton,
+  TestimonialsSkeleton,
+} from '@/components/home/section-skeletons'
+import { routing, type Locale } from '@/i18n/routing'
 import { getHomePage } from '@/lib/payload/queries'
 import { firstFilled } from '@/lib/utils'
 import { buildAlternates } from '@/lib/seo'
 
-type PageProps = { params: Promise<{ locale: Locale }> }
+type PageProps = { params: Promise<{ locale: string }> }
 
 export const generateMetadata = async ({ params }: PageProps): Promise<Metadata> => {
   const { locale } = await params
-  const [home, t] = await Promise.all([getHomePage(locale), getTranslations({ locale, namespace: 'meta' })])
+
+  /**
+   * Next runs this in parallel with the layout, so the layout's notFound() cannot
+   * stop it. Without this guard a request for a non-route like /favicon.ico reaches
+   * the CMS as locale "favicon.ico" and logs a read failure per query.
+   */
+  if (!hasLocale(routing.locales, locale)) return {}
+
+  const [home, t] = await Promise.all([
+    getHomePage(locale),
+    getTranslations({ locale, namespace: 'meta' }),
+  ])
 
   /**
    * The translated tagline is the last resort deliberately: `firstFilled` returning ''
@@ -34,7 +54,7 @@ export const generateMetadata = async ({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
-    alternates: buildAlternates(locale),
+    alternates: buildAlternates(locale as Locale),
     openGraph: {
       title,
       description,
@@ -45,6 +65,8 @@ export const generateMetadata = async ({ params }: PageProps): Promise<Metadata>
 
 const HomePage = async ({ params }: PageProps) => {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
+
   setRequestLocale(locale)
 
   /**
@@ -54,28 +76,40 @@ const HomePage = async ({ params }: PageProps) => {
    */
   return (
     <>
-      <Suspense fallback={<HeroSkeleton />}>
-        <HeroSection locale={locale} />
+      {/*
+        Marks the region the header may render transparently over. HeaderShell looks
+        for this element on every route: finding it puts the bar in its overlay state
+        until the hero's foot passes underneath, and finding none — every inner page —
+        keeps it solid white from the first paint.
+
+        It wraps the Suspense boundary rather than sitting inside it so the element
+        survives the swap from skeleton to hero; a marker inside would be torn out of
+        the DOM at exactly the moment the observer needs it.
+      */}
+      <div data-hero-zone>
+        <Suspense fallback={<HeroSkeleton />}>
+          <HeroSection locale={locale as Locale} />
+        </Suspense>
+      </div>
+
+      <Suspense fallback={<ServicesSkeleton />}>
+        <ServicesSection locale={locale as Locale} />
+      </Suspense>
+
+      <Suspense fallback={<OffersSkeleton />}>
+        <OffersSection locale={locale as Locale} />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton columns={3} />}>
-        <ServicesSection locale={locale} />
+        <DestinationsSection locale={locale as Locale} />
       </Suspense>
 
-      <Suspense fallback={<SectionSkeleton columns={2} />}>
-        <OffersSection locale={locale} />
+      <Suspense fallback={<TestimonialsSkeleton />}>
+        <TestimonialsSection locale={locale as Locale} />
       </Suspense>
 
-      <Suspense fallback={<SectionSkeleton columns={3} />}>
-        <DestinationsSection locale={locale} />
-      </Suspense>
-
-      <Suspense fallback={<SectionSkeleton columns={3} />}>
-        <TestimonialsSection locale={locale} />
-      </Suspense>
-
-      <Suspense fallback={<SectionSkeleton columns={3} />}>
-        <JournalSection locale={locale} />
+      <Suspense fallback={<PlanJourneySkeleton />}>
+        <PlanJourneySection locale={locale as Locale} />
       </Suspense>
     </>
   )

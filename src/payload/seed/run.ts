@@ -6,6 +6,7 @@ import { destinations, homeCopy, offers, posts, services, testimonials } from '.
 import { altText } from './alt-text'
 import { seedServices } from './seed-services'
 import { seedNavigation } from './seed-navigation'
+import { revalidateRemote } from './revalidate-remote'
 
 type AssetKey = keyof typeof assets
 type MediaIds = Record<string, string>
@@ -300,10 +301,46 @@ const seed = async () => {
   payload.logger.info('Uploading design assets...')
   const media = await uploadAssets(payload)
 
-  await seedContent(payload, media)
-  await seedGlobals(payload, media)
+  const mediaProxy = new Proxy(media, {
+    get(target, prop) {
+      const key = String(prop)
+      if (target[key]) return target[key]
+      const fallback = target.hero || Object.values(target)[0]
+      payload.logger.warn(`Asset "${key}" was not uploaded, falling back to ID "${fallback}"`)
+      return fallback
+    }
+  })
+
+  await seedContent(payload, mediaProxy)
+  await seedGlobals(payload, mediaProxy)
 
   payload.logger.info('Seed complete.')
+
+  /**
+   * A seed replaces every content collection, so every cache tag is stale. This
+   * script has no Next request context to bust them from, which is why a reseed used
+   * to leave a running server showing the old content — for up to an hour, and across
+   * a restart, because that cache is on disk.
+   */
+  await revalidateRemote(
+    [
+      'services',
+      'offers',
+      'destinations',
+      'testimonials',
+      'posts',
+      'tours',
+      'hotels',
+      'transfers',
+      'bicycles',
+      'home-page',
+      'header',
+      'footer',
+      'site-settings',
+    ],
+    (message) => payload.logger.info(message),
+  )
+
   process.exit(0)
 }
 

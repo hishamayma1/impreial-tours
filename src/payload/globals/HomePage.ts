@@ -56,7 +56,7 @@ export const HomePage: GlobalConfig = {
             sectionHeading('offersSection', 'Limited-Edition Offers'),
             sectionHeading('destinationsSection', 'Featured Destinations'),
             sectionHeading('testimonialsSection', 'Client Testimonials'),
-            sectionHeading('journalSection', 'Latest from the Journal'),
+            sectionHeading('planSection', 'Plan your journey'),
           ],
         },
         {

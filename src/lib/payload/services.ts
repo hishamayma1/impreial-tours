@@ -5,6 +5,7 @@ import type { Where } from 'payload'
 
 import type { Locale } from '@/i18n/routing'
 import { locales } from '@/i18n/routing'
+import type { OfferVM } from '@/types/content'
 import type {
   CardFact,
   ServiceCardVM,
@@ -203,7 +204,10 @@ export const getTours = cached(
       tourType: { equals: tourType },
       _status: { equals: 'published' },
     }
-    if (filters.destination) where.destination = { equals: filters.destination }
+    // Matched on the destination's slug, not its id: the filter travels in the URL
+    // (`?destination=cairo`), and a shareable, crawlable link should not carry a raw
+    // ObjectId. Payload resolves the dotted path across the relationship.
+    if (filters.destination) where['destination.slug'] = { equals: filters.destination }
     if (filters.difficulty) where.difficulty = { equals: filters.difficulty }
 
     const priceField = tourType === 'daily' ? 'pricePerPerson' : 'pricing.basePricePerPerson'
@@ -240,13 +244,81 @@ export const getTours = cached(
   },
 )
 
+/**
+ * A tour carrying a live offer, shaped for the home page carousel.
+ *
+ * The href is built from `tourType`, so a slide always lands on that tour's own
+ * detail page — `/tours/daily/<slug>` or `/tours/experiences/<slug>`.
+ */
+const tourOfferCard = (doc: Doc): OfferVM => {
+  const base = doc.tourType === 'experience' ? '/tours/experiences' : '/tours/daily'
+  const label = str(doc.offer?.label)
+
+  return {
+    id: String(doc.id),
+    title: str(doc.title),
+    href: `${base}/${str(doc.slug)}`,
+    // The editor's offer label is the badge. The tour's own `badge` field is
+    // deliberately not shown here: it stores raw values ('bestseller', 'new') with no
+    // translation behind them, so it would print untranslated on the Spanish and
+    // German home pages.
+    badges: label ? [{ text: label, tone: 'solid' as const }] : [],
+    image: toImage(doc.heroImage, 'wide'),
+  }
+}
+
+/**
+ * Tours flagged for the home page offers carousel, within their date window.
+ *
+ * Tagged `tours` rather than `offers` so that editing the tour — the document that
+ * actually owns this content — is what refreshes the carousel.
+ */
+export const getTourOffers = cached('tours', [] as OfferVM[], async (locale: Locale) => {
+  const payload = await getPayloadClient()
+  const now = new Date().toISOString()
+
+  const { docs } = await payload.find({
+    collection: 'tours',
+    locale,
+    fallbackLocale: 'en',
+    depth: 1,
+    limit: 8,
+    sort: '-createdAt',
+    where: {
+      and: [
+        { _status: { equals: 'published' } },
+        { 'offer.active': { equals: true } },
+        {
+          or: [
+            { 'offer.activeFrom': { exists: false } },
+            { 'offer.activeFrom': { less_than_equal: now } },
+          ],
+        },
+        {
+          or: [
+            { 'offer.activeUntil': { exists: false } },
+            { 'offer.activeUntil': { greater_than_equal: now } },
+          ],
+        },
+      ],
+    },
+    overrideAccess: true,
+    select: { slug: true, title: true, tourType: true, heroImage: true, offer: true },
+  })
+
+  return docs.map((doc) => tourOfferCard(doc as Doc))
+})
+
 export const getHotels = cached(
   'hotels',
   emptyPage<ServiceCardVM>(),
   async (locale: Locale, filters: ListingFilters = {}): Promise<PaginatedVM<ServiceCardVM>> => {
     const payload = await getPayloadClient()
     const where: Where = { _status: { equals: 'published' } }
-    if (filters.destination) where.destination = { equals: filters.destination }
+    // Matched on the destination's slug, not its id: the filter travels in the URL
+    // (`?destination=cairo`), and a shareable, crawlable link should not carry a raw
+    // ObjectId. Payload resolves the dotted path across the relationship.
+    if (filters.destination) where['destination.slug'] = { equals: filters.destination }
     if (filters.starRating) where.starRating = { greater_than_equal: filters.starRating }
     if (filters.amenities?.length) where.amenities = { in: filters.amenities }
 
@@ -374,15 +446,28 @@ export const getTourBySlug = cached(
       instantConfirmation: bool(doc.instantConfirmation),
       durationDays: numOrNull(doc.durationDays),
       nights: numOrNull(doc.nights),
+      /**
+       * Rows with no title are dropped rather than rendered.
+       *
+       * The itinerary currently stored for the seeded experiences is eight rows in
+       * which every field — including the non-localized `dayNumber` — is empty, in
+       * all three languages, so the page was painting eight blank "Day" cards and
+       * keying them all on `0`. Until that data is repaired this keeps the section
+       * hiding itself, which is how the rest of this codebase degrades on missing
+       * content. `dayNumber` falls back to the row's position so a document that has
+       * titles but lost its numbering still reads correctly.
+       */
       itinerary: Array.isArray(doc.itinerary)
-        ? doc.itinerary.map((day: Doc) => ({
-            dayNumber: numOrNull(day?.dayNumber) ?? 0,
-            dayTitle: str(day?.dayTitle),
-            dayDescription: str(day?.dayDescription),
-            meals: Array.isArray(day?.meals) ? day.meals.map(str) : [],
-            accommodation: str(day?.accommodation),
-            image: toImage(day?.image, 'card'),
-          }))
+        ? doc.itinerary
+            .map((day: Doc, index: number) => ({
+              dayNumber: numOrNull(day?.dayNumber) ?? index + 1,
+              dayTitle: str(day?.dayTitle),
+              dayDescription: str(day?.dayDescription),
+              meals: Array.isArray(day?.meals) ? day.meals.map(str) : [],
+              accommodation: str(day?.accommodation),
+              image: toImage(day?.image, 'card'),
+            }))
+            .filter((day) => day.dayTitle || day.dayDescription)
         : [],
       basePricePerPerson: numOrNull(doc.pricing?.basePricePerPerson),
       singleSupplement: numOrNull(doc.pricing?.singleSupplement),
@@ -606,6 +691,59 @@ export const getAllSlugs = async (
     console.error(`[payload] getAllSlugs("${collection}") failed`, error)
     return []
   }
+}
+
+/**
+ * Every published document in a collection, with its slug in each language.
+ *
+ * The sitemap needs this to emit `hreflang` on detail URLs. It costs exactly what
+ * calling `getAllSlugs` once per locale already cost — the same one read per locale,
+ * keeping the document id instead of discarding it — rather than the per-document
+ * `getAlternateSlugs` round trip, which would be one read per document per language.
+ *
+ * A locale whose read fails contributes nothing, so a partial outage yields a smaller
+ * sitemap rather than no sitemap.
+ */
+export const getLocalizedSlugs = async (
+  collection: 'tours' | 'hotels' | 'bicycles',
+  where: Where = {},
+): Promise<Array<Partial<Record<Locale, string>>>> => {
+  const perLocale = await Promise.all(
+    locales.map(async (locale) => {
+      try {
+        const payload = await getPayloadClient()
+        const result = await payload.find({
+          collection,
+          locale,
+          fallbackLocale: false,
+          where: { _status: { equals: 'published' }, ...where },
+          depth: 0,
+          limit: 500,
+          pagination: false,
+          overrideAccess: true,
+          select: { slug: true },
+        })
+        return { locale, docs: result.docs as Doc[] }
+      } catch (error) {
+        console.error(`[payload] getLocalizedSlugs("${collection}", "${locale}") failed`, error)
+        return { locale, docs: [] as Doc[] }
+      }
+    }),
+  )
+
+  const byId = new Map<string, Partial<Record<Locale, string>>>()
+  for (const { locale, docs } of perLocale) {
+    for (const doc of docs) {
+      const slug = str(doc.slug)
+      if (!slug) continue
+      const id = String(doc.id)
+      const entry = byId.get(id) ?? {}
+      entry[locale] = slug
+      byId.set(id, entry)
+    }
+  }
+
+  return [...byId.values()]
 }
 
 /**

@@ -63,7 +63,7 @@ export const services: SeedService[] = [
   {
     asset: 'serviceCollage',
     icon: 'all-inclusive',
-    href: '/tours/packages',
+    href: '/tours/experiences',
     order: 2,
     copy: {
       en: {
@@ -83,7 +83,7 @@ export const services: SeedService[] = [
   {
     asset: 'serviceHotel',
     icon: 'hotel',
-    href: '/stays',
+    href: '/hotels',
     order: 3,
     copy: {
       en: {
@@ -101,10 +101,35 @@ export const services: SeedService[] = [
     },
   },
   {
+    // Transfers is one of the four service families in the nav and in
+    // SiteSettings.enabledServices, but the home page had no card for it.
+    asset: 'destCairo',
+    icon: 'transfer',
+    href: '/transfers',
+    order: 4,
+    copy: {
+      en: {
+        title: 'Transfers',
+        description:
+          'Airport meet-and-greet, city-to-city road transfers, and custom routes with a private driver.',
+      },
+      es: {
+        title: 'Traslados',
+        description:
+          'Recepción en el aeropuerto, traslados por carretera entre ciudades y rutas a medida con chófer privado.',
+      },
+      de: {
+        title: 'Transfers',
+        description:
+          'Empfang am Flughafen, Ueberlandtransfers zwischen Staedten und individuelle Routen mit privatem Fahrer.',
+      },
+    },
+  },
+  {
     asset: 'serviceBikes',
     icon: 'bike',
-    href: '/tours/cycling',
-    order: 4,
+    href: '/bicycles',
+    order: 5,
     copy: {
       en: {
         title: 'Bicycle Reservations',
@@ -125,7 +150,7 @@ export const services: SeedService[] = [
 export const offers: SeedOffer[] = [
   {
     asset: 'offerDahabiya',
-    href: '/offers/pharaohs-private-voyage',
+    href: '/tours/experiences',
     order: 1,
     copy: {
       en: {
@@ -153,7 +178,7 @@ export const offers: SeedOffer[] = [
   },
   {
     asset: 'offerSahara',
-    href: '/offers/sahara-twilight-retreat',
+    href: '/tours/experiences',
     order: 2,
     copy: {
       en: {
@@ -181,7 +206,7 @@ export const offers: SeedOffer[] = [
   },
   {
     asset: 'offerLuxor',
-    href: '/offers/eternal-luxor-sunrise',
+    href: '/tours/experiences',
     order: 3,
     copy: {
       en: {

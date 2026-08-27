@@ -5,7 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ListingHero } from '@/components/services/ListingHero'
 import { ListingFilters } from '@/components/services/ListingFilters'
 import { ServiceResults } from '@/components/services/ServiceResults'
-import { ServiceGridSkeleton } from '@/components/services/ServiceSkeletons'
+import { ServiceGridSkeleton, ListingFiltersSkeleton } from '@/components/services/ServiceSkeletons'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 
@@ -50,14 +50,16 @@ const DailyToursPage = async ({
         title={t('title')}
         description={t('description')}
       />
-      <ListingFilters variant="tours" />
+      <Suspense fallback={<ListingFiltersSkeleton />}>
+        <ListingFilterBar variant="tours" locale={locale as Locale} />
+      </Suspense>
 
       {/*
         Keyed on the query so changing a filter shows the skeleton again rather than
         leaving stale results on screen while the new ones load.
       */}
       <Suspense key={JSON.stringify(query)} fallback={<ServiceGridSkeleton />}>
-        <ServiceResults kind="daily" locale={locale as Locale} query={query} />
+        <ServiceResults kind="daily" locale={locale as Locale} query={query} listName={t('title')} />
       </Suspense>
     </>
   )

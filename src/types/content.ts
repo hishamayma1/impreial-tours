@@ -79,7 +79,7 @@ export type HomePageVM = {
     offers: SectionHeadingVM
     destinations: SectionHeadingVM
     testimonials: SectionHeadingVM
-    journal: SectionHeadingVM
+    plan: SectionHeadingVM
   }
   seo: {
     title: string
@@ -107,6 +107,22 @@ export type FooterVM = {
 
 export type CurrencyVM = { code: string; symbol: string; rate: number }
 
+export type SocialLinkVM = { platform: string; url: string }
+
+/**
+ * The parts of `contact` an editor fills in. These feed the JSON-LD `Organization`
+ * block rather than any visible chrome, which is why every field is optional-by-
+ * emptiness: a blank one is simply omitted from the payload instead of emitting an
+ * empty property that answer engines would have to guess at.
+ */
+export type ContactVM = {
+  email: string
+  phone: string
+  whatsappNumber: string
+  address: string
+  businessHours: string
+}
+
 export type SiteSettingsVM = {
   brandName: string
   logo: ImageVM | null
@@ -114,6 +130,8 @@ export type SiteSettingsVM = {
   defaultSeo: { title: string; description: string; image: ImageVM | null }
   /** Spec Section 3 additions. */
   whatsappNumber: string
+  contact: ContactVM
+  socialLinks: SocialLinkVM[]
   enabledServices: string[]
   enableCustomQuote: boolean
 }

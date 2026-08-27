@@ -5,26 +5,26 @@ import { Services } from '@/components/sections/Services'
 import { Offers } from '@/components/sections/Offers'
 import { FeaturedDestinations } from '@/components/sections/FeaturedDestinations'
 import { Testimonials } from '@/components/sections/Testimonials'
-import { Journal } from '@/components/sections/Journal'
+import { PlanJourney } from '@/components/sections/PlanJourney'
 import type { Locale } from '@/i18n/routing'
 import {
   getFeaturedDestinations,
   getHomePage,
-  getLatestPosts,
-  getOffers,
   getServices,
+  getSiteSettings,
   getTestimonials,
 } from '@/lib/payload/queries'
+import { getTourOffers } from '@/lib/payload/services'
 import { firstFilled } from '@/lib/utils'
 import type { SectionHeadingVM } from '@/types/content'
 
 /**
  * The home page as six independently-streamed sections.
  *
- * Previously one component awaited all six queries in a single Promise.all, so the
- * hero — the LCP element — could not paint until the journal query came back. Each
- * section now fetches only what it renders and sits behind its own Suspense boundary,
- * so the hero arrives as soon as the hero query does and the rest fill in after.
+ * Previously one component awaited every query in a single Promise.all, so the hero —
+ * the LCP element — could not paint until the last query came back. Each section now
+ * fetches only what it renders and sits behind its own Suspense boundary, so the hero
+ * arrives as soon as the hero query does and the rest fill in after.
  *
  * Every read is cache-tagged and request-deduplicated, so calling getHomePage from
  * several sections costs one query, not several.
@@ -43,9 +43,32 @@ const buildHeading = (
   body: firstFilled(section.body, keys.body ? t(keys.body) : ''),
 })
 
+/**
+ * The enquiry band's anchor, used as the secondary CTA everywhere on the page.
+ *
+ * A same-page hash rather than `/contact`: contact is still a placeholder route that
+ * is deliberately kept out of the index, so pointing the page's softer CTA at it
+ * would send every hesitant visitor to a "coming soon" note.
+ */
+const PLAN_ANCHOR = '#plan'
+
 export const HeroSection = async ({ locale }: Props) => {
-  const home = await getHomePage(locale)
-  return <Hero hero={home.hero} />
+  const [home, t] = await Promise.all([getHomePage(locale), getTranslations('hero')])
+
+  return (
+    <Hero
+      hero={home.hero}
+      labels={{
+        primaryCta: t('primaryCta'),
+        secondaryCta: t('secondaryCta'),
+        trust: [
+          { icon: 'shield', label: t('trust.licensed') },
+          { icon: 'clock', label: t('trust.reply') },
+          { icon: 'star', label: t('trust.rated') },
+        ],
+      }}
+    />
+  )
 }
 
 export const ServicesSection = async ({ locale }: Props) => {
@@ -62,14 +85,27 @@ export const ServicesSection = async ({ locale }: Props) => {
         title: 'services.title',
       })}
       services={services}
+      exploreLabel={t('services.explore')}
+      cta={{
+        primary: { label: t('cta.browseTours'), href: '/tours/daily' },
+        secondary: { label: t('cta.planWithUs'), href: PLAN_ANCHOR },
+      }}
     />
   )
 }
 
+/**
+ * The offers band reads from Tours, not the Offers collection.
+ *
+ * Every slide is a real tour flagged with `offer.active`, so "Discover" lands on that
+ * tour's own detail page. Previously these were standalone Offer documents whose
+ * `href` was free text pointing at `/offers/<slug>` — a route family that was never
+ * built, so all three CTAs 404'd.
+ */
 export const OffersSection = async ({ locale }: Props) => {
   const [home, offers, t] = await Promise.all([
     getHomePage(locale),
-    getOffers(locale),
+    getTourOffers(locale),
     getTranslations(),
   ])
 
@@ -81,6 +117,10 @@ export const OffersSection = async ({ locale }: Props) => {
         body: 'offers.body',
       })}
       offers={offers}
+      cta={{
+        primary: { label: t('cta.seeAllOffers'), href: '/tours/experiences' },
+        secondary: { label: t('cta.askAboutOffer'), href: PLAN_ANCHOR },
+      }}
     />
   )
 }
@@ -94,9 +134,18 @@ export const DestinationsSection = async ({ locale }: Props) => {
 
   return (
     <FeaturedDestinations
-      heading={buildHeading(t, home.sections.destinations, { title: 'destinations.title' })}
+      heading={buildHeading(t, home.sections.destinations, {
+        title: 'destinations.title',
+        // The section had no fallback body, so with the CMS group empty it rendered a
+        // bare heading. CMS copy still wins when an editor fills it in.
+        body: 'destinations.body',
+      })}
       destinations={destinations}
       exploreLabel={(name) => t('destinations.explore', { name })}
+      cta={{
+        primary: { label: t('cta.allDestinations'), href: '/tours/daily' },
+        secondary: { label: t('cta.planWithUs'), href: PLAN_ANCHOR },
+      }}
     />
   )
 }
@@ -112,28 +161,47 @@ export const TestimonialsSection = async ({ locale }: Props) => {
     <Testimonials
       heading={buildHeading(t, home.sections.testimonials, {
         eyebrow: 'testimonials.eyebrow',
-        title: 'testimonials.eyebrow',
+        title: 'testimonials.title',
       })}
       testimonials={testimonials}
     />
   )
 }
 
-export const JournalSection = async ({ locale }: Props) => {
-  const [home, posts, t] = await Promise.all([
+/**
+ * The enquiry band, in the slot the journal used to hold.
+ *
+ * The journal linked three cards at `/journal/<slug>`, a route family that was never
+ * built, so the home page ended in three dead links. This ends it with the one thing
+ * the page exists to produce instead.
+ */
+export const PlanJourneySection = async ({ locale }: Props) => {
+  const [home, settings, t] = await Promise.all([
     getHomePage(locale),
-    getLatestPosts(locale),
-    getTranslations(),
+    getSiteSettings(locale),
+    getTranslations('plan'),
   ])
 
   return (
-    <Journal
-      heading={buildHeading(t, home.sections.journal, {
-        eyebrow: 'journal.eyebrow',
-        title: 'journal.title',
+    <PlanJourney
+      heading={buildHeading(t, home.sections.plan, {
+        eyebrow: 'eyebrow',
+        title: 'title',
+        body: 'body',
       })}
-      posts={posts}
-      readAllLabel={t('journal.readAll')}
+      contact={settings.contact}
+      labels={{
+        benefits: [t('benefits.tailored'), t('benefits.local'), t('benefits.noFee')],
+        stats: [
+          { value: t('stats.yearsValue'), label: t('stats.yearsLabel') },
+          { value: t('stats.travellersValue'), label: t('stats.travellersLabel') },
+          { value: t('stats.ratingValue'), label: t('stats.ratingLabel') },
+        ],
+        orReachUs: t('orReachUs'),
+        whatsapp: t('channels.whatsapp'),
+        call: t('channels.call'),
+        email: t('channels.email'),
+      }}
     />
   )
 }

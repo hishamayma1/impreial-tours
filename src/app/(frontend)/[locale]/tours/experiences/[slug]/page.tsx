@@ -19,6 +19,8 @@ import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
 import { getTourBySlug, getAllSlugs, getAlternateSlugs } from '@/lib/payload/services'
+import { JsonLd } from '@/components/seo/JsonLd'
+import { breadcrumbNode, tourNode } from '@/lib/structured-data'
 
 const PATH = '/tours/experiences'
 type PageParams = { locale: string; slug: string }

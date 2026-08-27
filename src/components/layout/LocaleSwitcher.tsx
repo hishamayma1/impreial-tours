@@ -10,15 +10,19 @@ import { cn } from '@/lib/utils'
 
 type LocaleSwitcherProps = {
   className?: string
-  tone?: 'dark' | 'light'
 }
 
 /**
  * Renders the EN | ES | DE control as real links so each translation is crawlable
  * and works without JavaScript. `usePathname` from next-intl returns the pathname
  * without the locale prefix, so the current route is preserved on switch.
+ *
+ * Every colour here is `currentColor` at a different opacity rather than a named
+ * token, because the header this sits in is navy over a photograph and grey over
+ * white. A `tone` prop cannot express that: the tone changes on scroll, and the
+ * header keeps its state in a client shell that this component never sees.
  */
-export const LocaleSwitcher = ({ className, tone = 'dark' }: LocaleSwitcherProps) => {
+export const LocaleSwitcher = ({ className }: LocaleSwitcherProps) => {
   const t = useTranslations('locale')
   const active = useLocale() as Locale
   const pathname = usePathname()
@@ -29,7 +33,7 @@ export const LocaleSwitcher = ({ className, tone = 'dark' }: LocaleSwitcherProps
       {locales.map((locale, index) => (
         <Fragment key={locale}>
           {index > 0 ? (
-            <span aria-hidden className={tone === 'dark' ? 'text-outline' : 'text-white/40'}>
+            <span aria-hidden className="opacity-40">
               |
             </span>
           ) : null}
@@ -39,14 +43,8 @@ export const LocaleSwitcher = ({ className, tone = 'dark' }: LocaleSwitcherProps
             hrefLang={localeLabels[locale].hreflang}
             aria-current={locale === active ? 'true' : undefined}
             className={cn(
-              'px-1 font-medium transition-colors',
-              tone === 'dark'
-                ? locale === active
-                  ? 'text-brand'
-                  : 'text-on-surface-variant hover:text-brand'
-                : locale === active
-                  ? 'text-white'
-                  : 'text-white/70 hover:text-white',
+              'rounded px-1 font-medium transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current',
+              locale === active ? 'opacity-100' : 'opacity-60 hover:opacity-100',
             )}
           >
             {localeLabels[locale].short}

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
-import { ButtonLink } from '@/components/ui/Button'
+import { Link } from '@/i18n/navigation'
 import { CmsImage } from '@/components/ui/CmsImage'
 import { Icon } from '@/components/ui/Icon'
 import type { OfferVM } from '@/types/content'
@@ -91,15 +91,24 @@ export const OffersCarousel = ({ offers }: { offers: OfferVM[] }) => {
     )
   }
 
+  /**
+   * The controls sit in a row beneath the image rather than floating over it.
+   *
+   * Overlaid, they were `opacity-0` until the carousel was hovered — which meant they
+   * did not exist at all for touch, where there is no hover, and they sat on top of
+   * the photograph they were asking you to look at. Below the image they are always
+   * visible, they are a real hit target on a phone, and they no longer need to be
+   * white-on-glass to survive whatever image is behind them.
+   */
   const arrowClass =
-    'absolute top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full ' +
-    'bg-white/20 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-white ' +
-    'hover:text-brand focus-visible:opacity-100 focus-visible:outline-none ' +
-    'focus-visible:ring-2 focus-visible:ring-white group-hover/carousel:opacity-100'
+    'flex h-10 w-10 items-center justify-center rounded-full border border-hairline ' +
+    'bg-surface-container-lowest text-brand transition-colors hover:bg-brand hover:text-white ' +
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ' +
+    'focus-visible:ring-offset-2 disabled:opacity-40'
 
   return (
     <div
-      className="group/carousel relative"
+      className="relative"
       role="region"
       aria-roledescription="carousel"
       aria-label={t('title')}
@@ -122,25 +131,17 @@ export const OffersCarousel = ({ offers }: { offers: OfferVM[] }) => {
       />
 
       {count > 1 ? (
-        <>
+        <div className="mt-6 flex items-center justify-center gap-5">
           <button
             type="button"
             onClick={goPrevious}
             aria-label={t('previous')}
-            className={cn(arrowClass, 'left-4')}
+            className={arrowClass}
           >
             <Icon name="chevron-left" className="h-5 w-5" />
           </button>
-          <button
-            type="button"
-            onClick={goNext}
-            aria-label={t('next')}
-            className={cn(arrowClass, 'right-4')}
-          >
-            <Icon name="chevron-right" className="h-5 w-5" />
-          </button>
 
-          <div className="mt-6 flex justify-center gap-2">
+          <div className="flex items-center gap-2">
             {offers.map((offer, dotIndex) => (
               <button
                 key={offer.id}
@@ -149,14 +150,27 @@ export const OffersCarousel = ({ offers }: { offers: OfferVM[] }) => {
                 aria-label={t('goTo', { index: dotIndex + 1 })}
                 aria-current={dotIndex === index}
                 className={cn(
-                  'h-2 w-2 rounded-full transition-colors focus-visible:outline-none',
-                  'focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
-                  dotIndex === index ? 'bg-brand' : 'bg-brand/20 hover:bg-brand/40',
+                  // A 2px dot is far below the 24px minimum touch target, so the tap
+                  // area is padded out around it while the dot itself stays small.
+                  'flex h-6 w-6 items-center justify-center rounded-full',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
                 )}
-              />
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    'block h-2 w-2 rounded-full transition-colors',
+                    dotIndex === index ? 'bg-brand' : 'bg-brand/25 hover:bg-brand/50',
+                  )}
+                />
+              </button>
             ))}
           </div>
-        </>
+
+          <button type="button" onClick={goNext} aria-label={t('next')} className={arrowClass}>
+            <Icon name="chevron-right" className="h-5 w-5" />
+          </button>
+        </div>
       ) : null}
     </div>
   )
@@ -183,51 +197,74 @@ const CarouselTrack = ({ offers, index, groupId, reducedMotion, cta }: CarouselT
           aria-roledescription="slide"
           aria-label={slideIndex + 1 + ' / ' + offers.length}
           aria-hidden={slideIndex !== index}
-          className="group relative aspect-[16/9] w-full flex-shrink-0 overflow-hidden"
+          className="relative aspect-[16/9] w-full flex-shrink-0 overflow-hidden"
         >
-          <CmsImage
-            image={offer.image}
-            sizes="(max-width: 768px) 100vw, 60vw"
-            priority={slideIndex === 0}
-            className="transition-transform duration-700 group-hover:scale-105"
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-gradient-to-r from-brand/80 via-brand/20 to-transparent"
-          />
+          {/*
+            The whole slide is the link, not just the button: the image and headline
+            are the obvious things to click, and a lone button inside a large tappable
+            card is a small target on a phone. A nested <a> inside an <a> is invalid,
+            so the "Discover" affordance below renders as a <span> styled like the
+            button rather than as a second link.
 
-          <div className="absolute inset-y-0 left-0 flex w-full flex-col justify-center p-8 md:w-2/3 md:p-12">
-            {offer.badges.length > 0 ? (
-              <ul className="mb-6 flex flex-wrap gap-3">
-                {offer.badges.map((badge) => (
-                  <li
-                    key={badge.text}
-                    className={cn(
-                      'rounded-full px-3 py-1 font-label-caps text-xs uppercase tracking-wider text-white',
-                      badge.tone === 'solid' ? 'bg-brand' : 'bg-white/20 backdrop-blur-sm',
-                    )}
-                  >
-                    {badge.text}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
+            `tabIndex={-1}` on the off-screen slides keeps them out of the tab order —
+            they are `aria-hidden`, and a focusable node inside a hidden subtree is
+            exactly the trap that makes a carousel unusable with a keyboard.
+          */}
+          <Link
+            href={offer.href}
+            tabIndex={slideIndex === index ? undefined : -1}
+            className="group block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
+          >
+            {/*
+              Deliberately NOT `priority`. The offers band is the third section of the
+              home page, below a 90vh hero, so it is never the LCP element — but
+              `priority` emits a high-priority preload in <head>, which put a large
+              offer image in direct competition with the hero for the first bytes on
+              every home-page load. Lazy is correct here: by the time this scrolls into
+              view the browser has already fetched it.
+            */}
+            <CmsImage
+              image={offer.image}
+              sizes="(max-width: 768px) 100vw, 60vw"
+              className="transition-transform duration-700 group-hover:scale-105"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-r from-brand/80 via-brand/20 to-transparent"
+            />
 
-            <h3 className="mb-8 font-headline-card text-3xl leading-tight text-white md:text-4xl">
-              {offer.title}
-            </h3>
+            <div className="absolute inset-y-0 left-0 flex w-full flex-col justify-center p-8 md:w-2/3 md:p-12">
+              {offer.badges.length > 0 ? (
+                <ul className="mb-6 flex flex-wrap gap-3">
+                  {offer.badges.map((badge) => (
+                    <li
+                      key={badge.text}
+                      className={cn(
+                        'rounded-full px-3 py-1 font-label-caps text-xs uppercase tracking-wider text-white',
+                        badge.tone === 'solid' ? 'bg-brand' : 'bg-white/20 backdrop-blur-sm',
+                      )}
+                    >
+                      {badge.text}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
 
-            <div>
-              <ButtonLink
-                href={offer.href}
-                variant="outlineLight"
-                size="lg"
-                tabIndex={slideIndex === index ? undefined : -1}
-              >
-                {cta}
-              </ButtonLink>
+              <h3 className="mb-8 font-headline-card text-3xl leading-tight text-white md:text-4xl">
+                {offer.title}
+              </h3>
+
+              <div>
+                {/*
+                  A span, not a link — the whole slide is already the anchor. It keeps
+                  the button's look and its hover state follows the slide's `group`.
+                */}
+                <span className="inline-flex items-center justify-center rounded-full border border-white/70 px-8 py-4 font-label-caps text-label-caps uppercase tracking-widest text-white transition-colors group-hover:bg-white group-hover:text-brand">
+                  {cta}
+                </span>
+              </div>
             </div>
-          </div>
+          </Link>
         </article>
       ))}
     </div>

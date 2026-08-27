@@ -135,10 +135,6 @@ const config: Config = {
         nav: '0 8px 30px -12px rgba(0,0,0,0.12)',
       },
       keyframes: {
-        'fade-up': {
-          from: { opacity: '0', transform: 'translateY(12px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
         /* Loader keyframes — transform/opacity only, so they stay off the main thread. */
         'loader-spin': {
           to: { transform: 'rotate(360deg)' },
@@ -151,9 +147,11 @@ const config: Config = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(400%)' },
         },
-      },
-      animation: {
-        'fade-up': 'fade-up 0.5s ease-out both',
+        /* Typewriter caret. Opacity only, so it never triggers layout or paint cost. */
+        'caret-blink': {
+          '0%, 49%': { opacity: '1' },
+          '50%, 100%': { opacity: '0' },
+        },
       },
     },
   },

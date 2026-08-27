@@ -11,15 +11,3 @@ export type {
   ContactDetails,
 } from './booking-store'
 export { useFilterStore, filtersToSearchParams, type FilterState } from './filter-store'
-
-/**
- * Spec Section 6 calls this store `useCurrencyStore`. It already existed here as
- * `usePreferencesStore` (localStorage-persisted currency + hydration guard), so it is
- * aliased rather than duplicated — two stores owning the same value would drift.
- */
-export { usePreferencesStore as useCurrencyStore } from './preferences-store'
-export {
-  useResourceStore,
-  resourceKey,
-  type ResourceKind,
-} from './resource-store'

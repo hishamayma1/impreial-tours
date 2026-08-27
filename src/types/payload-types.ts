@@ -225,6 +225,24 @@ export interface Tour {
   groupSizeMax?: number | null;
   rating?: number | null;
   badge?: ('none' | 'bestseller' | 'new') | null;
+  /**
+   * Feature this tour in the offers carousel on the home page.
+   */
+  offer?: {
+    active?: boolean | null;
+    /**
+     * Badge shown on the slide, e.g. "Save 20%" or "Limited dates".
+     */
+    label?: string | null;
+    /**
+     * Optional. Leave blank to start immediately.
+     */
+    activeFrom?: string | null;
+    /**
+     * Optional. Leave blank to run until switched off.
+     */
+    activeUntil?: string | null;
+  };
   durationHours?: number | null;
   startTimes?:
     | {
@@ -1029,7 +1047,7 @@ export interface Service {
   /**
    * Optional badge shown above the card title.
    */
-  icon?: ('explore' | 'all-inclusive' | 'hotel' | 'bike' | 'sailing') | null;
+  icon?: ('explore' | 'all-inclusive' | 'hotel' | 'bike' | 'sailing' | 'transfer') | null;
   image: string | Media;
   /**
    * Locale-agnostic path, e.g. /tours/daily.
@@ -1303,6 +1321,14 @@ export interface ToursSelect<T extends boolean = true> {
   groupSizeMax?: T;
   rating?: T;
   badge?: T;
+  offer?:
+    | T
+    | {
+        active?: T;
+        label?: T;
+        activeFrom?: T;
+        activeUntil?: T;
+      };
   durationHours?: T;
   startTimes?:
     | T
@@ -2096,7 +2122,7 @@ export interface HomePage {
     title?: string | null;
     body?: string | null;
   };
-  journalSection?: {
+  planSection?: {
     eyebrow?: string | null;
     title?: string | null;
     body?: string | null;
@@ -2345,7 +2371,7 @@ export interface HomePageSelect<T extends boolean = true> {
         title?: T;
         body?: T;
       };
-  journalSection?:
+  planSection?:
     | T
     | {
         eyebrow?: T;

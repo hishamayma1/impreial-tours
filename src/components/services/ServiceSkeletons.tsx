@@ -66,9 +66,13 @@ export const PageHeaderSkeleton = () => (
   </div>
 )
 
-/** Matches DetailHero's 16:9 (21:9 on desktop) media band plus its title block. */
+/**
+ * Matches DetailHero's 16:9 (21:9 on desktop) media band plus its title block.
+ * The `-mt-20` mirrors DetailHero's, so the route's loading state sits at the same
+ * offset as the page that replaces it and the swap shifts nothing.
+ */
 export const DetailHeroSkeleton = () => (
-  <div>
+  <div className="-mt-20">
     <Skeleton className="aspect-[16/9] w-full rounded-none md:aspect-[21/9]" />
     <Container className="py-10 md:py-14">
       <Skeleton className="mb-3 h-3 w-24" />

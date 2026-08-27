@@ -154,10 +154,12 @@
   },
   "destinations": {
     "title": "Destinos destacados",
-    "explore": "Descubrir {name}"
+    "explore": "Descubrir {name}",
+    "body": "Desde el campo de pirámides de Guiza hasta las islas de granito de Asuán: los lugares que nuestros guías conocen calle a calle."
   },
   "testimonials": {
     "eyebrow": "Opiniones de clientes",
+    "title": "Lo que dicen nuestros viajeros",
     "goTo": "Ir al testimonio {index}"
   },
   "journal": {
@@ -278,6 +280,7 @@
   },
   "filters": {
     "any": "Cualquiera",
+    "destination": "Destino",
     "stars": "Estrellas",
     "maxPrice": "Precio máx.",
     "sortBy": "Ordenar por",

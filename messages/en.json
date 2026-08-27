@@ -154,10 +154,12 @@
   },
   "destinations": {
     "title": "Featured Destinations",
-    "explore": "Explore {name}"
+    "explore": "Explore {name}",
+    "body": "From the pyramid field at Giza to the granite islands of Aswan — the places our guides know street by street."
   },
   "testimonials": {
     "eyebrow": "Client Testimonials",
+    "title": "What Our Travellers Say",
     "goTo": "Go to testimonial {index}"
   },
   "journal": {
@@ -278,6 +280,7 @@
   },
   "filters": {
     "any": "Any",
+    "destination": "Destination",
     "stars": "Stars",
     "maxPrice": "Max price",
     "sortBy": "Sort by",

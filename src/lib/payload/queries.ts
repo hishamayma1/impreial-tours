@@ -65,7 +65,7 @@ const emptyHomePage: HomePageVM = {
     offers: emptyHeading,
     destinations: emptyHeading,
     testimonials: emptyHeading,
-    journal: emptyHeading,
+    plan: emptyHeading,
   },
   seo: { title: '', description: '', image: null },
 }
@@ -158,6 +158,40 @@ export const getLatestPosts = cachedByLocale<PostVM[]>('posts', [], async (local
   return docs.map(toPost)
 })
 
+/**
+ * Name + slug for every published destination, for the listing filter's select.
+ *
+ * Separate from `getFeaturedDestinations` on purpose: that one is the home page's
+ * editorial grid and is limited to six featured entries, while the filter must offer
+ * every destination a tour can actually be tagged with.
+ */
+export const getDestinationOptions = cachedByLocale<Array<{ name: string; slug: string }>>(
+  'destinations',
+  [],
+  async (locale) => {
+    const payload = await getPayloadClient()
+    const { docs } = await payload.find({
+      collection: 'destinations',
+      locale,
+      fallbackLocale: 'en',
+      depth: 0,
+      limit: 100,
+      pagination: false,
+      sort: 'order',
+      where: { _status: { equals: 'published' } },
+      overrideAccess: true,
+      select: { name: true, slug: true },
+    })
+
+    return docs
+      .map((doc) => ({
+        name: String((doc as Record<string, unknown>).name ?? ''),
+        slug: String((doc as Record<string, unknown>).slug ?? ''),
+      }))
+      .filter((option) => option.name && option.slug)
+  },
+)
+
 export const getHomePage = cachedByLocale<HomePageVM>('home-page', emptyHomePage, async (locale) => {
   const payload = await getPayloadClient()
   const doc = await payload.findGlobal({
@@ -202,6 +236,8 @@ export const getSiteSettings = cachedByLocale<SiteSettingsVM>(
     currencies: [],
     defaultSeo: { title: '', description: '', image: null },
     whatsappNumber: '',
+    contact: { email: '', phone: '', whatsappNumber: '', address: '', businessHours: '' },
+    socialLinks: [],
     // With settings unreadable, keep every service visible rather than blanking the nav.
     enabledServices: ['tours', 'hotels', 'transfers', 'bicycles'],
     enableCustomQuote: true,

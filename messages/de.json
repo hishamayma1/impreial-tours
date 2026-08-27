@@ -154,10 +154,12 @@
   },
   "destinations": {
     "title": "Ausgewählte Reiseziele",
-    "explore": "{name} entdecken"
+    "explore": "{name} entdecken",
+    "body": "Vom Pyramidenfeld in Gizeh bis zu den Granitinseln von Assuan — die Orte, die unsere Guides Strasse fuer Strasse kennen."
   },
   "testimonials": {
     "eyebrow": "Kundenstimmen",
+    "title": "Was unsere Reisenden sagen",
     "goTo": "Zu Kundenstimme {index}"
   },
   "journal": {
@@ -278,6 +280,7 @@
   },
   "filters": {
     "any": "Beliebig",
+    "destination": "Reiseziel",
     "stars": "Sterne",
     "maxPrice": "Höchstpreis",
     "sortBy": "Sortieren nach",

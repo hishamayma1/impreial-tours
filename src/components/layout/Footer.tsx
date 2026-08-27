@@ -8,29 +8,40 @@ import { getFooter, getSiteSettings } from '@/lib/payload/queries'
 import { firstFilled } from '@/lib/utils'
 
 export const Footer = async ({ locale }: { locale: Locale }) => {
-  const [footer, settings, t] = await Promise.all([
+  const [footer, settings, t, nav] = await Promise.all([
     getFooter(locale),
     getSiteSettings(locale),
     getTranslations('footer'),
+    getTranslations('nav'),
   ])
 
+  /**
+   * Fallback columns for a Footer global no editor has filled in yet.
+   *
+   * These previously listed Privacy Policy, Terms, Travel Insurance, Sitemap and an
+   * Agent Portal — five links to routes that were never built, so every one 404'd on
+   * every page of the site. A footer that sends people nowhere is worse than a
+   * shorter one, so the placeholder now points at the routes that exist. Populate the
+   * Footer global in the dashboard and this is replaced wholesale.
+   */
   const columns =
     footer.columns.length > 0
       ? footer.columns
       : [
           {
-            title: t('legal'),
+            title: nav('tours'),
             links: [
-              { label: 'Privacy Policy', href: '/legal/privacy' },
-              { label: 'Terms of Service', href: '/legal/terms' },
+              { label: nav('dailyTours'), href: '/tours/daily' },
+              { label: nav('fullExperiences'), href: '/tours/experiences' },
+              { label: nav('hotels'), href: '/hotels' },
             ],
           },
           {
-            title: t('resources'),
+            title: nav('transfers'),
             links: [
-              { label: 'Travel Insurance', href: '/resources/insurance' },
-              { label: 'Sitemap', href: '/sitemap' },
-              { label: 'Agent Portal', href: '/agents' },
+              { label: nav('airportTransfer'), href: '/transfers/airport' },
+              { label: nav('cityToCity'), href: '/transfers/intercity' },
+              { label: nav('bicycles'), href: '/bicycles' },
             ],
           },
         ]

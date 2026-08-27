@@ -47,7 +47,7 @@ export const MobileNav = ({ items, cta }: MobileNavProps) => {
         aria-expanded={open}
         aria-controls="mobile-nav"
         aria-label={open ? t('closeMenu') : t('openMenu')}
-        className="md:hidden rounded-lg p-1.5 text-primary transition-colors hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        className="rounded-lg p-1.5 opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current lg:hidden"
       >
         <Icon name={open ? 'close' : 'menu'} />
       </button>
@@ -55,7 +55,7 @@ export const MobileNav = ({ items, cta }: MobileNavProps) => {
       <div
         id="mobile-nav"
         hidden={!open}
-        className="fixed inset-x-0 top-24 z-40 mx-6 rounded-2xl border border-outline-variant/40 bg-surface-container-lowest p-6 shadow-widget md:hidden"
+        className="fixed inset-x-0 top-24 z-40 mx-6 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-2xl border border-outline-variant/40 bg-surface-container-lowest p-6 shadow-widget lg:hidden"
       >
         <nav className="flex flex-col gap-1">
           {items.map((item) => (

@@ -24,6 +24,14 @@ export type IconName =
   | 'menu'
   | 'close'
   | 'users'
+  | 'check'
+  | 'shield'
+  | 'sparkle'
+  | 'whatsapp'
+  | 'mail'
+  | 'phone'
+  | 'clock'
+  | 'star'
 
 const paths: Record<IconName, React.ReactNode> = {
   pin: (
@@ -96,6 +104,45 @@ const paths: Record<IconName, React.ReactNode> = {
       <circle cx="9" cy="7" r="4" />
       <path d="M22 20v-2a4 4 0 0 0-3-3.9" />
     </>
+  ),
+  check: <path d="m4 12.5 5 5L20 6.5" />,
+  shield: (
+    <>
+      <path d="M12 2.5 4 6v6c0 5 3.4 8.4 8 9.5 4.6-1.1 8-4.5 8-9.5V6l-8-3.5Z" />
+      <path d="m9 12 2 2 4-4" />
+    </>
+  ),
+  sparkle: (
+    <>
+      <path d="M12 2.5 14 9l6.5 2-6.5 2-2 6.5-2-6.5L3.5 11 10 9l2-6.5Z" />
+      <path d="M19 3v3M20.5 4.5h-3" />
+    </>
+  ),
+  /* Filled glyph: the WhatsApp mark is illegible as a 1.6px stroke at 20px. */
+  whatsapp: (
+    <path
+      fill="currentColor"
+      stroke="none"
+      d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 1.8a8.2 8.2 0 1 1-4.2 15.2l-.3-.2-2.9.8.8-2.8-.2-.3A8.2 8.2 0 0 1 12 3.8Zm-3.1 4c-.2 0-.5 0-.7.4-.3.4-1 1-1 2.3 0 1.4 1 2.7 1.1 2.9.2.2 2 3.2 5 4.3 2.4.9 2.9.7 3.4.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3l-2-1c-.3-.1-.5-.2-.7.1l-.9 1.2c-.2.2-.4.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.1-.3 0-.4.2-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2c-.2-.5-.4-.5-.6-.5h-.5Z"
+    />
+  ),
+  mail: (
+    <>
+      <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
+      <path d="m3 7 9 6 9-6" />
+    </>
+  ),
+  phone: (
+    <path d="M6.5 2.5h-2A2 2 0 0 0 2.5 5c0 8.6 6.9 15.5 15.5 15.5a2 2 0 0 0 2.5-2v-2l-4.5-1.5-2 2.5a15.7 15.7 0 0 1-6-6l2.5-2L6.5 2.5Z" />
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M12 6.5V12l3.5 2" />
+    </>
+  ),
+  star: (
+    <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
   ),
 }
 

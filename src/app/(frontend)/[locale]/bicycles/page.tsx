@@ -53,7 +53,7 @@ const BicyclesPage = async ({
         leaving stale results on screen while the new ones load.
       */}
       <Suspense key={JSON.stringify(query)} fallback={<ServiceGridSkeleton />}>
-        <ServiceResults kind="bicycles" locale={locale as Locale} query={query} />
+        <ServiceResults kind="bicycles" locale={locale as Locale} query={query} listName={t('title')} />
       </Suspense>
     </>
   )
