@@ -10,6 +10,9 @@ import { Container } from '@/components/ui/Container'
  *
  * Horizontally scrollable on small screens rather than wrapping, so the bar stays one
  * row tall and never pushes the content down.
+ *
+ * In normal flow: the bar sits directly under the hero and scrolls away with it,
+ * rather than tracking the viewport.
  */
 export const SectionNav = ({
   items,
@@ -23,7 +26,7 @@ export const SectionNav = ({
   return (
     <nav
       aria-label={label}
-      className="sticky top-20 z-30 border-b border-hairline bg-surface-container-lowest/90 backdrop-blur-md"
+      className="border-b border-hairline bg-surface-container-lowest"
     >
       <Container>
         <ul className="-mx-1 flex gap-1 overflow-x-auto py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

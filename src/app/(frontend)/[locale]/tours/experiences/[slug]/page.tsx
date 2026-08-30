@@ -78,6 +78,13 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
     tour.groupSizeMax
       ? { icon: 'users' as const, label: t('groupSize'), value: String(tour.groupSizeMax) }
       : null,
+    tour.languages.length
+      ? {
+          icon: 'globe' as const,
+          label: t('fact.languagesLabel'),
+          value: tour.languages.map((code) => code.toUpperCase()).join(' · '),
+        }
+      : null,
   ].filter((fact): fact is NonNullable<typeof fact> => Boolean(fact))
 
   const sections = [
@@ -86,6 +93,7 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
     tour.highlights.length ? { id: 'highlights', label: t('highlights') } : null,
     tour.included.length || tour.notIncluded.length ? { id: 'included', label: t('included') } : null,
     tour.priceTiers.length ? { id: 'pricing', label: t('groupPricing') } : null,
+    tour.meetingPoint ? { id: 'meeting-point', label: t('meetingPoint') } : null,
     tour.gallery.length ? { id: 'gallery', label: t('gallery') } : null,
   ].filter((section): section is NonNullable<typeof section> => Boolean(section))
 
@@ -158,6 +166,18 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
             {tour.priceTiers.length ? (
               <TourSection id="pricing" title={t('groupPricing')} className="border-t border-hairline">
                 <PriceTiers tiers={tour.priceTiers} currencies={settings.currencies} />
+              </TourSection>
+            ) : null}
+
+            {tour.meetingPoint ? (
+              <TourSection
+                id="meeting-point"
+                title={t('meetingPoint')}
+                className="border-t border-hairline"
+              >
+                <p className="max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
+                  {tour.meetingPoint}
+                </p>
               </TourSection>
             ) : null}
 

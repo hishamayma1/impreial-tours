@@ -147,6 +147,8 @@
     "allTours": "All daily tours",
     "allExperiences": "All experiences",
     "singleSupplementLabel": "Single supplement",
+    "mealsLabel": "Meals included",
+    "accommodationLabel": "Overnight",
     "meals": {
       "breakfast": "Breakfast",
       "lunch": "Lunch",

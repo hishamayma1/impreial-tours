@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils'
 /**
  * One content section of a tour page.
  *
- * The `id` doubles as the anchor target for the section nav, and `scroll-mt-32`
- * clears both the site header and the sticky nav — without it, jumping to a section
- * parks its heading underneath them.
+ * The `id` doubles as the anchor target for the section nav, and `scroll-mt-24`
+ * clears the sticky site header — the nav bar itself scrolls away with the hero, so it
+ * needs no room. Without it, a jump parks the heading underneath the header.
  */
 export const TourSection = ({
   id,
@@ -22,7 +22,7 @@ export const TourSection = ({
   children: ReactNode
   className?: string
 }) => (
-  <section id={id} className={cn('scroll-mt-32 py-12 md:py-16', className)}>
+  <section id={id} className={cn('scroll-mt-24 py-12 md:py-16', className)}>
     {title ? (
       <header className="mb-8">
         {eyebrow ? (

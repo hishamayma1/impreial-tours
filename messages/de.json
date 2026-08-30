@@ -147,6 +147,8 @@
     "allTours": "Alle Tagestouren",
     "allExperiences": "Alle Erlebnisse",
     "singleSupplementLabel": "Einzelzimmerzuschlag",
+    "mealsLabel": "Inklusive Mahlzeiten",
+    "accommodationLabel": "Übernachtung",
     "meals": {
       "breakfast": "Frühstück",
       "lunch": "Mittagessen",

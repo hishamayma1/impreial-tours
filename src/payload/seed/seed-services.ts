@@ -31,9 +31,39 @@ const richText = (paragraph: string) => ({
   },
 })
 
+type Row = Record<string, unknown>
+
+/**
+ * Copies the row ids the default-locale create assigned onto the same rows of a
+ * translation payload.
+ *
+ * Arrays are not localized in these collections — one set of rows is shared and only
+ * the marked subfields (dayTitle, roomName, …) vary by language. A row sent
+ * without its id is a new row, so an update that omits them replaces the array
+ * wholesale and takes every translation stored against the old rows with it: seeded
+ * that way, only the last locale written survived and the itinerary rendered blank in
+ * the other two. Matching by position is safe here because the translation arrays are
+ * built from the same seed arrays as the create.
+ */
+const withRowIds = (created: Row, translation: Row): Row => {
+  const out: Row = { ...translation }
+
+  for (const [key, value] of Object.entries(translation)) {
+    const rows = created[key]
+    if (!Array.isArray(value) || !Array.isArray(rows)) continue
+
+    out[key] = value.map((row, index) => {
+      const id = (rows[index] as Row | undefined)?.id
+      return id && row && typeof row === 'object' ? { ...(row as Row), id } : row
+    })
+  }
+
+  return out
+}
+
 /**
  * Creates the default-locale document then patches each translation onto it, mirroring
- * `createLocalized` in run.ts. Localized array fields (highlights, itinerary days, room
+ * createLocalized in run.ts. Localized array fields (highlights, itinerary days, room
  * names) must be sent whole on every locale — Payload stores one array per language.
  */
 const createTranslated = async (
@@ -54,7 +84,7 @@ const createTranslated = async (
       collection,
       id: doc.id,
       locale,
-      data: { ...perLocale[locale], _status: 'published' } as never,
+      data: { ...withRowIds(doc as unknown as Row, perLocale[locale]), _status: 'published' } as never,
       overrideAccess: true,
     })
   }

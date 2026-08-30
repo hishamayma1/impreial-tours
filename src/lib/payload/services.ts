@@ -533,13 +533,13 @@ export const getTourBySlug = cached(
       durationDays: numOrNull(doc.durationDays),
       nights: numOrNull(doc.nights),
       /**
-       * Rows with no title are dropped rather than rendered.
+       * Rows with no title and no description are dropped rather than rendered.
        *
-       * The itinerary currently stored for the seeded experiences is eight rows in
-       * which every field — including the non-localized `dayNumber` — is empty, in
-       * all three languages, so the page was painting eight blank "Day" cards and
-       * keying them all on `0`. Until that data is repaired this keeps the section
-       * hiding itself, which is how the rest of this codebase degrades on missing
+       * An array row can exist with none of its localized text filled in — that is
+       * what an editor gets from a half-finished translation, and it is what the
+       * original seed left behind before `backfill-localized-rows.ts` repaired it.
+       * Painting those as blank "Day" cards is worse than a shorter itinerary, so the
+       * section hides them, the way the rest of this codebase degrades on missing
        * content. `dayNumber` falls back to the row's position so a document that has
        * titles but lost its numbering still reads correctly.
        */

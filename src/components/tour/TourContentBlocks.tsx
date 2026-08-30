@@ -86,12 +86,15 @@ export const InclusionColumns = async ({
 }
 
 /**
- * The day-by-day itinerary, as a vertical timeline.
+ * The day-by-day itinerary.
  *
  * This is the centrepiece of a multi-day page: the reader is buying a sequence, so
- * the layout should read as one. The connecting rule is drawn on the list itself
- * rather than per item, so it never breaks between days, and it stops at the last
- * marker instead of trailing into whitespace.
+ * the layout has to read as one. It opens with an at-a-glance list of every day —
+ * the whole shape of the trip in one screen, which a timeline alone never gives you
+ * because it is taller than the viewport — and then the days in full.
+ *
+ * The connecting rule is drawn on the list rather than per item, so it never breaks
+ * between days, and it stops at the last marker instead of trailing into whitespace.
  */
 export const ItineraryTimeline = async ({
   days,
@@ -102,54 +105,114 @@ export const ItineraryTimeline = async ({
   if (!days.length) return null
 
   return (
-    <ol className="relative space-y-10 before:absolute before:bottom-6 before:left-[15px] before:top-3 before:w-px before:bg-hairline before:content-['']">
-      {days.map((day) => (
-        <li key={day.dayNumber} className="reveal relative pl-12">
-          <span
-            aria-hidden
-            className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full border border-hairline bg-surface-container-lowest font-headline-card text-caption text-brand"
-          >
-            {day.dayNumber}
-          </span>
+    <div>
+      {/*
+        The summary is decorative repetition for a screen reader — every day below is
+        the same text — so it is a plain list and the anchor targets stay on the days.
+      */}
+      {days.length > 2 ? (
+        <div className="mb-12 rounded-2xl border border-hairline bg-surface-container-low p-5 md:p-6">
+          <p className="mb-4 font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+            {t('atAGlance')}
+          </p>
+          <ol className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
+            {days.map((day) => (
+              <li key={day.dayNumber} className="flex gap-3">
+                <span className="w-12 shrink-0 font-label-caps text-label-caps uppercase tracking-widest text-brand">
+                  {t('day')} {day.dayNumber}
+                </span>
+                <span className="font-body-md text-body-md text-on-surface">{day.dayTitle}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : null}
 
-          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
-            <div>
-              <p className="mb-1 font-label-caps text-label-caps uppercase tracking-widest text-brand">
-                {t('day')} {day.dayNumber}
-              </p>
-              <h3 className="mb-3 font-headline-card text-headline-card text-primary">
-                {day.dayTitle}
-              </h3>
-              <p className="max-w-2xl font-body-md text-body-md text-on-surface-variant">
-                {day.dayDescription}
-              </p>
+      <ol className="relative space-y-8 before:absolute before:bottom-10 before:left-[19px] before:top-10 before:w-px before:bg-hairline before:content-['']">
+        {days.map((day) => (
+          <li key={day.dayNumber} className="reveal relative pl-14 md:pl-16">
+            <span
+              aria-hidden
+              className="absolute left-0 top-0 flex h-10 w-10 flex-col items-center justify-center rounded-full border border-hairline bg-surface-container-lowest font-headline-card text-body-lg leading-none text-brand shadow-widget"
+            >
+              {day.dayNumber}
+            </span>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                {day.meals.map((meal) => (
-                  <span
-                    key={meal}
-                    className="rounded-full border border-hairline px-2.5 py-1 font-body-md text-caption text-on-surface-variant"
-                  >
-                    {t(`meals.${meal}`)}
-                  </span>
-                ))}
-                {day.accommodation ? (
-                  <span className="rounded-full bg-surface-container px-2.5 py-1 font-body-md text-caption text-on-surface-variant">
-                    {day.accommodation}
-                  </span>
+            <article className="overflow-hidden rounded-2xl border border-hairline bg-surface-container-lowest">
+              <div className="grid gap-0 md:grid-cols-[1fr_auto]">
+                <div className="p-5 md:p-6">
+                  <p className="mb-1 font-label-caps text-label-caps uppercase tracking-widest text-brand">
+                    {t('day')} {day.dayNumber}
+                  </p>
+                  <h3 className="font-headline-card text-headline-card text-primary">
+                    {day.dayTitle}
+                  </h3>
+                  {day.dayDescription ? (
+                    <p className="mt-3 max-w-2xl font-body-md text-body-md text-on-surface-variant">
+                      {day.dayDescription}
+                    </p>
+                  ) : null}
+
+                  {day.meals.length || day.accommodation ? (
+                    <dl className="mt-5 flex flex-wrap items-start gap-x-8 gap-y-4 border-t border-hairline pt-4">
+                      {day.meals.length ? (
+                        <div>
+                          <dt className="mb-1.5 font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+                            {t('mealsLabel')}
+                          </dt>
+                          <dd className="flex flex-wrap gap-2">
+                            {day.meals.map((meal) => (
+                              <span
+                                key={meal}
+                                className="inline-flex items-center gap-1.5 rounded-full bg-brand/8 px-2.5 py-1 font-body-md text-caption text-brand"
+                              >
+                                <svg
+                                  aria-hidden
+                                  viewBox="0 0 16 16"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="1.8"
+                                  className="h-3 w-3"
+                                >
+                                  <path d="m3.5 8.5 3 3 6-7" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                {t(`meals.${meal}`)}
+                              </span>
+                            ))}
+                          </dd>
+                        </div>
+                      ) : null}
+
+                      {day.accommodation ? (
+                        <div>
+                          <dt className="mb-1.5 font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+                            {t('accommodationLabel')}
+                          </dt>
+                          <dd className="font-body-md text-body-md text-on-surface">
+                            {day.accommodation}
+                          </dd>
+                        </div>
+                      ) : null}
+                    </dl>
+                  ) : null}
+                </div>
+
+                {day.image ? (
+                  <div className="relative h-44 w-full md:h-full md:w-56">
+                    <CmsImage
+                      image={day.image}
+                      alt={day.dayTitle}
+                      sizes="(min-width: 768px) 224px, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
                 ) : null}
               </div>
-            </div>
-
-            {day.image ? (
-              <div className="relative h-36 w-full overflow-hidden rounded-xl md:h-28 md:w-44">
-                <CmsImage image={day.image} alt={day.dayTitle} sizes="176px" className="object-cover" />
-              </div>
-            ) : null}
-          </div>
-        </li>
-      ))}
-    </ol>
+            </article>
+          </li>
+        ))}
+      </ol>
+    </div>
   )
 }
 

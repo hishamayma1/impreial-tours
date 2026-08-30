@@ -26,6 +26,7 @@
     "test:twmerge": "node --experimental-strip-types tests/tailwind-merge.test.ts",
     "test:links": "node --experimental-strip-types tests/links.test.ts",
     "demo:offers": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/demo-offers.ts",
+    "services:backfill-locales": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-localized-rows.ts",
     "services:backfill-transfers": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-transfers-service.ts"
   },
   "dependencies": {

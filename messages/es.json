@@ -147,6 +147,8 @@
     "allTours": "Todas las excursiones",
     "allExperiences": "Todas las experiencias",
     "singleSupplementLabel": "Suplemento individual",
+    "mealsLabel": "Comidas incluidas",
+    "accommodationLabel": "Alojamiento",
     "meals": {
       "breakfast": "Desayuno",
       "lunch": "Almuerzo",
