@@ -4,9 +4,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { DetailHero } from '@/components/services/DetailHero'
 import { DetailSection, FactRow } from '@/components/services/DetailSection'
+import { RoomCard } from '@/components/services/RoomCard'
 import { RichText } from '@/components/ui/RichText'
-import { ButtonLink } from '@/components/ui/Button'
-import { Price } from '@/components/ui/Price'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
@@ -114,61 +113,28 @@ const HotelDetailPage = async ({ params }: { params: Promise<PageParams> }) => {
 
       {hotel.roomTypes.length ? (
         <DetailSection title={t('rooms')}>
-          <div className="space-y-6">
-            {hotel.roomTypes.map((room) => (
-              <article
+          {/* Staggered, so a list of rooms arrives in reading order rather than at once. */}
+          <div className="stagger space-y-5">
+            {hotel.roomTypes.map((room, index) => (
+              <RoomCard
                 key={room.id}
-                className="rounded-xl border border-hairline bg-surface-container-lowest p-6"
-              >
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <h3 className="font-headline-card text-headline-card text-primary">
-                    {room.roomName}
-                  </h3>
-                  <span className="font-body-md text-caption text-on-surface-variant">
-                    {room.bedConfiguration}
-                  </span>
-                </div>
-
-                {room.roomDescription ? (
-                  <p className="mt-3 font-body-md text-body-md text-on-surface-variant">
-                    {room.roomDescription}
-                  </p>
-                ) : null}
-
-                {/* Prices are per person per night — the label says so explicitly so a
-                    double rate is never mistaken for the whole room. */}
-                <dl className="mt-5 grid grid-cols-3 gap-4 border-t border-hairline pt-4">
-                  {(
-                    [
-                      ['single', room.pricing.singlePrice],
-                      ['double', room.pricing.doublePrice],
-                      ['triple', room.pricing.triplePrice],
-                    ] as const
-                  ).map(([key, value]) =>
-                    value ? (
-                      <div key={key}>
-                        <dt className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
-                          {t(key)}
-                        </dt>
-                        <dd className="mt-1 font-headline-card text-headline-card text-primary">
-                          <Price amount={value} currencies={settings.currencies} />
-                        </dd>
-                      </div>
-                    ) : null,
-                  )}
-                </dl>
-                <p className="mt-2 font-body-md text-caption text-on-surface-variant">
-                  {t('perPerson')}
-                </p>
-              </article>
+                hotel={hotel}
+                room={room}
+                currencies={settings.currencies}
+                index={index}
+              />
             ))}
           </div>
 
-          <div className="mt-10">
-            <ButtonLink href={`/booking/hotel?item=${hotel.slug}`} variant="navy" size="lg">
-              {t('bookNow')}
-            </ButtonLink>
-          </div>
+          {/*
+            The page-level "Book now" button is gone: each card reserves its own room
+            and occupancy, which is the choice a hotel booking is actually made of. A
+            single button underneath could only send the visitor to a checkout with
+            nothing selected — which is what it did.
+          */}
+          <p className="mt-6 font-body-md text-caption text-on-surface-variant">
+            {t('ratesNote')}
+          </p>
         </DetailSection>
       ) : null}
 

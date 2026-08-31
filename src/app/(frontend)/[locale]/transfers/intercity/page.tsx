@@ -1,10 +1,15 @@
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
-import { PageHeader } from '@/components/layout/PageHeader'
-import { DetailSection, CheckList } from '@/components/services/DetailSection'
+import { TransferBookingForm } from '@/components/transfers/TransferBookingForm'
+import {
+  TransferHero,
+  TransferSection,
+  FleetGrid,
+  PriceCard,
+} from '@/components/transfers/TransferShell'
+import { Container } from '@/components/ui/Container'
 import { PhasePlaceholder } from '@/components/ui/PhasePlaceholder'
-import { Price } from '@/components/ui/Price'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
@@ -29,90 +34,79 @@ export const generateMetadata = async ({
   }
 }
 
+/** Minutes into a readable "3 h 20" without pulling in a formatting library. */
+const duration = (minutes: number | null): string => {
+  if (!minutes) return ''
+  const hours = Math.floor(minutes / 60)
+  const rest = minutes % 60
+  return hours ? `${hours} h${rest ? ` ${rest}` : ''}` : `${rest} min`
+}
+
 const IntercityTransferPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params
   setRequestLocale(locale)
 
-  const [transfer, settings, t, s, parent] = await Promise.all([
+  const [transfer, settings, t, f, parent] = await Promise.all([
     getTransferByType(locale as Locale, 'intercity'),
     getSiteSettings(locale as Locale),
     getTranslations('transfers.intercity'),
-    getTranslations('services'),
+    getTranslations('transfers.form'),
     getTranslations('transfers'),
   ])
 
   return (
-    <>
-      <PageHeader
+    <div className="aurora">
+      <TransferHero
         eyebrow={parent('title')}
         title={transfer?.title || t('title')}
         description={transfer?.description || t('description')}
+        image={transfer?.heroImage ?? null}
+        facts={[{ icon: 'wallet', label: f('fixedPrice') }]}
       />
 
+      {transfer && transfer.routes.length ? (
+        <Container className="relative z-10 -mt-12 md:-mt-16">
+          <div className="mx-auto max-w-4xl">
+            <TransferBookingForm
+              transfer={transfer}
+              variant="intercity"
+              currencies={settings.currencies}
+            />
+          </div>
+        </Container>
+      ) : null}
+
       {transfer?.vehicles.length ? (
-        <DetailSection title={s('vehicles')}>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {transfer.vehicles.map((vehicle) => (
-              <li
-                key={vehicle.className}
-                className="rounded-xl border border-hairline bg-surface-container-lowest p-5"
-              >
-                <h3 className="font-headline-card text-headline-card text-primary">
-                  {vehicle.className}
-                </h3>
-                <p className="mt-2 font-body-md text-caption text-on-surface-variant">
-                  {vehicle.maxPassengers} {s('passengers')} · {vehicle.maxLuggage} {s('luggage')}
-                </p>
-                <CheckList items={vehicle.features} />
-              </li>
-            ))}
-          </ul>
-        </DetailSection>
+        <TransferSection title={f('fleetTitle')}>
+          <FleetGrid vehicles={transfer.vehicles} />
+        </TransferSection>
       ) : null}
 
       {transfer?.routes.length ? (
-        <DetailSection title={s('routes')}>
-          <div className="space-y-6">
-            {transfer.routes.map((route) => (
-              <article
-                key={`${route.fromCity}-${route.toCity}`}
-                className="rounded-xl border border-hairline bg-surface-container-lowest p-6"
-              >
-                <h3 className="font-headline-card text-headline-card text-primary">
-                  {route.fromCity} → {route.toCity}
-                </h3>
-                <p className="mt-2 font-body-md text-caption text-on-surface-variant">
-                  {route.distanceKm ? `${route.distanceKm} km` : ''}
-                  {route.estimatedDurationMin
-                    ? ` · ${Math.round(route.estimatedDurationMin / 60)} h`
-                    : ''}
-                </p>
-                <ul className="mt-4 divide-y divide-hairline border-t border-hairline">
-                  {route.vehiclePricing.map((price) => (
-                    <li
-                      key={price.vehicleClass}
-                      className="flex items-center justify-between gap-4 py-3"
-                    >
-                      <span className="font-body-md text-body-md text-on-surface-variant">
-                        {price.vehicleClass}
-                        {price.maxPassengers ? ` · ${price.maxPassengers} ${s('passengers')}` : ''}
-                      </span>
-                      <Price
-                        amount={price.price}
-                        currencies={settings.currencies}
-                        className="font-headline-card text-headline-card text-primary"
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </article>
+        <TransferSection title={f('routesTitle')} className="border-t border-hairline">
+          <div className="stagger grid gap-5 lg:grid-cols-2">
+            {transfer.routes.map((route, index) => (
+              <PriceCard
+                key={route.id}
+                index={index}
+                title={`${route.fromCity} → ${route.toCity}`}
+                meta={[
+                  route.distanceKm ? `${route.distanceKm} km` : '',
+                  duration(route.estimatedDurationMin),
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+                note={route.note}
+                pricing={route.vehiclePricing}
+                currencies={settings.currencies}
+              />
             ))}
           </div>
-        </DetailSection>
+        </TransferSection>
       ) : null}
 
-      {!transfer ? <PhasePlaceholder note={s('empty')} /> : null}
-    </>
+      {!transfer ? <PhasePlaceholder note={t('description')} /> : null}
+    </div>
   )
 }
 

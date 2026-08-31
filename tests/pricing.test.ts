@@ -1,6 +1,6 @@
 import {
   calculateHotelTotal, calculateDailyTourTotal, calculateExperienceTotal,
-  calculateTransferTotal, calculateBicycleRentalTotal, applyTotals,
+  calculateTransferTotal, calculateExtrasTotal, calculateBicycleRentalTotal, applyTotals,
   nightsBetween, resolveSeasonMultiplier, resolveTierPrice,
 } from '../src/lib/pricing.ts'
 
@@ -86,6 +86,34 @@ const vp = [{ vehicleClass: 'Sedan', maxPassengers: 3, price: 45 },
 eq('transfer one way', calculateTransferTotal({ vehiclePricing: vp, vehicleClass: 'Sedan' }).subtotal, 45)
 eq('transfer round trip', calculateTransferTotal({ vehiclePricing: vp, vehicleClass: 'Sedan', roundTrip: true }).subtotal, 90)
 eq('transfer unknown class -> 0', calculateTransferTotal({ vehiclePricing: vp, vehicleClass: 'Bus' }).subtotal, 0)
+
+/*
+  Zone scoping. Two zones price the same class differently, which is the whole reason
+  the booking route now looks the row up by id: priced against the near zone's list a
+  Sedan is 45, against the far zone's it is 120, and nothing but the caller's choice of
+  list decides which. The route passes exactly one of these, never both concatenated.
+*/
+const nearZone = [{ vehicleClass: 'Sedan', maxPassengers: 3, price: 45 }]
+const farZone = [{ vehicleClass: 'Sedan', maxPassengers: 3, price: 120 }]
+eq('near zone sedan', calculateTransferTotal({ vehiclePricing: nearZone, vehicleClass: 'Sedan' }).subtotal, 45)
+eq('far zone sedan', calculateTransferTotal({ vehiclePricing: farZone, vehicleClass: 'Sedan' }).subtotal, 120)
+eq(
+  'flattening the two would have charged the near price for the far zone',
+  calculateTransferTotal({ vehiclePricing: [...nearZone, ...farZone], vehicleClass: 'Sedan' }).subtotal,
+  45,
+)
+
+// --- transfer extras
+const extras = [
+  { id: 'a', label: 'Child seat', price: 10, perPassenger: false },
+  { id: 'b', label: 'Welcome pack', price: 6, perPassenger: true },
+  { id: 'c', label: 'Not selected', price: 99, perPassenger: false },
+]
+eq('extras: per booking', calculateExtrasTotal({ extras, selectedIds: ['a'], passengers: 4 }).subtotal, 10)
+eq('extras: per passenger', calculateExtrasTotal({ extras, selectedIds: ['b'], passengers: 4 }).subtotal, 24)
+eq('extras: only what was selected', calculateExtrasTotal({ extras, selectedIds: ['a', 'b'], passengers: 2 }).subtotal, 22)
+eq('extras: unknown id contributes nothing', calculateExtrasTotal({ extras, selectedIds: ['zzz'], passengers: 2 }).subtotal, 0)
+eq('extras: the same id twice is charged once', calculateExtrasTotal({ extras, selectedIds: ['a', 'a'], passengers: 1 }).subtotal, 10)
 
 // --- bicycle bands: 5h should pick the half-day (6h/25), not 5x hourly(8)
 const bands = [{ durationLabel: '1 hour', durationHours: 1, price: 8 },

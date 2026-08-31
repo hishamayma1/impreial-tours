@@ -49,7 +49,7 @@ const timeList = (v: unknown): string[] =>
  * `['tours', '"en"']` — whichever ran first served its shape to the other, and the
  * offers carousel received a `{ new, top }` object where it expected an array.
  */
-const cached = <A extends unknown[], T>(
+export const cached = <A extends unknown[], T>(
   tag: string,
   fallback: T,
   loader: (...args: A) => Promise<T>,
@@ -70,13 +70,13 @@ const cached = <A extends unknown[], T>(
     )()
 }
 
-const emptyPage = <T>(): PaginatedVM<T> => ({ items: [], page: 1, totalPages: 0, totalDocs: 0 })
+export const emptyPage = <T>(): PaginatedVM<T> => ({ items: [], page: 1, totalPages: 0, totalDocs: 0 })
 
 // ---------------------------------------------------------------------------
 // Cards
 // ---------------------------------------------------------------------------
 
-const tourCard = (doc: Doc): ServiceCardVM => {
+export const tourCard = (doc: Doc): ServiceCardVM => {
   const isDaily = doc.tourType === 'daily'
 
   const meta: string[] = []
@@ -125,28 +125,6 @@ const tourCard = (doc: Doc): ServiceCardVM => {
   }
 }
 
-const hotelCard = (doc: Doc): ServiceCardVM => {
-  // "From" price is the cheapest per-person rate across every room and occupancy.
-  const prices = (Array.isArray(doc.roomTypes) ? doc.roomTypes : [])
-    .flatMap((room: Doc) => [
-      room?.pricing?.singlePrice,
-      room?.pricing?.doublePrice,
-      room?.pricing?.triplePrice,
-    ])
-    .map(numOrNull)
-    .filter((n): n is number => n !== null && n > 0)
-
-  return {
-    id: String(doc.id),
-    slug: str(doc.slug),
-    title: str(doc.name),
-    summary: str(doc.address),
-    image: toImage(doc.heroImage, 'card'),
-    priceFrom: prices.length ? Math.min(...prices) : null,
-    meta: (Array.isArray(doc.amenities) ? doc.amenities : []).slice(0, 3).map(str),
-    rating: numOrNull(doc.starRating),
-  }
-}
 
 const bicycleCard = (doc: Doc): ServiceCardVM => {
   const bands = Array.isArray(doc.rentalPricing) ? doc.rentalPricing : []
@@ -395,43 +373,6 @@ export const getSpotlightTours = cached(
   'tours:spotlight',
 )
 
-export const getHotels = cached(
-  'hotels',
-  emptyPage<ServiceCardVM>(),
-  async (locale: Locale, filters: ListingFilters = {}): Promise<PaginatedVM<ServiceCardVM>> => {
-    const payload = await getPayloadClient()
-    const where: Where = { _status: { equals: 'published' } }
-    // Matched on the destination's slug, not its id: the filter travels in the URL
-    // (`?destination=cairo`), and a shareable, crawlable link should not carry a raw
-    // ObjectId. Payload resolves the dotted path across the relationship.
-    if (filters.destination) where['destination.slug'] = { equals: filters.destination }
-    if (filters.starRating) where.starRating = { greater_than_equal: filters.starRating }
-    if (filters.amenities?.length) where.amenities = { in: filters.amenities }
-
-    const result = await payload.find({
-      collection: 'hotels',
-      locale,
-      fallbackLocale: 'en',
-      where,
-      depth: 1,
-      limit: PAGE_SIZE,
-      page: filters.page ?? 1,
-      sort: filters.sortBy === 'ratingDesc' ? '-starRating' : '-createdAt',
-      overrideAccess: true,
-      select: {
-        slug: true, name: true, address: true, heroImage: true,
-        starRating: true, amenities: true, roomTypes: true,
-      },
-    })
-
-    return {
-      items: result.docs.map((doc) => hotelCard(doc as Doc)),
-      page: result.page ?? 1,
-      totalPages: result.totalPages,
-      totalDocs: result.totalDocs,
-    }
-  },
-)
 
 export const getBicycles = cached(
   'bicycles',
@@ -495,9 +436,26 @@ const findOneBySlug = async (
   return (result.docs[0] as Doc) ?? null
 }
 
+/**
+ * A gallery row, resolved at two sizes.
+ *
+ * `image` is the 768px `card` crop the thumbnail grid needs. `full` is the 2400px
+ * `hero` variant, which the lightbox needs and the card crop cannot stand in for:
+ * `card` is not merely smaller, it is cropped to 4:3, so enlarging it on a 2560px
+ * display would show both a soft image and a different one from the photograph the
+ * editor uploaded. `hero` is width-constrained only, so it keeps the original
+ * proportions.
+ *
+ * Both fall back to the original upload inside `toImage` when a variant was never
+ * generated, so an older Media document still opens.
+ */
 const galleryOf = (v: unknown) =>
   Array.isArray(v)
-    ? v.map((row: Doc) => ({ image: toImage(row?.image, 'card'), caption: str(row?.caption) }))
+    ? v.map((row: Doc) => ({
+        image: toImage(row?.image, 'card'),
+        full: toImage(row?.image, 'hero'),
+        caption: str(row?.caption),
+      }))
     : []
 
 export const getTourBySlug = cached(
@@ -666,8 +624,36 @@ export const getTransferByType = cached(
             features: textList(v?.features),
           }))
         : [],
+      airports: Array.isArray(doc.airports)
+        ? doc.airports
+            .filter((a: unknown) => a && typeof a === 'object')
+            .map((a: Doc) => ({
+              id: String(a.id),
+              name: str(a.name),
+              code: str(a.code),
+              city: str(a.city),
+              terminals: Array.isArray(a.terminals)
+                ? a.terminals.map((t: Doc) => str(t?.name)).filter(Boolean)
+                : [],
+            }))
+        : [],
+      extras: Array.isArray(doc.extras)
+        ? doc.extras.map((e: Doc) => ({
+            id: String(e?.id ?? ''),
+            label: str(e?.label),
+            description: str(e?.description),
+            price: numOrNull(e?.price) ?? 0,
+            perPassenger: bool(e?.perPassenger),
+          }))
+        : [],
+      /**
+       * Row ids travel with the zone and the route because they are what the booking
+       * route prices from. Matching on the vehicle-class *name* alone let a request
+       * name the cheapest zone's Sedan while asking to be driven to the dearest one.
+       */
       zones: Array.isArray(doc.zones)
         ? doc.zones.map((z: Doc) => ({
+            id: String(z?.id ?? ''),
             zoneName: str(z?.zoneName),
             areas: textList(z?.hotelsOrAreas),
             vehiclePricing: vehiclePrices(z?.vehiclePricing),
@@ -675,16 +661,29 @@ export const getTransferByType = cached(
         : [],
       routes: Array.isArray(doc.routes)
         ? doc.routes.map((r: Doc) => ({
+            id: String(r?.id ?? ''),
             fromCity: str(r?.fromCity),
             toCity: str(r?.toCity),
             distanceKm: numOrNull(r?.distanceKm),
             estimatedDurationMin: numOrNull(r?.estimatedDurationMin),
             oneWayOnly: bool(r?.oneWayOnly),
+            note: str(r?.note),
             vehiclePricing: vehiclePrices(r?.vehiclePricing),
           }))
         : [],
     } satisfies TransferDetailVM
   },
+  /**
+   * Versioned cache key, bumped when this view model gained `airports`, `extras` and
+   * the zone/route row ids.
+   *
+   * `unstable_cache` entries survive a deploy and live for an hour, and they store the
+   * *shape* that was cached, not the shape the code now expects. Without a new key the
+   * first hour after release serves pre-upgrade objects with no `airports` array to
+   * components that index into one — which is not a stale price, it is a 500 on a
+   * booking page. Bump this again the next time the shape changes.
+   */
+  'transfers:v2',
 )
 
 export const getBicycleBySlug = cached(

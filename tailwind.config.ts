@@ -147,6 +147,11 @@ const config: Config = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(400%)' },
         },
+        /* The nav mega panel dropping in. Transform and opacity only. */
+        'nav-panel-in': {
+          from: { opacity: '0', transform: 'translateY(-6px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
         /* Typewriter caret. Opacity only, so it never triggers layout or paint cost. */
         'caret-blink': {
           '0%, 49%': { opacity: '1' },

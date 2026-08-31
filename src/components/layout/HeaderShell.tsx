@@ -32,6 +32,7 @@ import { cn } from '@/lib/utils'
 export const HeaderShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
   const mobileNavOpen = useUIStore((state) => state.mobileNavOpen)
+  const navPanelOpen = useUIStore((state) => state.navPanelOpen)
   const ref = useRef<HTMLElement>(null)
 
   /**
@@ -70,8 +71,10 @@ export const HeaderShell = ({ children }: { children: React.ReactNode }) => {
       setScrolled(zone ? trigger <= 0 : y > trigger)
 
       // Below the fold only, and never far enough up to strand a mid-scroll reader.
+      // An open menu pins the bar for the same reason the mobile sheet does: sliding
+      // it away would take the open panel — and its close button — with it.
       const goingDown = y > last && y > 240
-      setHidden(goingDown && !mobileNavOpen)
+      setHidden(goingDown && !mobileNavOpen && !navPanelOpen)
       last = y
 
       const scrollable = document.documentElement.scrollHeight - window.innerHeight
@@ -94,15 +97,22 @@ export const HeaderShell = ({ children }: { children: React.ReactNode }) => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
     }
-  }, [pathname, mobileNavOpen])
+  }, [pathname, mobileNavOpen, navPanelOpen])
 
-  const solid = !overlay || scrolled
+  /**
+   * An open mega panel forces the solid state.
+   *
+   * The panel is an opaque white band hanging directly off the bar. Over a hero the
+   * bar is transparent, so leaving it that way puts a hard white edge under floating
+   * white nav labels and the two stop reading as one piece of chrome.
+   */
+  const solid = !overlay || scrolled || navPanelOpen
 
   return (
     <header
       ref={ref}
       data-state={solid ? 'solid' : 'overlay'}
-      data-hidden={hidden && !mobileNavOpen ? '' : undefined}
+      data-hidden={hidden && !mobileNavOpen && !navPanelOpen ? '' : undefined}
       className={cn(
         'group/header sticky top-0 z-50 w-full',
         'transition-[transform,background-color,box-shadow,border-color] duration-300 ease-out',

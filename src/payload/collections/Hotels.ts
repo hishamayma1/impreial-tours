@@ -49,6 +49,44 @@ export const Hotels: CollectionConfig = {
       max: 5,
       admin: { position: 'sidebar', step: 1 },
     },
+    /**
+     * The cheapest per-person rate across every room and occupancy, denormalised.
+     *
+     * A hotel has no single price — it has a room list, each room with up to three
+     * occupancy rates — so there was nothing for the database to filter or sort on.
+     * The listing offered a price range and two price sorts anyway, and `getHotels`
+     * quietly ignored all three: the control moved, the URL changed, the results did
+     * not. This field is what makes them mean something.
+     *
+     * Written on save and indexed, mirroring `tours.priceFrom`. Read-only in the
+     * admin because it is derived, never authored.
+     */
+    {
+      name: 'priceFrom',
+      type: 'number',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Cheapest room rate, derived on save. Sorts and filters the hotels listing.',
+      },
+      hooks: {
+        beforeChange: [
+          ({ data }) => {
+            const rooms = (data?.roomTypes ?? []) as Array<Record<string, any>>
+            const rates = rooms
+              .flatMap((room) => [
+                room?.pricing?.singlePrice,
+                room?.pricing?.doublePrice,
+                room?.pricing?.triplePrice,
+              ])
+              .filter((rate): rate is number => typeof rate === 'number' && Number.isFinite(rate) && rate > 0)
+
+            return rates.length ? Math.min(...rates) : null
+          },
+        ],
+      },
+    },
     { name: 'heroImage', type: 'upload', relationTo: 'media', required: true },
     {
       name: 'gallery',

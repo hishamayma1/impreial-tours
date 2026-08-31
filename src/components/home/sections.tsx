@@ -88,7 +88,7 @@ export const ServicesSection = async ({ locale }: Props) => {
       services={services}
       exploreLabel={t('services.explore')}
       cta={{
-        primary: { label: t('cta.browseTours'), href: '/tours/daily' },
+        primary: { label: t('cta.browseTours'), href: '/tours' },
         secondary: { label: t('cta.planWithUs'), href: PLAN_ANCHOR },
       }}
     />
@@ -164,7 +164,7 @@ export const TopToursSection = async ({ locale }: Props) => {
         tablist: t('topTours.tablist'),
       }}
       cta={{
-        primary: { label: t('cta.browseTours'), href: '/tours/daily' },
+        primary: { label: t('cta.browseTours'), href: '/tours' },
         secondary: { label: t('cta.planWithUs'), href: PLAN_ANCHOR },
       }}
     />

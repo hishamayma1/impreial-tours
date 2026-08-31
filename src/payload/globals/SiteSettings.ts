@@ -73,19 +73,44 @@ export const SiteSettings: GlobalConfig = {
       name: 'currencies',
       type: 'array',
       labels: { singular: 'Currency', plural: 'Currencies' },
-      admin: { description: 'Offered in the header currency switcher. The first row is the default.' },
+      /**
+       * Capped at the two currencies this operator actually trades in.
+       *
+       * `code` was free text, so the switcher offered whatever had been typed into it
+       * — and a code that is not a real ISO 4217 currency silently breaks
+       * `Intl.NumberFormat`, which is what formats every price on the site. A select
+       * of the two supported codes makes the offer deliberate rather than incidental,
+       * and `maxRows` stops a third being added by accident.
+       */
+      maxRows: 2,
+      admin: {
+        description:
+          'Offered in the header currency switcher. The first row is the default and should be USD, which is the currency every price is authored in.',
+      },
       fields: [
         {
           type: 'row',
           fields: [
-            { name: 'code', type: 'text', required: true, admin: { width: '33%' } },
+            {
+              name: 'code',
+              type: 'select',
+              required: true,
+              admin: { width: '33%' },
+              options: [
+                { label: 'US Dollar (USD)', value: 'USD' },
+                { label: 'Egyptian Pound (EGP)', value: 'EGP' },
+              ],
+            },
             { name: 'symbol', type: 'text', required: true, admin: { width: '33%' } },
             {
               name: 'rate',
               type: 'number',
               required: true,
               defaultValue: 1,
-              admin: { width: '34%', description: 'Multiplier applied to base (USD) prices.' },
+              admin: {
+                width: '34%',
+                description: 'Multiplier applied to base (USD) prices. USD is the base, so its rate is 1.',
+              },
             },
           ],
         },

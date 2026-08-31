@@ -289,6 +289,42 @@ export const Bookings: CollectionConfig = {
             { name: 'vehicleClass', type: 'text' },
             { name: 'pickupTime', type: 'text' },
             { name: 'roundTrip', type: 'checkbox', defaultValue: false },
+            /**
+             * Dispatch detail, added when transfers became bookable from their own
+             * page.
+             *
+             * Payload drops fields it has no definition for, so without these the
+             * route's carefully recomputed passenger count, luggage and chosen zone
+             * were written and silently discarded — the booking priced correctly but
+             * told whoever had to send a car nothing about how big it needed to be.
+             */
+            {
+              type: 'row',
+              fields: [
+                { name: 'passengers', type: 'number', min: 0, admin: { width: '50%' } },
+                { name: 'luggage', type: 'number', min: 0, admin: { width: '50%' } },
+              ],
+            },
+            { name: 'terminal', type: 'text' },
+            /**
+             * The zone or route the price came from, resolved server-side from the CMS
+             * rather than echoed back from the request — so a dispute can be settled by
+             * reading the booking instead of guessing which band was applied.
+             */
+            {
+              type: 'row',
+              fields: [
+                { name: 'zoneName', type: 'text', admin: { width: '50%', readOnly: true } },
+                { name: 'routeLabel', type: 'text', admin: { width: '50%', readOnly: true } },
+              ],
+            },
+            /*
+              The chosen add-ons are deliberately not stored here. They already appear
+              in the price lines by name and amount ("Child seat — 8"), which is the
+              form an operator can actually read and a customer can be shown; a second
+              copy as raw row ids would be noise that can only drift out of step with
+              the figures beside it.
+            */
           ],
         },
         {

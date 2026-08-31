@@ -6,11 +6,8 @@ import { TourHero } from '@/components/tour/TourHero'
 import { SectionNav } from '@/components/tour/SectionNav'
 import { BookingPanel } from '@/components/tour/BookingPanel'
 import { TourSection } from '@/components/tour/TourSection'
-import {
-  HighlightList,
-  InclusionColumns,
-  GalleryGrid,
-} from '@/components/tour/TourContentBlocks'
+import { HighlightList, InclusionColumns } from '@/components/tour/TourContentBlocks'
+import { TourGallery } from '@/components/tour/TourGallery'
 import { RichText } from '@/components/ui/RichText'
 import { Container } from '@/components/ui/Container'
 import { locales, type Locale } from '@/i18n/routing'
@@ -81,12 +78,15 @@ const DailyTourDetailPage = async ({ params }: { params: Promise<PageParams> }) 
 
   // Only sections that actually have content get an anchor — a nav pointing at an
   // empty section is worse than a shorter nav.
+  // The gallery leads, ahead of the overview: a reader deciding on a day out looks at
+  // the place before reading about it, and the nav order has to match the page order
+  // or the anchors run backwards.
   const sections = [
+    tour.gallery.length ? { id: 'gallery', label: t('gallery') } : null,
     tour.overview ? { id: 'overview', label: t('overview') } : null,
     tour.highlights.length ? { id: 'highlights', label: t('highlights') } : null,
     tour.included.length || tour.notIncluded.length ? { id: 'included', label: t('included') } : null,
     tour.meetingPoint ? { id: 'meeting-point', label: t('meetingPoint') } : null,
-    tour.gallery.length ? { id: 'gallery', label: t('gallery') } : null,
   ].filter((section): section is NonNullable<typeof section> => Boolean(section))
 
   const panel = (
@@ -129,8 +129,23 @@ const DailyTourDetailPage = async ({ params }: { params: Promise<PageParams> }) 
           <div className="lg:order-2 lg:col-span-4">{panel}</div>
 
           <div className="lg:order-1 lg:col-span-8">
+            {/*
+              The gallery opens the column. It carries no top border and no heading
+              rule above it because it is the first thing under the hero — the
+              photographs continue the hero rather than starting a new section.
+            */}
+            {tour.gallery.length ? (
+              <TourSection id="gallery" title={t('gallery')}>
+                <TourGallery images={tour.gallery} title={tour.title} />
+              </TourSection>
+            ) : null}
+
             {tour.overview ? (
-              <TourSection id="overview" title={t('overview')}>
+              <TourSection
+                id="overview"
+                title={t('overview')}
+                className={tour.gallery.length ? 'border-t border-hairline' : undefined}
+              >
                 <RichText data={tour.overview} />
               </TourSection>
             ) : null}
@@ -152,12 +167,6 @@ const DailyTourDetailPage = async ({ params }: { params: Promise<PageParams> }) 
                 <p className="max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
                   {tour.meetingPoint}
                 </p>
-              </TourSection>
-            ) : null}
-
-            {tour.gallery.length ? (
-              <TourSection id="gallery" title={t('gallery')} className="border-t border-hairline">
-                <GalleryGrid images={tour.gallery} title={tour.title} />
               </TourSection>
             ) : null}
           </div>

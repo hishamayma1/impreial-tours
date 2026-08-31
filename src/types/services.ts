@@ -50,11 +50,37 @@ export type SpotlightTourVM = ServiceCardVM & {
   spotlight: 'new' | 'top'
 }
 
+/**
+ * A tour shaped for the combined `/tours` catalogue, which mixes daily tours and
+ * multi-day experiences in one result set.
+ *
+ * It carries `href` and `tourType` for the same reason `SpotlightTourVM` does: the
+ * grid cannot derive `/tours/daily` from a single `basePath` when the row beside it
+ * is an experience. `tourType` is separate from the href so the card can label the
+ * kind of journey without parsing a URL back apart.
+ */
+export type CatalogTourVM = ServiceCardVM & {
+  href: string
+  tourType: 'daily' | 'experience'
+}
+
 export type PaginatedVM<T> = {
   items: T[]
   page: number
   totalPages: number
   totalDocs: number
+}
+
+/**
+ * One gallery entry, carried at two sizes.
+ *
+ * The grid renders the cropped card variant and the lightbox renders the full one —
+ * see `galleryOf` in services.ts for why the thumbnail cannot simply be scaled up.
+ */
+export type GalleryItemVM = {
+  image: ImageVM | null
+  full: ImageVM | null
+  caption: string
 }
 
 export type TourDetailVM = {
@@ -65,7 +91,7 @@ export type TourDetailVM = {
   shortDescription: string
   overview: unknown
   heroImage: ImageVM | null
-  gallery: Array<{ image: ImageVM | null; caption: string }>
+  gallery: GalleryItemVM[]
   highlights: string[]
   included: string[]
   notIncluded: string[]
@@ -103,7 +129,7 @@ export type HotelDetailVM = {
   name: string
   description: unknown
   heroImage: ImageVM | null
-  gallery: Array<{ image: ImageVM | null; caption: string }>
+  gallery: GalleryItemVM[]
   starRating: number | null
   address: string
   amenities: string[]
@@ -142,6 +168,16 @@ export type VehiclePriceVM = {
   price: number
 }
 
+/** One paid add-on on a transfer booking. */
+export type TransferExtraVM = {
+  id: string
+  label: string
+  description: string
+  price: number
+  /** Multiply by the passenger count rather than charging once per booking. */
+  perPassenger: boolean
+}
+
 export type TransferDetailVM = {
   id: string
   slug: string
@@ -158,13 +194,36 @@ export type TransferDetailVM = {
     maxLuggage: number | null
     features: string[]
   }>
-  zones: Array<{ zoneName: string; areas: string[]; vehiclePricing: VehiclePriceVM[] }>
+  /** Airports this transfer serves, resolved from the Airports collection. */
+  airports: Array<{
+    id: string
+    name: string
+    code: string
+    city: string
+    terminals: string[]
+  }>
+  /** Editor-controlled paid add-ons, offered as checkboxes at booking time. */
+  extras: TransferExtraVM[]
+  /**
+   * `id` is the array row's own id, and it is load-bearing rather than incidental:
+   * the booking route prices from the zone or route the customer actually chose, and
+   * without an identity to send it could only match on the vehicle-class name — which
+   * is the same string in every zone.
+   */
+  zones: Array<{
+    id: string
+    zoneName: string
+    areas: string[]
+    vehiclePricing: VehiclePriceVM[]
+  }>
   routes: Array<{
+    id: string
     fromCity: string
     toCity: string
     distanceKm: number | null
     estimatedDurationMin: number | null
     oneWayOnly: boolean
+    note: string
     vehiclePricing: VehiclePriceVM[]
   }>
 }

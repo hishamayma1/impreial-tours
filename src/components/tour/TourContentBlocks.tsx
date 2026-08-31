@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { CmsImage } from '@/components/ui/CmsImage'
 import { Price } from '@/components/ui/Price'
-import type { ImageVM, CurrencyVM } from '@/types/content'
+import type { CurrencyVM } from '@/types/content'
 import type { TourDetailVM } from '@/types/services'
 
 /** Highlights as numbered cards — a scannable promise of what the day contains. */
@@ -213,47 +213,6 @@ export const ItineraryTimeline = async ({
         ))}
       </ol>
     </div>
-  )
-}
-
-/**
- * Gallery grid. The first image spans two columns on desktop, which gives the set a
- * focal point instead of a uniform contact sheet.
- */
-export const GalleryGrid = ({
-  images,
-  title,
-}: {
-  images: Array<{ image: ImageVM | null; caption: string }>
-  title: string
-}) => {
-  if (!images.length) return null
-
-  return (
-    <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
-      {images.slice(0, 8).map((entry, index) => (
-        <li
-          key={entry.image?.url ?? index}
-          className={index === 0 ? 'col-span-2 row-span-2' : undefined}
-        >
-          <figure className="relative h-full overflow-hidden rounded-xl bg-surface-container">
-            <div className={index === 0 ? 'aspect-square' : 'aspect-[4/3]'}>
-              <CmsImage
-                image={entry.image}
-                alt={entry.caption || title}
-                sizes={index === 0 ? '(min-width: 768px) 50vw, 100vw' : '(min-width: 768px) 25vw, 50vw'}
-                className="object-cover transition-transform duration-500 hover:scale-105"
-              />
-            </div>
-            {entry.caption ? (
-              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 font-body-md text-caption text-white">
-                {entry.caption}
-              </figcaption>
-            ) : null}
-          </figure>
-        </li>
-      ))}
-    </ul>
   )
 }
 

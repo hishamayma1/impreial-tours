@@ -31,6 +31,7 @@ export const Footer = async ({ locale }: { locale: Locale }) => {
           {
             title: nav('tours'),
             links: [
+              { label: nav('allTours'), href: '/tours' },
               { label: nav('dailyTours'), href: '/tours/daily' },
               { label: nav('fullExperiences'), href: '/tours/experiences' },
               { label: nav('hotels'), href: '/hotels' },

@@ -79,11 +79,15 @@ const LEGACY_PATHS: Record<string, string> = {
   '/tours/cycling': '/bicycles',
   '/tours/bicycles': '/bicycles',
   '/offers': '/tours/experiences',
-  // Hub paths that were never routes: `/tours` and `/destinations` are nav labels,
-  // and destinations are a filter over the tours listing rather than pages of
-  // their own, so both resolve to the day-tours listing.
-  '/tours': '/tours/daily',
-  '/destinations': '/tours/daily',
+  /**
+   * `/tours` is a real route now — the combined catalogue — so it is no longer
+   * remapped and simply passes through.
+   *
+   * `/destinations` still is: destinations are a filter over that catalogue rather
+   * than pages of their own, and the catalogue is where the destination filter lives,
+   * so it is a better landing place than the day-tours listing it used to point at.
+   */
+  '/destinations': '/tours',
   /**
    * The checkout route is `/booking/[type]`; bare `/booking` has no page, and the
    * Header global's "Book Now" CTA pointed at it — so the primary call to action

@@ -43,21 +43,21 @@ const CustomTripPage = async ({ params }: { params: Promise<{ locale: string }> 
   const enabled = settings.enableCustomQuote !== false
 
   return (
-    <>
+    <div className="aurora">
       <PageHeader eyebrow={parent('title')} title={t('title')} description={t('description')} />
 
       <Container size="narrow" className="py-14 md:py-20">
         {enabled ? (
           <CustomQuoteForm />
         ) : (
-          <div className="rounded-xl border border-dashed border-hairline p-10 text-center">
+          <div className="glass-panel rounded-2xl border-dashed p-10 text-center">
             <p className="font-body-md text-body-md text-on-surface-variant">
               {quote('disabled')}
             </p>
           </div>
         )}
       </Container>
-    </>
+    </div>
   )
 }
 

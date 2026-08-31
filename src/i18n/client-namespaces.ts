@@ -18,10 +18,13 @@ export const CLIENT_NAMESPACES = [
   'offers', // OffersCarousel
   'testimonials', // Testimonials
   'services', // ListingFilters
-  'filters', // ListingFilters
+  'filters', // ListingFilters + CatalogSidebar
+  'catalog', // CatalogSidebar + CatalogSort
   'booking', // BookingWizard + steps
   'forms', // form validation copy
   'quote', // CustomQuoteForm
+  'transfers', // TransferBookingForm
+  'hotels', // HotelFilters + HotelSort
   'plan', // PlanJourneyForm
 ] as const
 

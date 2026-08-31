@@ -278,10 +278,11 @@ const seedGlobals = async (payload: Payload, media: MediaIds) => {
     data: {
       brandName: 'IMPERIAL TOURS',
       logo: media.logo,
+      // USD first: it is the base every price is authored in, and row one is the
+      // default the switcher opens on. EGP's rate is a starting point for the
+      // operator to keep current.
       currencies: [
         { code: 'USD', symbol: '$', rate: 1 },
-        { code: 'EUR', symbol: '\u20AC', rate: 0.92 },
-        { code: 'GBP', symbol: '\u00A3', rate: 0.79 },
         { code: 'EGP', symbol: 'E\u00A3', rate: 48.5 },
       ],
     },

@@ -46,6 +46,27 @@ export const transferDetailsSchema = z.object({
   vehicleClass: z.string().trim().max(80).optional().default(''),
   pickupTime: z.string().trim().max(10).optional().default(''),
   roundTrip: z.boolean().optional().default(false),
+
+  /**
+   * Which priced row the customer chose — an airport zone or an intercity route.
+   *
+   * This is the field that makes the quote verifiable. Prices live per zone and per
+   * route but the *vehicle class* is the same word in every one of them, so a server
+   * that matched on the class name alone would happily charge the cheapest "Sedan" in
+   * the document for a ride to the dearest zone. Naming the row turns the request into
+   * something the server can price exactly one way.
+   *
+   * Optional only because the field is new and the booking wizard's older transfer
+   * path does not send it; the route refuses to price a transfer without one.
+   */
+  zoneId: z.string().trim().max(64).optional().default(''),
+  routeId: z.string().trim().max(64).optional().default(''),
+  airportId: z.string().trim().max(64).optional().default(''),
+  terminal: z.string().trim().max(80).optional().default(''),
+  passengers: z.number().int().min(1).max(60).optional().default(1),
+  luggage: z.number().int().min(0).max(60).optional().default(0),
+  /** Row ids of the chosen add-ons. Prices are read from the CMS, never from here. */
+  extraIds: z.array(z.string().trim().max(64)).max(20).optional().default([]),
 })
 
 export const bicycleSelectionSchema = z.object({
@@ -70,6 +91,14 @@ export const createBookingSchema = z
     transferDetails: transferDetailsSchema.nullable().optional(),
     bicycleSelection: bicycleSelectionSchema.nullable().optional(),
     contact: contactSchema,
+    /**
+     * Honeypot. A human never sees this input, so any value at all is a bot.
+     *
+     * Optional with an empty default so the existing booking wizard, which does not
+     * render one, keeps validating unchanged — this is a new defence on a shared
+     * endpoint, not a new requirement placed on every caller.
+     */
+    company: z.string().max(200).optional().default(''),
   })
   .refine((data) => data.serviceType !== 'hotel' || data.hotelSelection.length > 0, {
     message: 'A hotel booking needs at least one room',

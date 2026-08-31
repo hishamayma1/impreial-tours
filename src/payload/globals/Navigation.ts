@@ -34,6 +34,7 @@ const linkFields = [
       condition: (_: unknown, sibling: Record<string, unknown>) => sibling?.linkType === 'collection',
     },
     options: [
+      { label: 'All tours', value: '/tours' },
       { label: 'Daily tours', value: '/tours/daily' },
       { label: 'Full experiences', value: '/tours/experiences' },
       { label: 'Hotels', value: '/hotels' },

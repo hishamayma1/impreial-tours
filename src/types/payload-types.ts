@@ -70,6 +70,7 @@ export interface Config {
     tours: Tour;
     hotels: Hotel;
     transfers: Transfer;
+    airports: Airport;
     bicycles: Bicycle;
     bookings: Booking;
     'quote-requests': QuoteRequest;
@@ -92,6 +93,7 @@ export interface Config {
     tours: ToursSelect<false> | ToursSelect<true>;
     hotels: HotelsSelect<false> | HotelsSelect<true>;
     transfers: TransfersSelect<false> | TransfersSelect<true>;
+    airports: AirportsSelect<false> | AirportsSelect<true>;
     bicycles: BicyclesSelect<false> | BicyclesSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
     'quote-requests': QuoteRequestsSelect<false> | QuoteRequestsSelect<true>;
@@ -224,6 +226,10 @@ export interface Tour {
   difficulty?: ('easy' | 'moderate' | 'hard') | null;
   groupSizeMax?: number | null;
   rating?: number | null;
+  /**
+   * Derived from the pricing fields on save. Sorts and filters the /tours catalogue.
+   */
+  priceFrom?: number | null;
   badge?: ('none' | 'bestseller' | 'new') | null;
   /**
    * Feature this tour in the offers carousel on the home page.
@@ -414,6 +420,10 @@ export interface Hotel {
   slug?: string | null;
   destination?: (string | null) | Destination;
   starRating?: number | null;
+  /**
+   * Cheapest room rate, derived on save. Sorts and filters the hotels listing.
+   */
+  priceFrom?: number | null;
   heroImage: string | Media;
   gallery?:
     | {
@@ -561,6 +571,28 @@ export interface Transfer {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional add-ons shown as checkboxes on the booking form.
+   */
+  extras?:
+    | {
+        label: string;
+        description?: string | null;
+        price: number;
+        /**
+         * Multiply the price by the number of passengers.
+         */
+        perPassenger?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The airports this transfer serves. These populate the "From" select on the booking form; add them under Services → Airports.
+   */
+  airports?: (string | Airport)[] | null;
+  /**
+   * Legacy free-text airport name. Prefer the Airports relationship above.
+   */
   airport?: string | null;
   direction?: ('arrival' | 'departure' | 'roundTrip') | null;
   /**
@@ -569,6 +601,9 @@ export interface Transfer {
   zones?:
     | {
         zoneName: string;
+        /**
+         * Hotels, districts or landmarks priced at this zone. Shown to the customer as the "To" options.
+         */
         hotelsOrAreas?:
           | {
               text: string;
@@ -596,6 +631,10 @@ export interface Transfer {
         distanceKm?: number | null;
         estimatedDurationMin?: number | null;
         oneWayOnly?: boolean | null;
+        /**
+         * Shown under the route on the booking form — a scenic stop, a border formality, anything a traveller should know before choosing it.
+         */
+        note?: string | null;
         vehiclePricing?:
           | {
               vehicleClass: string;
@@ -612,6 +651,38 @@ export interface Transfer {
    * Custom trips carry no pricing — submissions land in Quote Requests for manual quoting. The form itself is switched on by SiteSettings.enableCustomQuote.
    */
   customNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Airports offered as the pick-up or drop-off point of an airport transfer.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "airports".
+ */
+export interface Airport {
+  id: string;
+  name: string;
+  /**
+   * IATA code, e.g. CAI. Shown beside the name so two airports serving the same city stay distinguishable.
+   */
+  code: string;
+  /**
+   * Leave blank to generate it from the title.
+   */
+  slug?: string | null;
+  city?: string | null;
+  /**
+   * Optional. Listed on the booking form so a traveller can say which terminal to meet at.
+   */
+  terminals?:
+    | {
+        name: string;
+        id?: string | null;
+      }[]
+    | null;
+  order?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -788,6 +859,11 @@ export interface Booking {
       vehicleClass?: string | null;
       pickupTime?: string | null;
       roundTrip?: boolean | null;
+      passengers?: number | null;
+      luggage?: number | null;
+      terminal?: string | null;
+      zoneName?: string | null;
+      routeLabel?: string | null;
     };
     bicycle?: {
       pickupTime?: string | null;
@@ -1189,6 +1265,10 @@ export interface PayloadLockedDocument {
         value: string | Transfer;
       } | null)
     | ({
+        relationTo: 'airports';
+        value: string | Airport;
+      } | null)
+    | ({
         relationTo: 'bicycles';
         value: string | Bicycle;
       } | null)
@@ -1320,6 +1400,7 @@ export interface ToursSelect<T extends boolean = true> {
   difficulty?: T;
   groupSizeMax?: T;
   rating?: T;
+  priceFrom?: T;
   badge?: T;
   offer?:
     | T
@@ -1390,6 +1471,7 @@ export interface HotelsSelect<T extends boolean = true> {
   slug?: T;
   destination?: T;
   starRating?: T;
+  priceFrom?: T;
   heroImage?: T;
   gallery?:
     | T
@@ -1469,6 +1551,16 @@ export interface TransfersSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  extras?:
+    | T
+    | {
+        label?: T;
+        description?: T;
+        price?: T;
+        perPassenger?: T;
+        id?: T;
+      };
+  airports?: T;
   airport?: T;
   direction?: T;
   zones?:
@@ -1502,6 +1594,7 @@ export interface TransfersSelect<T extends boolean = true> {
         distanceKm?: T;
         estimatedDurationMin?: T;
         oneWayOnly?: T;
+        note?: T;
         vehiclePricing?:
           | T
           | {
@@ -1514,6 +1607,26 @@ export interface TransfersSelect<T extends boolean = true> {
         id?: T;
       };
   customNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "airports_select".
+ */
+export interface AirportsSelect<T extends boolean = true> {
+  name?: T;
+  code?: T;
+  slug?: T;
+  city?: T;
+  terminals?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1670,6 +1783,11 @@ export interface BookingsSelect<T extends boolean = true> {
               vehicleClass?: T;
               pickupTime?: T;
               roundTrip?: T;
+              passengers?: T;
+              luggage?: T;
+              terminal?: T;
+              zoneName?: T;
+              routeLabel?: T;
             };
         bicycle?:
           | T
@@ -2170,6 +2288,7 @@ export interface Navigation {
         page?: (string | null) | Page;
         collectionPath?:
           | (
+              | '/tours'
               | '/tours/daily'
               | '/tours/experiences'
               | '/hotels'
@@ -2195,6 +2314,7 @@ export interface Navigation {
               page?: (string | null) | Page;
               collectionPath?:
                 | (
+                    | '/tours'
                     | '/tours/daily'
                     | '/tours/experiences'
                     | '/hotels'
@@ -2225,6 +2345,7 @@ export interface Navigation {
     page?: (string | null) | Page;
     collectionPath?:
       | (
+          | '/tours'
           | '/tours/daily'
           | '/tours/experiences'
           | '/hotels'
@@ -2314,14 +2435,14 @@ export interface SiteSetting {
     ogImage?: (string | null) | Media;
   };
   /**
-   * Offered in the header currency switcher. The first row is the default.
+   * Offered in the header currency switcher. The first row is the default and should be USD, which is the currency every price is authored in.
    */
   currencies?:
     | {
-        code: string;
+        code: 'USD' | 'EGP';
         symbol: string;
         /**
-         * Multiplier applied to base (USD) prices.
+         * Multiplier applied to base (USD) prices. USD is the base, so its rate is 1.
          */
         rate: number;
         id?: string | null;

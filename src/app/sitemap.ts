@@ -15,13 +15,19 @@ import { getLocalizedSlugs } from '@/lib/payload/services'
  */
 
 /**
- * `/about` and `/contact` are deliberately absent: both still render a placeholder
- * and carry `robots: { index: false }`. A sitemap that advertises a noindexed URL
- * asks a crawler to fetch a page it has been told to discard. Add them back in the
- * same commit that gives them real content.
+ * `/about` and `/contact` are listed again: both now carry real content and have had
+ * their `robots: { index: false }` removed, which is exactly the condition the note
+ * that used to sit here asked for. A sitemap must never advertise a noindexed URL —
+ * it asks a crawler to fetch a page it has been told to discard — so if either ever
+ * goes back to a placeholder, take it out of this list in the same change.
  */
 const STATIC_PATHS = [
   '',
+  '/about',
+  '/contact',
+  // The combined catalogue. Only the bare path: every filtered view of it is a
+  // near-duplicate that already asks not to be indexed.
+  '/tours',
   '/tours/daily',
   '/tours/experiences',
   '/hotels',

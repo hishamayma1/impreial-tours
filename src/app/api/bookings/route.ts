@@ -8,6 +8,7 @@ import {
   calculateDailyTourTotal,
   calculateExperienceTotal,
   calculateTransferTotal,
+  calculateExtrasTotal,
   calculateBicycleRentalTotal,
   calculateBicycleTourTotal,
   nightsBetween,
@@ -36,6 +37,15 @@ export const POST = async (request: Request) => {
     input = createBookingSchema.parse(await request.json())
   } catch {
     return NextResponse.json({ success: false, error: 'validation' }, { status: 400 })
+  }
+
+  /**
+   * Honeypot. Answered with a plain 200 rather than a 4xx on purpose — a bot that
+   * learns which shape gets rejected simply stops sending that shape, whereas one
+   * that believes it succeeded keeps posting into a void. Mirrors /api/leads.
+   */
+  if (input.company.trim()) {
+    return NextResponse.json({ success: true, reference: null, bookingId: null })
   }
 
   try {
@@ -109,21 +119,67 @@ export const POST = async (request: Request) => {
       refId = String(transfer.id)
       label = String(transfer.title ?? '')
 
-      // Prices live per zone (airport) or per route (intercity); flatten both and
-      // match on the requested vehicle class.
-      const pricing = [
-        ...(transfer.zones ?? []).flatMap((zone: Doc) => zone.vehiclePricing ?? []),
-        ...(transfer.routes ?? []).flatMap((route: Doc) => route.vehiclePricing ?? []),
-      ]
+      const details = input.transferDetails
+
+      /**
+       * Price from the one row the customer chose, never from a flattened pool.
+       *
+       * This previously concatenated every zone's and every route's vehicle prices
+       * and matched on the class name. Because "Sedan" is the same string in every
+       * zone, `find` returned whichever appeared first in the document — so a request
+       * for a long, expensive zone was charged at the cheapest zone's rate, and the
+       * client chose which by doing nothing more than naming a vehicle class. The row
+       * id now comes in with the request and the lookup is scoped to that row alone.
+       */
+      const zone = (transfer.zones ?? []).find((row: Doc) => String(row.id) === details.zoneId)
+      const route = (transfer.routes ?? []).find((row: Doc) => String(row.id) === details.routeId)
+      const selected = zone ?? route
+
+      // No identified row means no price we can stand behind. Refused rather than
+      // guessed: a booking recorded at an invented figure is worse than a failed one.
+      if (!selected) {
+        return NextResponse.json(
+          { success: false, error: 'transfer_route_required' },
+          { status: 400 },
+        )
+      }
 
       const breakdown = calculateTransferTotal({
-        vehiclePricing: pricing,
-        vehicleClass: input.transferDetails.vehicleClass,
-        roundTrip: input.transferDetails.roundTrip,
+        vehiclePricing: selected.vehiclePricing ?? [],
+        vehicleClass: details.vehicleClass,
+        roundTrip: details.roundTrip,
       })
+
+      // An unknown vehicle class prices at zero, which would otherwise be recorded as
+      // a free transfer rather than as the bad request it is.
+      if (!breakdown.lines.length) {
+        return NextResponse.json(
+          { success: false, error: 'transfer_vehicle_unknown' },
+          { status: 400 },
+        )
+      }
       lines.push(...breakdown.lines)
 
-      serviceDetails.transfer = input.transferDetails
+      // Add-ons are priced from the CMS rows by id, so the request can select them
+      // but never value them.
+      const extras = calculateExtrasTotal({
+        extras: transfer.extras ?? [],
+        selectedIds: details.extraIds,
+        passengers: details.passengers,
+      })
+      lines.push(...extras.lines)
+
+      // `extraIds` and the row ids are omitted on purpose: the add-ons are already in
+      // the price lines by name, and the ids identify nothing an operator can use.
+      const { extraIds: _extraIds, zoneId: _zoneId, routeId: _routeId, ...recorded } = details
+
+      serviceDetails.transfer = {
+        ...recorded,
+        // Resolved from the CMS rather than echoed from the request, so the booking
+        // records which zone or route was actually charged.
+        zoneName: zone ? String(zone.zoneName ?? '') : '',
+        routeLabel: route ? `${route.fromCity ?? ''} → ${route.toCity ?? ''}` : '',
+      }
     }
 
     // --- Bicycles ----------------------------------------------------------

@@ -245,11 +245,11 @@ export const ListingFilters = ({ variant, destinations = [] }: ListingFiltersPro
 
   return (
     /**
-     * Sticky under the header so filters stay reachable while scrolling a long list.
-     * `top-20` clears the 5rem header; the backdrop blur keeps the row legible over
-     * content passing beneath it without hiding that content entirely.
+     * Scrolls away with the page. The backdrop blur is kept because the row sits on a
+     * tinted band and the translucency is what separates it from the content above and
+     * below, not because anything passes beneath it.
      */
-    <div className="sticky top-20 z-30 border-y border-hairline bg-surface-container-low/85 backdrop-blur-md">
+    <div className="border-y border-hairline bg-surface-container-low/85 backdrop-blur-md">
       <Container className="py-4">
         {/* Phone-only disclosure. The count means the button reports state, not just posture. */}
         <button

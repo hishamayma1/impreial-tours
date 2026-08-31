@@ -11,3 +11,9 @@ export type {
   ContactDetails,
 } from './booking-store'
 export { useFilterStore, filtersToSearchParams, type FilterState } from './filter-store'
+export {
+  useCatalogStore,
+  catalogToSearchParams,
+  countActiveCatalogFilters,
+  type CatalogFilterState,
+} from './catalog-store'

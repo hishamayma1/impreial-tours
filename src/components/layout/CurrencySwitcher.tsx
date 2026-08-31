@@ -38,11 +38,30 @@ export const CurrencySwitcher = ({ currencies, className }: CurrencySwitcherProp
     }
   }, [open, setOpen])
 
+  /**
+   * Heals a persisted choice that is no longer on offer.
+   *
+   * The selection lives in localStorage, so someone who picked EUR or GBP before the
+   * switcher was reduced to USD and EGP still has that code in their browser. Nothing
+   * else breaks — every price falls back to the base currency — but the button would
+   * read "EUR" over prices printed in dollars, which is worse than either being
+   * wrong on its own. Rewriting the stored value settles it for good rather than
+   * papering over it on each render.
+   */
+  useEffect(() => {
+    if (!hydrated || currencies.length === 0) return
+    if (!currencies.some((option) => option.code === currency)) setCurrency(currencies[0].code)
+  }, [hydrated, currencies, currency, setCurrency])
+
   if (currencies.length === 0) return null
 
-  // Before hydration the persisted choice is unknown; show the base currency so the
-  // server and client markup agree.
-  const label = hydrated ? currency : (currencies[0]?.code ?? 'USD')
+  /**
+   * Before hydration the persisted choice is unknown, so the base currency is shown
+   * and the server and client markup agree. The `some` check covers the frame between
+   * hydration and the effect above, when the stale code is still in the store.
+   */
+  const known = currencies.some((option) => option.code === currency)
+  const label = hydrated && known ? currency : (currencies[0]?.code ?? 'USD')
 
   return (
     <div ref={ref} className={cn('relative', className)}>

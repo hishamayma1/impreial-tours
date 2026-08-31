@@ -138,6 +138,42 @@ export const Tours: CollectionConfig = {
     },
     { name: 'groupSizeMax', type: 'number', min: 1 },
     { name: 'rating', type: 'number', min: 0, max: 5, admin: { step: 0.1 } },
+
+    /**
+     * The "from" price, denormalised out of whichever pricing branch applies.
+     *
+     * A daily tour prices on `pricePerPerson` and an experience on
+     * `pricing.basePricePerPerson`, which is fine while the two have their own
+     * listings. The combined `/tours` catalogue mixes them in one result set, and a
+     * database can only sort a page of results by a field every document in it has —
+     * sorting by `pricePerPerson` would strand every experience at the end on a null,
+     * and the alternative (read both sets whole, merge, slice) pulls the entire
+     * collection into memory to render twelve cards.
+     *
+     * So the value is written once on save and indexed. Sorting and range-filtering
+     * the catalogue is then one indexed query regardless of the type mix. Read-only in
+     * the admin because it is derived, never authored.
+     */
+    {
+      name: 'priceFrom',
+      type: 'number',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Derived from the pricing fields on save. Sorts and filters the /tours catalogue.',
+      },
+      hooks: {
+        beforeChange: [
+          ({ data }) => {
+            const doc = (data ?? {}) as Record<string, any>
+            const raw =
+              doc.tourType === 'experience' ? doc.pricing?.basePricePerPerson : doc.pricePerPerson
+            return typeof raw === 'number' && Number.isFinite(raw) ? raw : null
+          },
+        ],
+      },
+    },
     {
       name: 'badge',
       type: 'select',

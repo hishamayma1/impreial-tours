@@ -10,9 +10,9 @@ import {
   HighlightList,
   InclusionColumns,
   ItineraryTimeline,
-  GalleryGrid,
   PriceTiers,
 } from '@/components/tour/TourContentBlocks'
+import { TourGallery } from '@/components/tour/TourGallery'
 import { RichText } from '@/components/ui/RichText'
 import { Container } from '@/components/ui/Container'
 import { locales, type Locale } from '@/i18n/routing'
@@ -87,14 +87,17 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
       : null,
   ].filter((fact): fact is NonNullable<typeof fact> => Boolean(fact))
 
+  // The gallery leads, ahead of the overview: a reader deciding on a fortnight away
+  // looks at where they are going before reading about it, and the nav order has to
+  // match the page order or the anchors run backwards.
   const sections = [
+    tour.gallery.length ? { id: 'gallery', label: t('gallery') } : null,
     tour.overview ? { id: 'overview', label: t('overview') } : null,
     tour.itinerary.length ? { id: 'itinerary', label: t('itinerary') } : null,
     tour.highlights.length ? { id: 'highlights', label: t('highlights') } : null,
     tour.included.length || tour.notIncluded.length ? { id: 'included', label: t('included') } : null,
     tour.priceTiers.length ? { id: 'pricing', label: t('groupPricing') } : null,
     tour.meetingPoint ? { id: 'meeting-point', label: t('meetingPoint') } : null,
-    tour.gallery.length ? { id: 'gallery', label: t('gallery') } : null,
   ].filter((section): section is NonNullable<typeof section> => Boolean(section))
 
   return (
@@ -129,8 +132,23 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
           </div>
 
           <div className="lg:order-1 lg:col-span-8">
+            {/*
+              The gallery opens the column. It carries no top border because it is the
+              first thing under the hero — the photographs continue the hero rather
+              than starting a new section.
+            */}
+            {tour.gallery.length ? (
+              <TourSection id="gallery" title={t('gallery')}>
+                <TourGallery images={tour.gallery} title={tour.title} />
+              </TourSection>
+            ) : null}
+
             {tour.overview ? (
-              <TourSection id="overview" title={t('overview')}>
+              <TourSection
+                id="overview"
+                title={t('overview')}
+                className={tour.gallery.length ? 'border-t border-hairline' : undefined}
+              >
                 <RichText data={tour.overview} />
               </TourSection>
             ) : null}
@@ -178,12 +196,6 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
                 <p className="max-w-2xl font-body-lg text-body-lg text-on-surface-variant">
                   {tour.meetingPoint}
                 </p>
-              </TourSection>
-            ) : null}
-
-            {tour.gallery.length ? (
-              <TourSection id="gallery" title={t('gallery')} className="border-t border-hairline">
-                <GalleryGrid images={tour.gallery} title={tour.title} />
               </TourSection>
             ) : null}
           </div>

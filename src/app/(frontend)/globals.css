@@ -113,6 +113,48 @@
       focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
+  /*
+    Glass surfaces.
+
+    Two variants because a translucent panel only reads as glass when there is
+    something behind it to see: `.glass` sits over photography and leans on the
+    backdrop blur, `.glass-panel` sits on the page background where a heavy blur
+    would just look grey, so it keeps a near-opaque fill and earns its depth from the
+    border and the shadow instead.
+
+    `backdrop-filter` is expensive to composite, so both are capped at a modest
+    radius and neither is animated. Browsers without support fall back to the same
+    background colour at full strength, which is legible rather than merely different.
+  */
+  .glass {
+    @apply border border-white/25 bg-white/10 shadow-widget backdrop-blur-xl;
+  }
+
+  .glass-panel {
+    @apply border border-white/60 bg-surface-container-lowest/85 shadow-widget backdrop-blur-md;
+  }
+
+  /*
+    A soft aurora wash, used behind the transfer forms.
+
+    Pure CSS gradients rather than an image: no request, no decode, no layout, and it
+    scales to any viewport without a second asset.
+  */
+  .aurora {
+    background-image:
+      radial-gradient(38rem 22rem at 12% -8%, rgb(28 58 99 / 0.16), transparent 62%),
+      radial-gradient(32rem 20rem at 88% 4%, rgb(165 131 89 / 0.14), transparent 60%),
+      radial-gradient(30rem 24rem at 50% 108%, rgb(16 34 59 / 0.1), transparent 65%);
+  }
+
+  /* Staggered entrance for a list of controls. Transform and opacity only. */
+  @media (prefers-reduced-motion: no-preference) {
+    .stagger > * {
+      animation: reveal-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(var(--stagger-step, 60ms) * var(--i, 0));
+    }
+  }
+
   .skip-link {
     @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100]
       focus:rounded-xl focus:bg-brand focus:px-4 focus:py-2 focus:text-white;

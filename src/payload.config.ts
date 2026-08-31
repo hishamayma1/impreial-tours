@@ -19,6 +19,7 @@ import { Bookings } from './payload/collections/Bookings'
 import { Tours } from './payload/collections/Tours'
 import { Hotels } from './payload/collections/Hotels'
 import { Transfers } from './payload/collections/Transfers'
+import { Airports } from './payload/collections/Airports'
 import { Bicycles } from './payload/collections/Bicycles'
 import { QuoteRequests } from './payload/collections/QuoteRequests'
 import { Pages } from './payload/collections/Pages'
@@ -75,6 +76,8 @@ export default buildConfig({
     Tours,
     Hotels,
     Transfers,
+    // The airports an airport transfer runs from, referenced by Transfers.
+    Airports,
     Bicycles,
     // Sales
     Bookings,

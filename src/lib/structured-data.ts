@@ -246,3 +246,29 @@ export const itemListNode = (
       url: pageUrl(locale, `${basePath}/${item.slug}`),
     })),
   })
+
+/**
+ * The same list node for a result set whose members do not share one base path.
+ *
+ * The combined `/tours` catalogue mixes day tours under `/tours/daily` with
+ * experiences under `/tours/experiences`, so each item carries its own href and the
+ * list cannot derive a URL by appending a slug to a single prefix. Emitting the wrong
+ * URL here is worse than emitting nothing: it tells a crawler the listing points
+ * somewhere it does not.
+ */
+export const mixedItemListNode = (
+  items: Array<{ title: string; href: string }>,
+  locale: Locale,
+  name: string,
+): JsonLdNode =>
+  compact({
+    '@type': 'ItemList',
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.title,
+      url: pageUrl(locale, item.href),
+    })),
+  })

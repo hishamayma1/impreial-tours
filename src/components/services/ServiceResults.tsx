@@ -1,6 +1,6 @@
 import type { Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/payload/queries'
-import { getTours, getHotels, getBicycles, type ListingFilters } from '@/lib/payload/services'
+import { getTours, getBicycles, type ListingFilters } from '@/lib/payload/services'
 
 import { JsonLd } from '@/components/seo/JsonLd'
 import { itemListNode } from '@/lib/structured-data'
@@ -10,12 +10,16 @@ import { TourResultsGrid } from './TourResultsGrid'
 
 type SearchQuery = Record<string, string | string[] | undefined>
 
-export type ResultsKind = 'daily' | 'experience' | 'hotels' | 'bicycles'
+/**
+ * Hotels are absent on purpose: that listing has its own query, filters and card in
+ * components/hotels, because it filters on things — amenities, star bands, a real
+ * price range — this generic grid has no vocabulary for.
+ */
+export type ResultsKind = 'daily' | 'experience' | 'bicycles'
 
 const BASE_PATH: Record<ResultsKind, string> = {
   daily: '/tours/daily',
   experience: '/tours/experiences',
-  hotels: '/hotels',
   bicycles: '/bicycles',
 }
 
@@ -68,11 +72,9 @@ export const ServiceResults = async ({
 
   // Settings and results are independent, so they overlap rather than queue.
   const [data, settings] = await Promise.all([
-    kind === 'hotels'
-      ? getHotels(locale, filters)
-      : kind === 'bicycles'
-        ? getBicycles(locale, undefined, filters)
-        : getTours(locale, kind === 'daily' ? 'daily' : 'experience', filters),
+    kind === 'bicycles'
+      ? getBicycles(locale, undefined, filters)
+      : getTours(locale, kind === 'daily' ? 'daily' : 'experience', filters),
     getSiteSettings(locale),
   ])
 

@@ -316,6 +316,51 @@ export type VehiclePrice = {
   price?: number | null
 }
 
+export type TransferExtra = {
+  id?: string
+  label?: string
+  price?: number | null
+  perPassenger?: boolean | null
+}
+
+/**
+ * Prices the chosen add-ons.
+ *
+ * Selection arrives as a list of row ids and every figure is read back out of the CMS
+ * rows, so a request naming an extra that does not exist — or naming one at a price of
+ * its own choosing — contributes nothing. Ids are de-duplicated first: the same extra
+ * sent twice is one extra, not a double charge.
+ */
+export const calculateExtrasTotal = ({
+  extras,
+  selectedIds,
+  passengers = 1,
+}: {
+  extras: TransferExtra[]
+  selectedIds: string[]
+  passengers?: number
+}): PriceBreakdown => {
+  const wanted = new Set(selectedIds)
+  const lines: PriceLine[] = []
+
+  for (const extra of extras) {
+    if (!extra.id || !wanted.has(extra.id)) continue
+
+    const unitPrice = round2(num(extra.price))
+    if (unitPrice <= 0) continue
+
+    const quantity = extra.perPassenger ? Math.max(1, passengers) : 1
+    lines.push({
+      label: String(extra.label ?? ''),
+      quantity,
+      unitPrice,
+      subtotal: round2(unitPrice * quantity),
+    })
+  }
+
+  return { lines, subtotal: round2(lines.reduce((sum, line) => sum + line.subtotal, 0)) }
+}
+
 export const calculateTransferTotal = ({
   vehiclePricing,
   vehicleClass,

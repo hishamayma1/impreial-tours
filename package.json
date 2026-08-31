@@ -27,7 +27,12 @@
     "test:links": "node --experimental-strip-types tests/links.test.ts",
     "demo:offers": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/demo-offers.ts",
     "services:backfill-locales": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-localized-rows.ts",
-    "services:backfill-transfers": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-transfers-service.ts"
+    "services:backfill-transfers": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-transfers-service.ts",
+    "tours:backfill-price": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-price-from.ts",
+    "transfers:seed-airports": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/seed-airports.ts",
+    "hotels:backfill-price": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-hotel-price.ts",
+    "currencies:set": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/set-currencies.ts",
+    "contact:seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/seed-contact.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

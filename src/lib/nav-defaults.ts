@@ -19,9 +19,13 @@ export const buildDefaultNav = (t: Translate, enabledServices?: string[]): NavIt
   const items: Array<NavItemVM & { service?: string }> = [
   {
     label: t('tours'),
-    href: '/tours/daily',
+    // The hub is a real page now — the combined catalogue — rather than an alias for
+    // the first child, so the trigger sends a visitor somewhere better than the half
+    // of the collection that happens to be listed first.
+    href: '/tours',
     service: 'tours',
     children: [
+      { label: t('allTours'), href: '/tours' },
       { label: t('dailyTours'), href: '/tours/daily' },
       { label: t('fullExperiences'), href: '/tours/experiences' },
     ],
