@@ -74,6 +74,14 @@ export const bicycleSelectionSchema = z.object({
   quantity: z.number().int().min(1).max(20),
   pickupTime: z.string().trim().max(10).optional().default(''),
   returnTime: z.string().trim().max(10).optional().default(''),
+  pickupDate: z.string().trim().max(10).optional().default(''),
+  /**
+   * Both are requests, not prices. The surcharge percentage and the delivery fee are
+   * read from the CMS when the booking is priced, so the worst a tampered payload can
+   * do here is ask to be charged more.
+   */
+  weekend: z.boolean().optional().default(false),
+  delivery: z.boolean().optional().default(false),
 })
 
 export const createBookingSchema = z

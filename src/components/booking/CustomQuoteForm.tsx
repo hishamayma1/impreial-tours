@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations, useLocale } from 'next-intl'
 
 import { Button } from '@/components/ui/Button'
+import { DatePicker } from '@/components/ui/DatePicker'
 import {
   quoteRequestSchema,
   type QuoteRequestInput,
@@ -179,7 +180,18 @@ export const CustomQuoteForm = () => {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-4">
-        <Field name="date" type="date" />
+        <label className="flex flex-col gap-1.5">
+          <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+            {t('fields.date')}
+          </span>
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => (
+              <DatePicker value={field.value ?? ''} onChange={field.onChange} className="w-full" />
+            )}
+          />
+        </label>
         <Field name="time" type="time" />
         <Field name="passengers" type="number" />
         <Field name="luggage" type="number" />

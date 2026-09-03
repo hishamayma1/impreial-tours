@@ -1,26 +1,25 @@
 import type { Locale } from '@/i18n/routing'
 import { getSiteSettings } from '@/lib/payload/queries'
-import { getTours, getBicycles, type ListingFilters } from '@/lib/payload/services'
+import { getTours, type ListingFilters } from '@/lib/payload/services'
 
 import { JsonLd } from '@/components/seo/JsonLd'
 import { itemListNode } from '@/lib/structured-data'
 
-import { ServiceGrid } from './ServiceGrid'
 import { TourResultsGrid } from './TourResultsGrid'
 
 type SearchQuery = Record<string, string | string[] | undefined>
 
 /**
- * Hotels are absent on purpose: that listing has its own query, filters and card in
- * components/hotels, because it filters on things — amenities, star bands, a real
- * price range — this generic grid has no vocabulary for.
+ * Hotels and bicycles are absent on purpose: each has its own query, filters and card
+ * — under components/hotels and components/bicycles — because each filters on things
+ * this generic grid has no vocabulary for. Hotels wants amenities and star bands;
+ * bicycles wants frame sizes, pedal assist and how many hours you want the thing for.
  */
-export type ResultsKind = 'daily' | 'experience' | 'bicycles'
+export type ResultsKind = 'daily' | 'experience'
 
 const BASE_PATH: Record<ResultsKind, string> = {
   daily: '/tours/daily',
   experience: '/tours/experiences',
-  bicycles: '/bicycles',
 }
 
 /** Reads one search param, tolerating the array form Next produces for repeats. */
@@ -72,15 +71,9 @@ export const ServiceResults = async ({
 
   // Settings and results are independent, so they overlap rather than queue.
   const [data, settings] = await Promise.all([
-    kind === 'bicycles'
-      ? getBicycles(locale, undefined, filters)
-      : getTours(locale, kind === 'daily' ? 'daily' : 'experience', filters),
+    getTours(locale, kind === 'daily' ? 'daily' : 'experience', filters),
     getSiteSettings(locale),
   ])
-
-  // Tours and experiences have their own layouts; hotels and bicycles keep the
-  // shared grid until they get the same treatment.
-  const isTourListing = kind === 'daily' || kind === 'experience'
 
   // Paging and sort are excluded on purpose: neither removes a result, so neither
   // explains an empty page.
@@ -93,17 +86,13 @@ export const ServiceResults = async ({
 
   return (
     <>
-      {isTourListing ? (
-        <TourResultsGrid
-          data={data}
-          basePath={BASE_PATH[kind]}
-          currencies={settings.currencies}
-          variant={kind === 'daily' ? 'daily' : 'experience'}
-          filtered={filtered}
-        />
-      ) : (
-        <ServiceGrid data={data} basePath={BASE_PATH[kind]} currencies={settings.currencies} />
-      )}
+      <TourResultsGrid
+        data={data}
+        basePath={BASE_PATH[kind]}
+        currencies={settings.currencies}
+        variant={kind === 'daily' ? 'daily' : 'experience'}
+        filtered={filtered}
+      />
       {/* Crawlers and answer engines read the listing order from the initial HTML. */}
       {data.items.length > 0 ? (
         <JsonLd data={itemListNode(data.items, locale, BASE_PATH[kind], listName)} />

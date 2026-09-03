@@ -694,6 +694,15 @@ export interface Airport {
 export interface Bicycle {
   id: string;
   bikeType: 'rental' | 'tour';
+  category?: ('city' | 'electric' | 'mountain' | 'road' | 'touring' | 'kids') | null;
+  /**
+   * Where the bike is picked up, or where the ride starts.
+   */
+  destination?: (string | null) | Destination;
+  /**
+   * Cheapest entry price, derived on save. Sorts and filters the listing.
+   */
+  priceFrom?: number | null;
   title: string;
   /**
    * Leave blank to generate it from the title.
@@ -713,18 +722,11 @@ export interface Bicycle {
     gears?: number | null;
     electric?: boolean | null;
     weightKg?: number | null;
+    /**
+     * Sizes kept in stock, offered at handover.
+     */
+    frameSizes?: ('XS' | 'S' | 'M' | 'L' | 'XL')[] | null;
   };
-  /**
-   * Duration bands, cheapest per hour as the window grows. durationHours drives the checkout maths; durationLabel is what the customer reads.
-   */
-  rentalPricing?:
-    | {
-        durationLabel: string;
-        durationHours: number;
-        price: number;
-        id?: string | null;
-      }[]
-    | null;
   deposit?: number | null;
   includedAccessories?:
     | {
@@ -733,6 +735,63 @@ export interface Bicycle {
       }[]
     | null;
   inventory?: number | null;
+  pricingMode?: ('both' | 'bands' | 'hourly') | null;
+  /**
+   * Price for one hour, in USD.
+   */
+  hourlyRate?: number | null;
+  /**
+   * Per hour beyond the longest package. Falls back to the hourly rate when empty.
+   */
+  extraHourRate?: number | null;
+  /**
+   * Shortest rental accepted.
+   */
+  minHours?: number | null;
+  /**
+   * Longest the planner will quote.
+   */
+  maxHours?: number | null;
+  /**
+   * Increment the planner moves in — 0.5 for half hours.
+   */
+  hourStep?: number | null;
+  /**
+   * Duration packages, cheapest per hour as the window grows. durationHours drives the checkout maths; durationLabel is what the customer reads.
+   */
+  rentalPricing?:
+    | {
+        durationLabel: string;
+        durationHours: number;
+        price: number;
+        /**
+         * Highlighted in the planner.
+         */
+        popular?: boolean | null;
+        /**
+         * Small print under the package, e.g. "Best value".
+         */
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Handover times offered in the planner, 24h clock. Empty means any time.
+   */
+  pickupSlots?:
+    | {
+        time: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Flat fee to bring the bike to the hotel. Empty hides the option.
+   */
+  deliveryFee?: number | null;
+  /**
+   * Percentage added to Friday and Saturday rentals.
+   */
+  weekendSurchargePct?: number | null;
   routeName?: string | null;
   distanceKm?: number | null;
   elevationGainM?: number | null;
@@ -866,8 +925,13 @@ export interface Booking {
       routeLabel?: string | null;
     };
     bicycle?: {
+      durationHours?: number | null;
+      quantity?: number | null;
+      pickupDate?: string | null;
       pickupTime?: string | null;
       returnTime?: string | null;
+      weekend?: boolean | null;
+      delivery?: boolean | null;
       bikeIds?:
         | {
             bikeId: string;
@@ -1637,6 +1701,9 @@ export interface AirportsSelect<T extends boolean = true> {
  */
 export interface BicyclesSelect<T extends boolean = true> {
   bikeType?: T;
+  category?: T;
+  destination?: T;
+  priceFrom?: T;
   title?: T;
   slug?: T;
   image?: T;
@@ -1655,14 +1722,7 @@ export interface BicyclesSelect<T extends boolean = true> {
         gears?: T;
         electric?: T;
         weightKg?: T;
-      };
-  rentalPricing?:
-    | T
-    | {
-        durationLabel?: T;
-        durationHours?: T;
-        price?: T;
-        id?: T;
+        frameSizes?: T;
       };
   deposit?: T;
   includedAccessories?:
@@ -1672,6 +1732,30 @@ export interface BicyclesSelect<T extends boolean = true> {
         id?: T;
       };
   inventory?: T;
+  pricingMode?: T;
+  hourlyRate?: T;
+  extraHourRate?: T;
+  minHours?: T;
+  maxHours?: T;
+  hourStep?: T;
+  rentalPricing?:
+    | T
+    | {
+        durationLabel?: T;
+        durationHours?: T;
+        price?: T;
+        popular?: T;
+        note?: T;
+        id?: T;
+      };
+  pickupSlots?:
+    | T
+    | {
+        time?: T;
+        id?: T;
+      };
+  deliveryFee?: T;
+  weekendSurchargePct?: T;
   routeName?: T;
   distanceKm?: T;
   elevationGainM?: T;
@@ -1792,8 +1876,13 @@ export interface BookingsSelect<T extends boolean = true> {
         bicycle?:
           | T
           | {
+              durationHours?: T;
+              quantity?: T;
+              pickupDate?: T;
               pickupTime?: T;
               returnTime?: T;
+              weekend?: T;
+              delivery?: T;
               bikeIds?:
                 | T
                 | {

@@ -25,6 +25,7 @@ export const CLIENT_NAMESPACES = [
   'quote', // CustomQuoteForm
   'transfers', // TransferBookingForm
   'hotels', // HotelFilters + HotelSort
+  'bicycles', // BicycleFilters + BicycleSort + RentalPlanner
   'plan', // PlanJourneyForm
 ] as const
 

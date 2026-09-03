@@ -7,6 +7,7 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { Button } from '@/components/ui/Button'
 import { Container } from '@/components/ui/Container'
+import { Icon } from '@/components/ui/Icon'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useBookingStore, selectEstimatedTotal, TOTAL_STEPS } from '@/stores'
 import { formatPrice, usePreferencesStore } from '@/stores'
@@ -62,6 +63,7 @@ export const BookingWizard = ({ serviceType, currencies }: BookingWizardProps) =
   const hydrated = useBookingStore((state) => state.hydrated)
   const total = useBookingStore(selectEstimatedTotal)
   const snapshot = useBookingStore((state) => state.itemSnapshot)
+  const hasDate = useBookingStore((state) => Boolean(state.dates.start))
   const { nextStep, prevStep } = useBookingStore(
     useShallow((state) => ({ nextStep: state.nextStep, prevStep: state.prevStep })),
   )
@@ -105,6 +107,30 @@ export const BookingWizard = ({ serviceType, currencies }: BookingWizardProps) =
           </li>
         ))}
       </ol>
+
+      {/* A tour/ride cannot be confirmed without a departure date, so every step of the
+          wizard repeats this — not just the details step where the date is picked —
+          since a visitor can reach contact or review with an incomplete selection by
+          going back and forth. */}
+      {serviceType === 'tour' || serviceType === 'bike' ? (
+        <div
+          role="status"
+          className={cn(
+            'mb-8 flex items-start gap-3 rounded-xl border px-4 py-3.5',
+            hasDate
+              ? 'border-hairline bg-surface-container-low text-on-surface-variant'
+              : 'border-brand/30 bg-brand/[0.06] text-primary',
+          )}
+        >
+          <Icon
+            name="alert-triangle"
+            className={cn('mt-0.5 h-4 w-4 shrink-0', hasDate ? 'text-on-surface-variant' : 'text-brand')}
+          />
+          <p className="font-body-md text-caption">
+            {hasDate ? t('dateRequiredNotice.confirmed') : t('dateRequiredNotice.pending')}
+          </p>
+        </div>
+      ) : null}
 
       <div className="grid gap-grid-gutter lg:grid-cols-[1fr_20rem]">
         <div>

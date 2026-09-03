@@ -1,11 +1,12 @@
 'use client'
 
 import { useId, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations, useLocale } from 'next-intl'
 
 import { Button } from '@/components/ui/Button'
+import { DatePicker } from '@/components/ui/DatePicker'
 import { Icon } from '@/components/ui/Icon'
 import { leadSchema, type LeadInput, type LeadFormValues } from '@/lib/validation/lead'
 import type { Locale } from '@/i18n/routing'
@@ -41,6 +42,7 @@ export const PlanJourneyForm = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<LeadFormValues, unknown, LeadInput>({
     resolver: zodResolver(leadSchema),
@@ -203,7 +205,18 @@ export const PlanJourneyForm = () => {
           <label htmlFor={`${fieldId}-date`} className={labelClass}>
             {t('fields.date')}
           </label>
-          <input id={`${fieldId}-date`} type="date" className={fieldClass} {...register('date')} />
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => (
+              <DatePicker
+                id={`${fieldId}-date`}
+                value={field.value ?? ''}
+                onChange={field.onChange}
+                className="w-full"
+              />
+            )}
+          />
         </div>
 
         <div className="sm:col-span-2">

@@ -200,6 +200,19 @@ export const POST = async (request: Request) => {
               bands: bike.rentalPricing ?? [],
               hours: input.bicycleSelection?.durationHours ?? 0,
               quantity: input.bicycleSelection?.quantity ?? 1,
+              // The rest of the time-pricing rules, read from the CMS rather than
+              // echoed from the request, so what is charged is what the dashboard says
+              // — including the hourly rate the planner may have quoted from.
+              pricingMode: bike.pricingMode,
+              hourlyRate: bike.hourlyRate,
+              extraHourRate: bike.extraHourRate,
+              minHours: bike.minHours,
+              maxHours: bike.maxHours,
+              hourStep: bike.hourStep,
+              deliveryFee: bike.deliveryFee,
+              weekendSurchargePct: bike.weekendSurchargePct,
+              weekend: input.bicycleSelection?.weekend,
+              delivery: input.bicycleSelection?.delivery,
             })
 
       lines.push(...breakdown.lines)

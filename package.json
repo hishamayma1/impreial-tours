@@ -18,7 +18,7 @@
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/run.ts",
     "test:pricing": "node --experimental-strip-types tests/pricing.test.ts",
-    "test": "npm run test:pricing && npm run test:whatsapp && npm run test:access && npm run test:i18n && npm run test:twmerge && npm run test:links",
+    "test": "npm run test:pricing && npm run test:rental && npm run test:whatsapp && npm run test:access && npm run test:i18n && npm run test:twmerge && npm run test:links",
     "test:whatsapp": "node --experimental-strip-types tests/whatsapp.test.ts",
     "test:access": "node --experimental-strip-types tests/access.test.ts",
     "test:i18n": "node --experimental-strip-types tests/i18n-namespaces.test.ts",
@@ -32,7 +32,9 @@
     "transfers:seed-airports": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/seed-airports.ts",
     "hotels:backfill-price": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/backfill-hotel-price.ts",
     "currencies:set": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/set-currencies.ts",
-    "contact:seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/seed-contact.ts"
+    "contact:seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/seed-contact.ts",
+    "demo:bicycles": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/demo-bicycles.ts",
+    "test:rental": "node --experimental-strip-types tests/rental-pricing.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -42,11 +44,13 @@
     "@payloadcms/richtext-lexical": "^3.58.0",
     "@payloadcms/ui": "^3.58.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
     "graphql": "^16.9.0",
     "next": "15.4.11",
     "next-intl": "^4.3.4",
     "payload": "^3.58.0",
     "react": "19.1.0",
+    "react-day-picker": "^10.0.1",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.86.0",
     "sharp": "0.34.2",

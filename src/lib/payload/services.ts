@@ -18,6 +18,8 @@ import type {
   AlternateSlugs,
 } from '@/types/services'
 
+import { toPricingConfig } from '@/lib/rental-pricing'
+
 import { getPayloadClient } from './client'
 import { toImage } from './mappers'
 
@@ -125,36 +127,6 @@ export const tourCard = (doc: Doc): ServiceCardVM => {
   }
 }
 
-
-const bicycleCard = (doc: Doc): ServiceCardVM => {
-  const bands = Array.isArray(doc.rentalPricing) ? doc.rentalPricing : []
-  const cheapest = bands
-    .map((b: Doc) => numOrNull(b?.price))
-    .filter((n): n is number => n !== null && n > 0)
-
-  const meta: string[] = []
-  if (doc.bikeType === 'tour') {
-    if (doc.distanceKm) meta.push(`${doc.distanceKm} km`)
-    if (doc.difficulty) meta.push(str(doc.difficulty))
-  } else if (doc.specs?.electric) {
-    meta.push('e-bike')
-  }
-
-  return {
-    id: String(doc.id),
-    slug: str(doc.slug),
-    title: str(doc.title),
-    summary: str(doc.description),
-    image: toImage(doc.image, 'card'),
-    priceFrom:
-      doc.bikeType === 'tour'
-        ? numOrNull(doc.pricePerPerson)
-        : cheapest.length
-          ? Math.min(...cheapest)
-          : null,
-    meta,
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Listings
@@ -373,44 +345,6 @@ export const getSpotlightTours = cached(
   'tours:spotlight',
 )
 
-
-export const getBicycles = cached(
-  'bicycles',
-  emptyPage<ServiceCardVM>(),
-  async (
-    locale: Locale,
-    bikeType?: 'rental' | 'tour',
-    filters: ListingFilters = {},
-  ): Promise<PaginatedVM<ServiceCardVM>> => {
-    const payload = await getPayloadClient()
-    const where: Where = { _status: { equals: 'published' } }
-    if (bikeType) where.bikeType = { equals: bikeType }
-
-    const result = await payload.find({
-      collection: 'bicycles',
-      locale,
-      fallbackLocale: 'en',
-      where,
-      depth: 1,
-      limit: PAGE_SIZE,
-      page: filters.page ?? 1,
-      sort: '-createdAt',
-      overrideAccess: true,
-      select: {
-        slug: true, title: true, description: true, image: true, bikeType: true,
-        rentalPricing: true, pricePerPerson: true, distanceKm: true,
-        difficulty: true, specs: true,
-      },
-    })
-
-    return {
-      items: result.docs.map((doc) => bicycleCard(doc as Doc)),
-      page: result.page ?? 1,
-      totalPages: result.totalPages,
-      totalDocs: result.totalDocs,
-    }
-  },
-)
 
 // ---------------------------------------------------------------------------
 // Details
@@ -703,20 +637,60 @@ export const getBicycleBySlug = cached(
       gallery: Array.isArray(doc.gallery)
         ? doc.gallery.map((g: Doc) => toImage(g?.image, 'card'))
         : [],
+      category: str(doc.category),
       bikeModel: str(doc.bikeModel),
       specs: {
         frameSize: str(doc.specs?.frameSize),
         gears: numOrNull(doc.specs?.gears),
         electric: bool(doc.specs?.electric),
         weightKg: numOrNull(doc.specs?.weightKg),
+        frameSizes: Array.isArray(doc.specs?.frameSizes) ? doc.specs.frameSizes.map(str) : [],
       },
       rentalPricing: Array.isArray(doc.rentalPricing)
         ? doc.rentalPricing.map((b: Doc) => ({
             durationLabel: str(b?.durationLabel),
             durationHours: numOrNull(b?.durationHours) ?? 0,
             price: numOrNull(b?.price) ?? 0,
+            popular: bool(b?.popular),
+            note: str(b?.note),
           }))
         : [],
+      /**
+       * Normalised through the same function the planner and the listing use, so a
+       * half-configured bike resolves its defaults once, here, rather than differently
+       * in each place that reads it.
+       */
+      pricing: (() => {
+        const config = toPricingConfig({
+          pricingMode: doc.pricingMode,
+          hourlyRate: numOrNull(doc.hourlyRate),
+          extraHourRate: numOrNull(doc.extraHourRate),
+          minHours: numOrNull(doc.minHours),
+          maxHours: numOrNull(doc.maxHours),
+          hourStep: numOrNull(doc.hourStep),
+          bands: Array.isArray(doc.rentalPricing)
+            ? doc.rentalPricing.map((b: Doc) => ({
+                durationLabel: str(b?.durationLabel),
+                durationHours: numOrNull(b?.durationHours) ?? 0,
+                price: numOrNull(b?.price) ?? 0,
+              }))
+            : [],
+          deliveryFee: numOrNull(doc.deliveryFee),
+          weekendSurchargePct: numOrNull(doc.weekendSurchargePct),
+        })
+
+        return {
+          pricingMode: config.pricingMode,
+          hourlyRate: config.hourlyRate,
+          extraHourRate: config.extraHourRate,
+          minHours: config.minHours,
+          maxHours: config.maxHours,
+          hourStep: config.hourStep,
+          deliveryFee: config.deliveryFee,
+          weekendSurchargePct: config.weekendSurchargePct,
+        }
+      })(),
+      pickupSlots: timeList(doc.pickupSlots),
       deposit: numOrNull(doc.deposit),
       includedAccessories: textList(doc.includedAccessories),
       inventory: numOrNull(doc.inventory),
@@ -741,6 +715,17 @@ export const getBicycleBySlug = cached(
         : [],
     } satisfies BicycleDetailVM
   },
+  /**
+   * A versioned cache key, for the reason spelled out on getTransferBySlug.
+   *
+   * unstable_cache entries survive a deploy, live for an hour and store the SHAPE that
+   * was cached, not the one the code now expects. This read gained `pricing`,
+   * `pickupSlots` and `specs.frameSizes` when rentals became time-priced; without a new
+   * key the first hour after release serves pre-upgrade objects to a page that indexes
+   * into all three, which is a 500 on the booking page rather than a stale price. Bump
+   * it again the next time this shape changes.
+   */
+  'bicycle-detail:v2',
 )
 
 // ---------------------------------------------------------------------------

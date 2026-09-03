@@ -332,8 +332,37 @@ export const Bookings: CollectionConfig = {
           type: 'group',
           admin: { condition: serviceIs('bicycle') },
           fields: [
-            { name: 'pickupTime', type: 'text' },
-            { name: 'returnTime', type: 'text' },
+            /**
+             * How long, how many, and when — the whole shape of a rental.
+             *
+             * Payload drops fields it has no definition for, and these had none: the
+             * booking priced a duration correctly and then told the person handing over
+             * the bike neither how long it was going out for nor how many were wanted.
+             * The same omission the transfer group above documents, on the service
+             * where duration *is* the product.
+             */
+            {
+              type: 'row',
+              fields: [
+                { name: 'durationHours', type: 'number', min: 0, admin: { width: '50%' } },
+                { name: 'quantity', type: 'number', min: 1, admin: { width: '50%' } },
+              ],
+            },
+            { name: 'pickupDate', type: 'text' },
+            {
+              type: 'row',
+              fields: [
+                { name: 'pickupTime', type: 'text', admin: { width: '50%' } },
+                { name: 'returnTime', type: 'text', admin: { width: '50%' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'weekend', type: 'checkbox', admin: { width: '50%' } },
+                { name: 'delivery', type: 'checkbox', admin: { width: '50%' } },
+              ],
+            },
             {
               name: 'bikeIds',
               type: 'array',

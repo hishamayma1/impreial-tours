@@ -8,6 +8,8 @@
  * and server components alike.
  */
 
+import { quoteRental, toPricingConfig } from './rental-pricing.ts'
+
 export type Occupancy = 'single' | 'double' | 'triple'
 
 const round2 = (n: number): number => Math.round(n * 100) / 100
@@ -403,63 +405,117 @@ export type RentalBand = {
 }
 
 /**
- * Picks the cheapest band that covers the requested hours — renting for 5 hours should
- * quote a half-day rate, not five hourly ones. If the request exceeds every band, the
- * longest band is repeated to cover it.
+ * Prices a rental for the requested number of hours.
+ *
+ * The maths itself lives in lib/rental-pricing.ts and is shared verbatim with the
+ * planner on the bicycle page. That sharing is the whole point: the planner shows the
+ * visitor a figure before they commit, and this function decides what they are
+ * actually charged. Two implementations of "cheapest way to N hours" would eventually
+ * disagree, and the first anyone would hear of it is a customer whose total went up at
+ * the last step.
+ *
+ * The optional pricing fields are what the shared engine adds over the old bands-only
+ * lookup — an hourly rate, an overtime rate, weekend and delivery charges. Called with
+ * bands alone it behaves exactly as it did before.
  */
 export const calculateBicycleRentalTotal = ({
   bands,
   hours,
   quantity = 1,
+  pricingMode,
+  hourlyRate,
+  extraHourRate,
+  minHours,
+  maxHours,
+  hourStep,
+  deliveryFee,
+  weekendSurchargePct,
+  weekend,
+  delivery,
 }: {
   bands: RentalBand[]
   hours: number
   quantity?: number
+  pricingMode?: string | null
+  hourlyRate?: number | null
+  extraHourRate?: number | null
+  minHours?: number | null
+  maxHours?: number | null
+  hourStep?: number | null
+  deliveryFee?: number | null
+  weekendSurchargePct?: number | null
+  weekend?: boolean
+  delivery?: boolean
 }): PriceBreakdown => {
-  const usable = bands
-    .filter((b) => num(b.durationHours) > 0 && num(b.price) > 0)
-    .sort((a, b) => num(a.durationHours) - num(b.durationHours))
+  if (hours <= 0) return { lines: [], subtotal: 0 }
 
-  if (!usable.length || hours <= 0) return { lines: [], subtotal: 0 }
+  const config = toPricingConfig({
+    pricingMode,
+    hourlyRate,
+    extraHourRate,
+    minHours,
+    maxHours,
+    hourStep,
+    deliveryFee,
+    weekendSurchargePct,
+    bands: bands
+      .filter((b) => num(b.durationHours) > 0 && num(b.price) > 0)
+      .map((b) => ({
+        durationLabel: b.durationLabel ?? `${num(b.durationHours)}h`,
+        durationHours: num(b.durationHours),
+        price: num(b.price),
+      })),
+  })
 
-  const covering = usable.filter((b) => num(b.durationHours) >= hours)
-  const bikes = Math.max(1, quantity)
+  const quote = quoteRental(config, { hours, quantity, weekend, delivery }, { clamp: false })
+  if (!quote.basis) return { lines: [], subtotal: 0 }
 
-  if (covering.length) {
-    const best = covering.reduce((cheapest, b) =>
-      num(b.price) < num(cheapest.price) ? b : cheapest,
-    )
-    const unitPrice = round2(num(best.price))
-    return {
-      lines: [
-        {
-          label: best.durationLabel ?? `${num(best.durationHours)}h`,
-          quantity: bikes,
-          unitPrice,
-          subtotal: round2(unitPrice * bikes),
-        },
-      ],
-      subtotal: round2(unitPrice * bikes),
+  /** The line label names what was actually charged, not what was asked for. */
+  const label = (() => {
+    switch (quote.basis.kind) {
+      case 'hourly':
+        return `${quote.basis.hours}h`
+      case 'band':
+        return quote.basis.band.durationLabel
+      case 'band-plus-hours':
+        return `${quote.basis.band.durationLabel} + ${quote.basis.extraHours}h`
+      case 'band-multiple':
+        return quote.basis.band.durationLabel
     }
+  })()
+
+  // A repeated package is billed as N units of that package, so the invoice reads the
+  // way the shop's own price list does rather than as one opaque sum.
+  const units = quote.basis.kind === 'band-multiple' ? quote.basis.units : 1
+
+  const lines: PriceLine[] = [
+    {
+      label,
+      quantity: units * quote.quantity,
+      unitPrice: round2(quote.unitPrice / units),
+      subtotal: quote.subtotal,
+    },
+  ]
+
+  if (quote.weekendSurcharge > 0) {
+    lines.push({
+      label: 'Weekend surcharge',
+      quantity: 1,
+      unitPrice: quote.weekendSurcharge,
+      subtotal: quote.weekendSurcharge,
+    })
   }
 
-  // Longer than anything on offer: charge N of the longest band.
-  const longest = usable[usable.length - 1]
-  const units = Math.ceil(hours / num(longest.durationHours))
-  const unitPrice = round2(num(longest.price))
-  const qty = units * bikes
-
-  return {
-    lines: [
-      {
-        label: longest.durationLabel ?? `${num(longest.durationHours)}h`,
-        quantity: qty,
-        unitPrice,
-        subtotal: round2(unitPrice * qty),
-      },
-    ],
-    subtotal: round2(unitPrice * qty),
+  if (quote.deliveryFee > 0) {
+    lines.push({
+      label: 'Delivery',
+      quantity: 1,
+      unitPrice: quote.deliveryFee,
+      subtotal: quote.deliveryFee,
+    })
   }
+
+  return { lines, subtotal: quote.total }
 }
 
 export const calculateBicycleTourTotal = ({

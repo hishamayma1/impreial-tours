@@ -17,3 +17,9 @@ export {
   countActiveCatalogFilters,
   type CatalogFilterState,
 } from './catalog-store'
+export {
+  useBicycleStore,
+  bicyclesToSearchParams,
+  countActiveBicycleFilters,
+  type BicycleFilterState,
+} from './bicycle-store'

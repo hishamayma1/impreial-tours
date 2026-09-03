@@ -32,6 +32,13 @@ export type IconName =
   | 'phone'
   | 'clock'
   | 'star'
+  | 'bolt'
+  | 'plus'
+  | 'minus'
+  | 'truck'
+  | 'gauge'
+  | 'mountain'
+  | 'alert-triangle'
 
 const paths: Record<IconName, React.ReactNode> = {
   pin: (
@@ -143,6 +150,31 @@ const paths: Record<IconName, React.ReactNode> = {
   ),
   star: (
     <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
+  ),
+  /* Pedal assist, on a bike card and in the filter rail. */
+  bolt: <path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12l1-8Z" strokeLinejoin="round" />,
+  plus: <path d="M12 5v14M5 12h14" />,
+  minus: <path d="M5 12h14" />,
+  /* Delivery to the hotel. */
+  truck: (
+    <>
+      <path d="M3 6.5h10v9H3zM13 9.5h3.5l3 3.5v2.5H13z" strokeLinejoin="round" />
+      <circle cx="7" cy="17.5" r="1.8" />
+      <circle cx="16.5" cy="17.5" r="1.8" />
+    </>
+  ),
+  gauge: (
+    <>
+      <path d="M4 17a9 9 0 1 1 16 0" strokeLinecap="round" />
+      <path d="m12 13 3.5-3.5" strokeLinecap="round" />
+    </>
+  ),
+  mountain: <path d="m3 19 6-11 4 7 2.5-4L21 19H3Z" strokeLinejoin="round" />,
+  'alert-triangle': (
+    <>
+      <path d="M12 3 2 20h20L12 3Z" strokeLinejoin="round" />
+      <path d="M12 10v4M12 17.5h.01" />
+    </>
   ),
 }
 

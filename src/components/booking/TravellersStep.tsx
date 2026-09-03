@@ -1,8 +1,10 @@
 'use client'
 
+import { useId } from 'react'
 import { useTranslations } from 'next-intl'
 import { useShallow } from 'zustand/react/shallow'
 
+import { DatePicker } from '@/components/ui/DatePicker'
 import { useBookingStore } from '@/stores'
 
 const Field = ({
@@ -30,6 +32,8 @@ const Field = ({
 
 export const TravellersStep = ({ serviceType }: { serviceType: string }) => {
   const t = useTranslations('booking')
+  const startLabelId = useId()
+  const endLabelId = useId()
 
   const { adults, children, infants } = useBookingStore(
     useShallow((state) => state.travelers),
@@ -49,31 +53,37 @@ export const TravellersStep = ({ serviceType }: { serviceType: string }) => {
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-2">
-          <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+        <div className="flex flex-col gap-2">
+          <span
+            id={startLabelId}
+            className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant"
+          >
             {t('startDate')}
           </span>
-          <input
-            type="date"
+          <DatePicker
+            aria-labelledby={startLabelId}
             value={dates.start ?? ''}
-            onChange={(event) => setDates(event.target.value || null, dates.end)}
-            className="rounded-lg border border-hairline bg-surface-container-lowest px-3 py-2.5 font-body-md text-body-md text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            invalid={!dates.start}
+            onChange={(iso) => setDates(iso, dates.end)}
           />
-        </label>
+        </div>
 
         {needsEndDate ? (
-          <label className="flex flex-col gap-2">
-            <span className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant">
+          <div className="flex flex-col gap-2">
+            <span
+              id={endLabelId}
+              className="font-label-caps text-label-caps uppercase tracking-widest text-on-surface-variant"
+            >
               {t('endDate')}
             </span>
-            <input
-              type="date"
+            <DatePicker
+              aria-labelledby={endLabelId}
               value={dates.end ?? ''}
               min={dates.start ?? undefined}
-              onChange={(event) => setDates(dates.start, event.target.value || null)}
-              className="rounded-lg border border-hairline bg-surface-container-lowest px-3 py-2.5 font-body-md text-body-md text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              invalid={!dates.end}
+              onChange={(iso) => setDates(dates.start, iso)}
             />
-          </label>
+          </div>
         ) : null}
       </div>
 

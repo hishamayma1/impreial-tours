@@ -228,6 +228,45 @@ export type TransferDetailVM = {
   }>
 }
 
+/**
+ * A bicycle shaped for the listing grid.
+ *
+ * Wider than `ServiceCardVM` because the listing shows two products side by side: a
+ * rental, whose headline fact is what an hour costs and how long you may keep it, and
+ * a guided ride, whose headline facts are distance and difficulty. The card branches
+ * on `bikeType` and reads only the half that applies, rather than both being flattened
+ * into the generic `meta` strings — which is what stopped the old card from being able
+ * to say anything specific about either.
+ */
+export type BicycleCardVM = ServiceCardVM & {
+  bikeType: 'rental' | 'tour'
+  category: string
+  electric: boolean
+  gears: number | null
+  frameSizes: string[]
+  // rental
+  hourlyRate: number | null
+  minHours: number | null
+  maxHours: number | null
+  /** The first few duration packages, for the price ladder printed on the card. */
+  bands: RentalBandVM[]
+  inventory: number | null
+  // guided ride
+  distanceKm: number | null
+  durationHours: number | null
+  difficulty: string
+  maxGroupSize: number | null
+}
+
+/** One duration package as authored in the CMS. */
+export type RentalBandVM = {
+  durationLabel: string
+  durationHours: number
+  price: number
+  popular?: boolean
+  note?: string
+}
+
 export type BicycleDetailVM = {
   id: string
   slug: string
@@ -236,10 +275,35 @@ export type BicycleDetailVM = {
   description: string
   image: ImageVM | null
   gallery: Array<ImageVM | null>
+  category: string
   // rental
   bikeModel: string
-  specs: { frameSize: string; gears: number | null; electric: boolean; weightKg: number | null }
-  rentalPricing: Array<{ durationLabel: string; durationHours: number; price: number }>
+  specs: {
+    frameSize: string
+    gears: number | null
+    electric: boolean
+    weightKg: number | null
+    frameSizes: string[]
+  }
+  rentalPricing: RentalBandVM[]
+  /**
+   * The time-pricing rules, exactly as the dashboard holds them.
+   *
+   * Passed to the planner whole rather than as a pre-computed price list: the visitor
+   * can ask for any duration on the editor's step, and enumerating every one of those
+   * on the server would ship a table to express what four numbers already do.
+   */
+  pricing: {
+    pricingMode: 'both' | 'bands' | 'hourly'
+    hourlyRate: number | null
+    extraHourRate: number | null
+    minHours: number
+    maxHours: number
+    hourStep: number
+    deliveryFee: number | null
+    weekendSurchargePct: number | null
+  }
+  pickupSlots: string[]
   deposit: number | null
   includedAccessories: string[]
   inventory: number | null

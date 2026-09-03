@@ -40,8 +40,12 @@ export type BicycleSelection = {
   durationLabel: string
   durationHours: number
   quantity: number
+  pickupDate: string
   pickupTime: string
   returnTime: string
+  /** Requests, not prices: the server re-reads both rates from the CMS. */
+  weekend: boolean
+  delivery: boolean
   unitPrice: number
 }
 
@@ -182,7 +186,8 @@ export const useBookingStore = create<BookingState>()(
         set((state) => ({
           bicycleSelection: {
             durationLabel: '', durationHours: 0, quantity: 1,
-            pickupTime: '', returnTime: '', unitPrice: 0,
+            pickupDate: '', pickupTime: '', returnTime: '',
+            weekend: false, delivery: false, unitPrice: 0,
             ...state.bicycleSelection,
             ...selection,
           },

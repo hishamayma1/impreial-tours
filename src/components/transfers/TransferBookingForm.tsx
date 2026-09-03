@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 
+import { DatePicker } from '@/components/ui/DatePicker'
 import { Icon } from '@/components/ui/Icon'
 import { useRouter } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
@@ -587,14 +588,12 @@ export const TransferBookingForm = ({ transfer, variant, currencies }: Props) =>
       {/* --- when / who ------------------------------------------------------- */}
       <div style={stagger(2)} className="grid gap-x-4 sm:grid-cols-2 lg:grid-cols-4">
         <Field label={t('date')} htmlFor="tf-date" error={errors.date}>
-          <input
+          <DatePicker
             id="tf-date"
-            type="date"
             value={date}
-            min={new Date().toISOString().slice(0, 10)}
-            onChange={(event) => setDate(event.target.value)}
-            aria-invalid={!!errors.date || undefined}
-            className={cn(field, errors.date && 'border-error/60')}
+            onChange={setDate}
+            invalid={!!errors.date}
+            className={cn(field, 'h-12', errors.date && 'border-error/60')}
           />
         </Field>
 

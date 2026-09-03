@@ -4,8 +4,10 @@ import { useEffect, useId, useTransition } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/Button'
+import { DatePicker } from '@/components/ui/DatePicker'
 import { Icon } from '@/components/ui/Icon'
 import { createBookingEnquiry } from '@/lib/actions/booking'
+import { cn } from '@/lib/utils'
 import { TOUR_TYPES, usePreferencesStore, useSearchStore, type TourType } from '@/stores'
 
 type SearchWidgetProps = {
@@ -96,13 +98,12 @@ export const SearchWidget = ({ defaultDestination }: SearchWidgetProps) => {
             name="calendar"
             className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-outline"
           />
-          <input
+          <DatePicker
             id={`${ids}-date`}
-            name="travelDate"
-            type="date"
             value={travelDate}
-            onChange={(event) => setField('travelDate', event.target.value)}
-            className={fieldShell}
+            onChange={(iso) => setField('travelDate', iso)}
+            hideIcon
+            className={cn(fieldShell, 'h-[58px]')}
           />
         </div>
       </div>
