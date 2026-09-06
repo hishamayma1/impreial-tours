@@ -30,7 +30,12 @@ export const buildDefaultNav = (t: Translate, enabledServices?: string[]): NavIt
       { label: t('fullExperiences'), href: '/tours/experiences' },
     ],
   },
-  { label: t('hotels'), href: '/hotels', service: 'hotels' },
+  {
+    label: t('hotels'),
+    href: '/hotels',
+    service: 'hotels',
+    children: [{ label: t('allHotels'), href: '/hotels' }],
+  },
   {
     label: t('transfers'),
     href: '/transfers',

@@ -77,7 +77,12 @@ const AboutPage = async ({ params }: { params: Promise<{ locale: string }> }) =>
   return (
     <div className="aurora">
       {/* --- hero -------------------------------------------------------------- */}
-      <header className="relative isolate overflow-hidden">
+      {/*
+        -mt-20 for the same reason as the home hero: the sticky header reserves its
+        height in flow, which otherwise sits as a band of page background above a
+        full-bleed image meant to start at the top of the viewport. See Hero.tsx.
+      */}
+      <header className="relative isolate -mt-20 overflow-hidden">
         {/*
           `data-hero-zone` tells HeaderShell to render the bar transparent over this
           photograph and turn solid as its foot passes under.

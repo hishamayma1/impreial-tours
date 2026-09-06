@@ -12,11 +12,13 @@ import { CurrencySwitcher } from './CurrencySwitcher'
 import { HeaderShell } from './HeaderShell'
 import { LocaleSwitcher } from './LocaleSwitcher'
 import { MobileNav } from './MobileNav'
-import { NavRecommendations, NavRecommendationsSkeleton } from './NavRecommendations'
+import {
+  NavHotelRecommendations,
+  NavRecommendations,
+  NavRecommendationsSkeleton,
+  NavTransferRecommendations,
+} from './NavRecommendations'
 import { PrimaryNav } from './PrimaryNav'
-
-/** The hub whose mega panel carries the recommendation rail. */
-const FEATURED_HUB = '/tours'
 
 /**
  * Server component: nav items and branding are read from the CMS at build/revalidate
@@ -61,20 +63,31 @@ export const Header = async ({ locale }: { locale: Locale }) => {
         </Link>
 
         {/*
-          The recommendation rail is handed over as a server-rendered slot, behind its
-          own Suspense boundary. The header sits above the fold on every route, so it
-          must not block on a database read; the panel starts closed, so the rail has
-          the whole of the first paint to arrive and is normally resolved long before
-          anyone opens the menu.
+          Each hub's recommendation rail is handed over as a server-rendered slot,
+          behind its own Suspense boundary. The header sits above the fold on every
+          route, so it must not block on a database read; every panel starts closed,
+          so each rail has the whole of the first paint to arrive and is normally
+          resolved long before anyone opens that hub's menu.
         */}
         <PrimaryNav
           items={navItems}
-          featuredHref={FEATURED_HUB}
-          featured={
-            <Suspense fallback={<NavRecommendationsSkeleton />}>
-              <NavRecommendations locale={locale} currencies={settings.currencies} />
-            </Suspense>
-          }
+          featuredByHub={{
+            '/tours': (
+              <Suspense fallback={<NavRecommendationsSkeleton />}>
+                <NavRecommendations locale={locale} currencies={settings.currencies} />
+              </Suspense>
+            ),
+            '/hotels': (
+              <Suspense fallback={<NavRecommendationsSkeleton />}>
+                <NavHotelRecommendations locale={locale} currencies={settings.currencies} />
+              </Suspense>
+            ),
+            '/transfers': (
+              <Suspense fallback={<NavRecommendationsSkeleton />}>
+                <NavTransferRecommendations locale={locale} currencies={settings.currencies} />
+              </Suspense>
+            ),
+          }}
         />
 
         {/*

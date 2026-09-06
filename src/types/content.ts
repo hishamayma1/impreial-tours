@@ -95,6 +95,20 @@ export type NavItemVM = {
   children?: NavItemVM[]
 }
 
+/**
+ * One card in a mega panel's recommendation rail — the shape every hub's spotlight
+ * query (tours, hotels) is mapped down to, so the rail itself never has to know
+ * whether it is showing a tour or a hotel.
+ */
+export type NavSpotlightItemVM = {
+  id: string
+  href: string
+  title: string
+  image: ImageVM | null
+  priceFrom: number | null
+  rating: number | null
+}
+
 export type HeaderVM = {
   navItems: NavItemVM[]
   cta: NavItemVM | null

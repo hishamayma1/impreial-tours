@@ -4,6 +4,7 @@ import type { Where } from 'payload'
 
 import type { Locale } from '@/i18n/routing'
 import type { PaginatedVM, ServiceCardVM } from '@/types/services'
+import type { NavSpotlightItemVM } from '@/types/content'
 
 import { getPayloadClient } from './client'
 import { cached, emptyPage, PAGE_SIZE } from './services'
@@ -230,6 +231,48 @@ export const parseHotelFilters = (query: SearchQuery): HotelFilters => {
     sortBy: (HOTEL_SORTS as readonly string[]).includes(sortBy ?? '') ? sortBy : 'newest',
   }
 }
+
+const SPOTLIGHT_SIZE = 3
+
+/**
+ * The top-rated hotels, for the Hotels hub's mega-panel recommendation rail.
+ *
+ * Reuses `hotelWhere`/`hotelCard`'s own query rather than a bespoke find, so a
+ * newly-published hotel becomes eligible the same way it becomes eligible for the
+ * listing page — no second definition of "published" to drift out of sync.
+ */
+export const getSpotlightHotels = cached(
+  'hotels',
+  [] as NavSpotlightItemVM[],
+  async (locale: Locale): Promise<NavSpotlightItemVM[]> => {
+    const payload = await getPayloadClient()
+
+    const result = await payload.find({
+      collection: 'hotels',
+      locale,
+      fallbackLocale: 'en',
+      where: hotelWhere({}),
+      depth: 1,
+      limit: SPOTLIGHT_SIZE,
+      sort: '-starRating',
+      overrideAccess: true,
+      select: { slug: true, name: true, heroImage: true, starRating: true, priceFrom: true },
+    })
+
+    return result.docs.map((doc) => {
+      const card = hotelCard(doc as Doc)
+      return {
+        id: card.id,
+        href: `/hotels/${card.slug}`,
+        title: card.title,
+        image: card.image,
+        priceFrom: card.priceFrom,
+        rating: card.rating ?? null,
+      }
+    })
+  },
+  'hotels:spotlight',
+)
 
 /**
  * Whether the visitor narrowed the list themselves. Paging and sort are excluded:

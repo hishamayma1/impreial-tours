@@ -12,15 +12,13 @@ import type { NavItemVM } from '@/types/content'
 
 type PrimaryNavProps = {
   items: NavItemVM[]
-  /** The hub whose panel carries a recommendation rail — the Tours hub. */
-  featuredHref?: string
   /**
-   * Server-rendered recommendation rail, handed in as a slot.
-   *
-   * Passing it as a node rather than as data keeps the tour cards — and the queries
-   * behind them — on the server. This component never learns what a tour is.
+   * Server-rendered recommendation rails, handed in as slots keyed by the hub's own
+   * `href`. Passing them as nodes rather than as data keeps the tour/hotel cards —
+   * and the queries behind them — on the server; this component never learns what a
+   * tour or a hotel is, only which hub is currently open.
    */
-  featured?: ReactNode
+  featuredByHub?: Record<string, ReactNode>
 }
 
 /**
@@ -50,20 +48,24 @@ const focusRing =
 const sectionLabel =
   'font-label-caps text-label-caps uppercase tracking-[0.14em] text-on-surface-variant'
 
+/**
+ * A vertical link row rather than a card: the hubs read as a list to scan top to
+ * bottom, which is what leaves the panel's width free for the recommendation rail
+ * instead of splitting it three or four ways into cramped tiles.
+ */
 const tileClass =
-  'group/tile flex h-full items-center gap-3 rounded-xl border border-hairline bg-surface-container-lowest px-3.5 py-3 ' +
-  'transition-[transform,border-color,box-shadow] duration-200 hover:border-brand/40 hover:shadow-nav ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ' +
-  // The lift is the only motion here, and it is a transform — no layout, no paint.
-  'motion-safe:hover:-translate-y-0.5'
+  'group/tile relative flex items-center gap-3.5 rounded-xl px-3 py-2.5 ' +
+  'transition-colors duration-200 hover:bg-surface-container-low ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 const tileIconClass =
-  'grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand/[0.07] text-brand transition-colors duration-200 ' +
+  'grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand/[0.07] text-brand transition-colors duration-200 ' +
   'group-hover/tile:bg-brand group-hover/tile:text-on-primary'
 
+/** Hidden until hover, then slides in from the label — a cheap way to signal "go". */
 const tileArrowClass =
-  'h-4 w-4 shrink-0 text-outline transition-[transform,color] duration-200 ' +
-  'group-hover/tile:translate-x-0.5 group-hover/tile:text-brand rtl:rotate-180'
+  'h-4 w-4 shrink-0 -translate-x-1 text-outline opacity-0 transition-all duration-200 ' +
+  'group-hover/tile:translate-x-0 group-hover/tile:text-brand group-hover/tile:opacity-100 rtl:rotate-180'
 
 /**
  * A glyph for a destination, chosen from its path.
@@ -109,7 +111,7 @@ const iconFor = (href: string): IconName =>
  * on the very next event. `suppressHover` holds the closure until the pointer
  * genuinely leaves.
  */
-export const PrimaryNav = ({ items, featuredHref, featured }: PrimaryNavProps) => {
+export const PrimaryNav = ({ items, featuredByHub }: PrimaryNavProps) => {
   const t = useTranslations('nav')
   const pathname = usePathname()
 
@@ -315,11 +317,7 @@ export const PrimaryNav = ({ items, featuredHref, featured }: PrimaryNavProps) =
         // Only add a link to the hub when it is not already among its own children —
         // the Tours hub lists "All Tours" itself, Transfers does not.
         const hubListed = item.children.some((child) => child.href === item.href)
-        const showsFeatured = Boolean(featured) && item.href === featuredHref
-        // The hub card is a tile like any other, so it has to be counted before the
-        // column split — otherwise Transfers' three children pick a 3-column grid and
-        // "View all" drops onto a row of its own.
-        const tileCount = item.children.length + (hubListed ? 0 : 1)
+        const featuredNode = featuredByHub?.[item.href]
 
         return (
           <div key={item.href}>
@@ -364,63 +362,60 @@ export const PrimaryNav = ({ items, featuredHref, featured }: PrimaryNavProps) =
               className="absolute inset-x-0 top-full origin-top border-b border-outline-variant/40 bg-surface-container-lowest shadow-nav motion-safe:animate-[nav-panel-in_180ms_ease-out]"
             >
               <div className="mx-auto w-full max-w-[1600px] px-6 py-7 md:px-grid-margin">
-                <p className={sectionLabel}>{t('browse')}</p>
-
-                {/*
-                  The destinations, laid out in a row. Each is a card rather than a
-                  line of text: at this width a list of four links leaves most of the
-                  band empty, and the extra room is better spent making each target
-                  bigger than making the panel taller.
-                */}
-                <ul
-                  className={cn(
-                    'mt-3 grid gap-3',
-                    tileCount >= 4
-                      ? 'sm:grid-cols-2 lg:grid-cols-4'
-                      : 'sm:grid-cols-2 lg:grid-cols-3',
-                  )}
-                >
-                  {item.children.map((child) => (
-                    <li key={`${child.href}-${child.label}`}>
-                      <Link href={child.href} className={tileClass}>
-                        <span className={tileIconClass}>
-                          <Icon name={iconFor(child.href)} className="h-4 w-4" />
-                        </span>
-                        <span className="flex-1 font-body-md text-body-md text-primary">
-                          {child.label}
-                        </span>
-                        <Icon name="arrow-right" className={tileArrowClass} />
-                      </Link>
-                    </li>
-                  ))}
-
+                <div className={cn('grid gap-x-10 gap-y-7', featuredNode && 'lg:grid-cols-[288px_1fr]')}>
                   {/*
-                    The hub, when it is not already one of its own children. Given the
-                    brand fill rather than another outline so the row has one obvious
-                    destination for someone who does not want to choose yet.
+                    The destinations, read top to bottom as a list rather than scanned
+                    across a row of cards. A vertical rail keeps a fixed, narrow width
+                    whatever the hub's child count, which is what leaves the rest of
+                    the band free for the recommendation grid beside it.
                   */}
-                  {!hubListed ? (
-                    <li>
-                      <Link
-                        href={item.href}
-                        className="group/tile flex h-full items-center gap-3 rounded-xl border border-brand bg-brand px-3.5 py-3 text-on-primary transition-[transform,box-shadow] duration-200 hover:shadow-nav focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 motion-safe:hover:-translate-y-0.5"
-                      >
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/15">
-                          <Icon name={iconFor(item.href)} className="h-4 w-4" />
-                        </span>
-                        <span className="flex-1 font-body-md text-body-md">{t('viewAll')}</span>
-                        <Icon
-                          name="arrow-right"
-                          className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover/tile:translate-x-0.5 rtl:rotate-180"
-                        />
-                      </Link>
-                    </li>
-                  ) : null}
-                </ul>
+                  <div className={cn(!featuredNode && 'max-w-xs')}>
+                    <p className={sectionLabel}>{t('browse')}</p>
 
-                {showsFeatured ? (
-                  <div className="mt-7 border-t border-hairline pt-6">{featured}</div>
-                ) : null}
+                    <ul className="mt-2">
+                      {item.children.map((child) => (
+                        <li key={`${child.href}-${child.label}`}>
+                          <Link href={child.href} className={tileClass}>
+                            <span className={tileIconClass}>
+                              <Icon name={iconFor(child.href)} className="h-[18px] w-[18px]" />
+                            </span>
+                            <span className="flex-1 font-body-md text-body-md text-primary">
+                              {child.label}
+                            </span>
+                            <Icon name="arrow-right" className={tileArrowClass} />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/*
+                      The hub, when it is not already one of its own children. Set off
+                      by a rule and the brand fill so the list has one obvious
+                      destination for someone who has not decided yet.
+                    */}
+                    {!hubListed ? (
+                      <div className="mt-2 border-t border-hairline pt-2">
+                        <Link
+                          href={item.href}
+                          className="group/tile flex items-center gap-3.5 rounded-xl bg-brand px-3 py-2.5 text-on-primary transition-colors duration-200 hover:bg-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                        >
+                          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-white/15">
+                            <Icon name={iconFor(item.href)} className="h-[18px] w-[18px]" />
+                          </span>
+                          <span className="flex-1 font-body-md text-body-md">{t('viewAll')}</span>
+                          <Icon
+                            name="arrow-right"
+                            className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover/tile:translate-x-0.5 rtl:rotate-180"
+                          />
+                        </Link>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {featuredNode ? (
+                    <div className="border-l border-hairline pl-10">{featuredNode}</div>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
