@@ -113,11 +113,17 @@ is ~139 kB for the whole homepage.
 
 ## Notes
 
-- Media is stored on the local filesystem under `public/media/` (gitignored), so Next
-  serves uploads as static files. Reads never touch Payload's `/api/media/file/` route,
-  which boots the REST layer and runs access control once per image *and* once per size
-  variant. Swap in `@payloadcms/storage-s3` or similar before deploying to serverless
-  hosting.
+- Media is stored on the local filesystem under `public/media/`, so Next serves uploads
+  as static files. Reads never touch Payload's `/api/media/file/` route, which boots the
+  REST layer and runs access control once per image *and* once per size variant.
+  `public/media/` is **committed to git** so the seeded demo imagery actually reaches a
+  static host like Vercel — leaving it gitignored ships a database full of Media
+  documents pointing at files that don't exist on the deployed server, which is a 400 on
+  every image. That only covers content seeded before a deploy, though: Vercel's
+  filesystem is read-only at runtime, so a file an editor uploads through `/admin`
+  *after* that deploy has nowhere to land and is lost on the next cold start. Swap in
+  `@payloadcms/storage-s3` (or a Vercel Blob adapter) before editors need to add real
+  content in production.
 - Emails are written to the server log unless `SMTP_PASS` is set. Add `EMAIL_PREVIEW=1`
   to route them through a throwaway ethereal.email inbox instead — that opens a test
   account over the network on every server boot, so leave it off by default.
