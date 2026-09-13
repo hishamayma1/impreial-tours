@@ -7,8 +7,9 @@ import { entryPrice, toPricingConfig, type RentalPricingConfig } from '@/lib/ren
 import type { BicycleCardVM, PaginatedVM } from '@/types/services'
 
 import { getPayloadClient } from './client'
-import { cached, emptyPage, PAGE_SIZE } from './services'
+import { cached, PAGE_SIZE } from './services'
 import { toImage } from './mappers'
+import { fallbackBicycleListing, fallbackBicycleCounts, fallbackBicyclePriceRange } from './fallback-data'
 
 /**
  * The bicycles listing — rentals and guided rides in one filterable result set.
@@ -267,7 +268,7 @@ const bicycleCard = (doc: Doc): BicycleCardVM => {
  */
 export const getBicycleListing = cached(
   'bicycles',
-  emptyPage<BicycleCardVM>(),
+  fallbackBicycleListing,
   async (locale: Locale, filters: BicycleFilters = {}): Promise<PaginatedVM<BicycleCardVM>> => {
     const payload = await getPayloadClient()
 
@@ -317,7 +318,7 @@ export type BicycleCounts = { all: number; rental: number; tour: number }
  */
 export const getBicycleCounts = cached(
   'bicycles',
-  { all: 0, rental: 0, tour: 0 } as BicycleCounts,
+  fallbackBicycleCounts,
   async (locale: Locale, filters: BicycleFilters = {}): Promise<BicycleCounts> => {
     const payload = await getPayloadClient()
     const common = { collection: 'bicycles' as const, locale, overrideAccess: true }
@@ -342,7 +343,7 @@ export const getBicycleCounts = cached(
  */
 export const getBicyclePriceRange = cached(
   'bicycles',
-  { min: 0, max: 0 },
+  fallbackBicyclePriceRange,
   async (locale: Locale): Promise<{ min: number; max: number }> => {
     const payload = await getPayloadClient()
 

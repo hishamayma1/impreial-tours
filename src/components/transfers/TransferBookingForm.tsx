@@ -705,7 +705,8 @@ export const TransferBookingForm = ({ transfer, variant, currencies }: Props) =>
       ) : null}
 
       {/* --- extras ----------------------------------------------------------- */}
-      {!isCustom && transfer.extras.length ? (
+      {/* Airport transfers price on the vehicle alone — no paid add-ons offered there. */}
+      {variant !== 'airport' && !isCustom && transfer.extras.length ? (
         <fieldset style={stagger(4)} className="mt-4">
           <legend className={labelText}>{t('extras')}</legend>
           <div className="grid gap-2 sm:grid-cols-2">

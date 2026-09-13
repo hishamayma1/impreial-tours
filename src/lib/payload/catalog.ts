@@ -6,7 +6,8 @@ import type { Locale } from '@/i18n/routing'
 import type { CatalogTourVM, PaginatedVM } from '@/types/services'
 
 import { getPayloadClient } from './client'
-import { cached, emptyPage, tourCard, PAGE_SIZE } from './services'
+import { cached, tourCard, PAGE_SIZE } from './services'
+import { fallbackTourCatalog, fallbackTourCounts, fallbackTourPriceRange } from './fallback-data'
 
 /**
  * The combined `/tours` catalogue — daily tours and full experiences in one
@@ -167,7 +168,7 @@ const catalogCard = (doc: Doc): CatalogTourVM => {
  */
 export const getTourCatalog = cached(
   'tours',
-  emptyPage<CatalogTourVM>(),
+  fallbackTourCatalog,
   async (locale: Locale, filters: CatalogFilters = {}): Promise<PaginatedVM<CatalogTourVM>> => {
     const payload = await getPayloadClient()
 
@@ -235,7 +236,7 @@ export type CatalogCounts = { all: number; daily: number; experience: number }
  */
 export const getCatalogCounts = cached(
   'tours',
-  { all: 0, daily: 0, experience: 0 } as CatalogCounts,
+  fallbackTourCounts,
   async (locale: Locale, filters: CatalogFilters = {}): Promise<CatalogCounts> => {
     const payload = await getPayloadClient()
 
@@ -275,7 +276,7 @@ export const getCatalogCounts = cached(
  */
 export const getCatalogPriceRange = cached(
   'tours',
-  { min: 0, max: 0 },
+  fallbackTourPriceRange,
   async (locale: Locale): Promise<{ min: number; max: number }> => {
     const payload = await getPayloadClient()
 

@@ -2,12 +2,7 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TransferBookingForm } from '@/components/transfers/TransferBookingForm'
-import {
-  TransferHero,
-  TransferSection,
-  FleetGrid,
-  PriceCard,
-} from '@/components/transfers/TransferShell'
+import { TransferHero } from '@/components/transfers/TransferShell'
 import { Container } from '@/components/ui/Container'
 import { PhasePlaceholder } from '@/components/ui/PhasePlaceholder'
 import { locales, type Locale } from '@/i18n/routing'
@@ -32,14 +27,6 @@ export const generateMetadata = async ({
     description: t('description'),
     alternates: buildAlternates(locale as Locale, PATH),
   }
-}
-
-/** Minutes into a readable "3 h 20" without pulling in a formatting library. */
-const duration = (minutes: number | null): string => {
-  if (!minutes) return ''
-  const hours = Math.floor(minutes / 60)
-  const rest = minutes % 60
-  return hours ? `${hours} h${rest ? ` ${rest}` : ''}` : `${rest} min`
 }
 
 const IntercityTransferPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
@@ -74,35 +61,6 @@ const IntercityTransferPage = async ({ params }: { params: Promise<{ locale: str
             />
           </div>
         </Container>
-      ) : null}
-
-      {transfer?.vehicles.length ? (
-        <TransferSection title={f('fleetTitle')}>
-          <FleetGrid vehicles={transfer.vehicles} />
-        </TransferSection>
-      ) : null}
-
-      {transfer?.routes.length ? (
-        <TransferSection title={f('routesTitle')} className="border-t border-hairline">
-          <div className="stagger grid gap-5 lg:grid-cols-2">
-            {transfer.routes.map((route, index) => (
-              <PriceCard
-                key={route.id}
-                index={index}
-                title={`${route.fromCity} → ${route.toCity}`}
-                meta={[
-                  route.distanceKm ? `${route.distanceKm} km` : '',
-                  duration(route.estimatedDurationMin),
-                ]
-                  .filter(Boolean)
-                  .join(' · ')}
-                note={route.note}
-                pricing={route.vehiclePricing}
-                currencies={settings.currencies}
-              />
-            ))}
-          </div>
-        </TransferSection>
       ) : null}
 
       {!transfer ? <PhasePlaceholder note={t('description')} /> : null}

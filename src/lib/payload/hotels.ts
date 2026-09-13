@@ -7,8 +7,9 @@ import type { PaginatedVM, ServiceCardVM } from '@/types/services'
 import type { NavSpotlightItemVM } from '@/types/content'
 
 import { getPayloadClient } from './client'
-import { cached, emptyPage, PAGE_SIZE } from './services'
+import { cached, PAGE_SIZE } from './services'
 import { toImage } from './mappers'
+import { fallbackHotelListing, fallbackHotelPriceRange, fallbackSpotlightHotels } from './fallback-data'
 
 /**
  * The hotels listing, with filters that actually filter.
@@ -112,7 +113,7 @@ const hotelCard = (doc: Doc): ServiceCardVM => ({
 
 export const getHotelListing = cached(
   'hotels',
-  emptyPage<ServiceCardVM>(),
+  fallbackHotelListing,
   async (locale: Locale, filters: HotelFilters = {}): Promise<PaginatedVM<ServiceCardVM>> => {
     const payload = await getPayloadClient()
 
@@ -155,7 +156,7 @@ export const getHotelListing = cached(
  */
 export const getHotelPriceRange = cached(
   'hotels',
-  { min: 0, max: 0 },
+  fallbackHotelPriceRange,
   async (locale: Locale): Promise<{ min: number; max: number }> => {
     const payload = await getPayloadClient()
 
@@ -243,7 +244,7 @@ const SPOTLIGHT_SIZE = 3
  */
 export const getSpotlightHotels = cached(
   'hotels',
-  [] as NavSpotlightItemVM[],
+  fallbackSpotlightHotels,
   async (locale: Locale): Promise<NavSpotlightItemVM[]> => {
     const payload = await getPayloadClient()
 

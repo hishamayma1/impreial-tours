@@ -58,7 +58,16 @@ export const HeroSection = async ({ locale }: Props) => {
 
   return (
     <Hero
-      hero={home.hero}
+      hero={{
+        ...home.hero,
+        // The hero heading is the page's only `<h1>` and its LCP text — never leave it
+        // empty the way `emptyHomePage`'s outage fallback does. Every other section on
+        // this page already falls back to a translation the same way; this one had been
+        // missed, so a database outage (or simply an editor leaving the field blank)
+        // rendered an empty <h1> — invisible to the hero, and to a crawler.
+        title: firstFilled(home.hero.title, t('title')),
+        subtitle: firstFilled(home.hero.subtitle, t('subtitle')),
+      }}
       labels={{
         primaryCta: t('primaryCta'),
         secondaryCta: t('secondaryCta'),

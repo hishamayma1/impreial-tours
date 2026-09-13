@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useLocale } from 'next-intl'
 import { DayPicker, type Locale as DayPickerLocale, type Matcher as DayPickerMatcher } from 'react-day-picker'
 import { de, enUS, es } from 'react-day-picker/locale'
@@ -52,12 +53,21 @@ export const DatePicker = ({
   const locale = useLocale()
   const panelId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
+  const [panelStyle, setPanelStyle] = useState<{ top: number; left: number; width: number } | null>(null)
 
   useEffect(() => {
     if (!open) return
     const onPointerDown = (event: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(event.target as Node)) setOpen(false)
+      const target = event.target as Node
+      if (
+        rootRef.current &&
+        !rootRef.current.contains(target) &&
+        !(panelRef.current && panelRef.current.contains(target))
+      ) {
+        setOpen(false)
+      }
     }
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false)
@@ -67,6 +77,38 @@ export const DatePicker = ({
     return () => {
       document.removeEventListener('pointerdown', onPointerDown)
       document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
+  /**
+   * Portalled to the body and positioned in fixed coordinates from the trigger's own
+   * rect — see the identical fix in PrimaryNav.tsx.
+   *
+   * Every caller of this component sits inside a `.glass`/`.glass-panel` ancestor
+   * somewhere in the tree, and `backdrop-filter` promotes its own element onto a
+   * compositor layer that paints in front of ordinary z-indexed content in some
+   * browsers regardless of the numbers involved — the panel's `z-50` lost to a plain
+   * sibling input two rows down purely because that input also carries
+   * `backdrop-blur-sm`. Rendering outside every such ancestor removes the local
+   * stacking context this bug depends on, rather than trying to out-number it.
+   */
+  useLayoutEffect(() => {
+    if (!open) return
+
+    const place = () => {
+      const rect = rootRef.current?.getBoundingClientRect()
+      if (!rect) return
+      setPanelStyle({ top: rect.bottom + 8, left: rect.left, width: rect.width })
+    }
+
+    place()
+    window.addEventListener('resize', place)
+    // `capture: true` so a scroll inside any nested scroll container repositions the
+    // panel too, not only a scroll of the window itself.
+    window.addEventListener('scroll', place, true)
+    return () => {
+      window.removeEventListener('resize', place)
+      window.removeEventListener('scroll', place, true)
     }
   }, [open])
 
@@ -138,34 +180,40 @@ export const DatePicker = ({
         )}
       </button>
 
-      {open ? (
-        <div
-          id={panelId}
-          role="dialog"
-          aria-modal="false"
-          // A fixed width independent of the trigger: a narrow trigger (a quarter-width
-          // search field, a two-up form column) would otherwise squeeze the 7-column
-          // grid below the day buttons' own size, forcing digits out past their circle.
-          // Capped against the viewport so it never runs off a small screen either.
-          className="absolute z-50 mt-2 w-[296px] max-w-[calc(100vw-2rem)] rounded-xl border border-hairline bg-surface-container-lowest p-3 shadow-widget"
-        >
-          <DayPicker
-            mode="single"
-            autoFocus
-            navLayout="around"
-            selected={selected}
-            defaultMonth={selected ?? minDate}
-            locale={dayPickerLocales[locale] ?? enUS}
-            disabled={disabledMatchers}
-            onSelect={(date) => {
-              if (!date) return
-              onChange(dateToISO(date))
-              setOpen(false)
-            }}
-            classNames={dayPickerClassNames}
-          />
-        </div>
-      ) : null}
+      {open && panelStyle
+        ? createPortal(
+            <div
+              ref={panelRef}
+              id={panelId}
+              role="dialog"
+              aria-modal="false"
+              style={{ top: panelStyle.top, left: panelStyle.left }}
+              // A fixed width independent of the trigger: a narrow trigger (a
+              // quarter-width search field, a two-up form column) would otherwise
+              // squeeze the 7-column grid below the day buttons' own size, forcing
+              // digits out past their circle. Capped against the viewport so it never
+              // runs off a small screen either.
+              className="fixed z-50 w-[296px] max-w-[calc(100vw-2rem)] rounded-xl border border-hairline bg-surface-container-lowest p-3 shadow-widget"
+            >
+              <DayPicker
+                mode="single"
+                autoFocus
+                navLayout="around"
+                selected={selected}
+                defaultMonth={selected ?? minDate}
+                locale={dayPickerLocales[locale] ?? enUS}
+                disabled={disabledMatchers}
+                onSelect={(date) => {
+                  if (!date) return
+                  onChange(dateToISO(date))
+                  setOpen(false)
+                }}
+                classNames={dayPickerClassNames}
+              />
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   )
 }

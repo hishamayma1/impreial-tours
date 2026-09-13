@@ -126,7 +126,7 @@ const LocaleLayout = async ({
 
   return (
     <html lang={locale} className={`${display.variable} ${body.variable}`} suppressHydrationWarning>
-      <body>
+      <body className="flex min-h-dvh flex-col">
         {/*
           Only the namespaces used by client components are serialised into the page;
           server components read the full catalogue directly. See i18n/client-namespaces.
@@ -136,7 +136,17 @@ const LocaleLayout = async ({
             {t('skipToContent')}
           </a>
           <Header locale={locale as Locale} />
-          <main id="main">{children}</main>
+          {/*
+            `flex-1` is what makes the footer behave like a "fixed to the bottom"
+            footer without actually being `position: fixed`: on a short page it grows
+            to fill the leftover viewport height, pushing the footer down to sit flush
+            with the bottom of the screen instead of leaving a gap beneath it. On a
+            page long enough to scroll, this does nothing — the footer simply follows
+            the content down, as it always did.
+          */}
+          <main id="main" className="flex-1">
+            {children}
+          </main>
           <Footer locale={locale as Locale} />
           {/* Warms the other service routes once this page is idle. Renders nothing. */}
           <RoutePrefetcher />

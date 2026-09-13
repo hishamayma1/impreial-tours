@@ -2,12 +2,7 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TransferBookingForm } from '@/components/transfers/TransferBookingForm'
-import {
-  TransferHero,
-  TransferSection,
-  FleetGrid,
-  PriceCard,
-} from '@/components/transfers/TransferShell'
+import { TransferHero } from '@/components/transfers/TransferShell'
 import { Container } from '@/components/ui/Container'
 import { PhasePlaceholder } from '@/components/ui/PhasePlaceholder'
 import { locales, type Locale } from '@/i18n/routing'
@@ -84,29 +79,6 @@ const AirportTransferPage = async ({ params }: { params: Promise<{ locale: strin
             />
           </div>
         </Container>
-      ) : null}
-
-      {transfer?.vehicles.length ? (
-        <TransferSection title={f('fleetTitle')}>
-          <FleetGrid vehicles={transfer.vehicles} />
-        </TransferSection>
-      ) : null}
-
-      {transfer?.zones.length ? (
-        <TransferSection title={f('zonesTitle')} className="border-t border-hairline">
-          <div className="stagger grid gap-5 lg:grid-cols-2">
-            {transfer.zones.map((zone, index) => (
-              <PriceCard
-                key={zone.id}
-                index={index}
-                title={zone.zoneName}
-                meta={zone.areas.join(' · ')}
-                pricing={zone.vehiclePricing}
-                currencies={settings.currencies}
-              />
-            ))}
-          </div>
-        </TransferSection>
       ) : null}
 
       {!transfer ? <PhasePlaceholder note={t('description')} /> : null}

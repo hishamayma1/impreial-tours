@@ -22,6 +22,16 @@ import { toPricingConfig } from '@/lib/rental-pricing'
 
 import { getPayloadClient } from './client'
 import { toImage } from './mappers'
+import { withFallback } from './with-fallback'
+import {
+  fallbackTourListing,
+  fallbackTourOffers,
+  fallbackSpotlightTours,
+  findFallbackTour,
+  findFallbackHotel,
+  findFallbackTransfer,
+  findFallbackBicycle,
+} from './fallback-data'
 
 const REVALIDATE_SECONDS = 3600
 
@@ -53,23 +63,19 @@ const timeList = (v: unknown): string[] =>
  */
 export const cached = <A extends unknown[], T>(
   tag: string,
-  fallback: T,
+  fallback: T | ((...args: A) => T),
   loader: (...args: A) => Promise<T>,
   key: string = tag,
 ) => {
+  const guarded = withFallback(loader, fallback, (error) =>
+    console.error(`[payload] "${key}" read failed`, error),
+  )
+
   return (...args: A): Promise<T> =>
-    unstable_cache(
-      async () => {
-        try {
-          return await loader(...args)
-        } catch (error) {
-          console.error(`[payload] "${key}" read failed`, error)
-          return fallback
-        }
-      },
-      [key, ...args.map((a) => JSON.stringify(a))],
-      { tags: [tag], revalidate: REVALIDATE_SECONDS },
-    )()
+    unstable_cache(() => guarded(...args), [key, ...args.map((a) => JSON.stringify(a))], {
+      tags: [tag],
+      revalidate: REVALIDATE_SECONDS,
+    })()
 }
 
 export const emptyPage = <T>(): PaginatedVM<T> => ({ items: [], page: 1, totalPages: 0, totalDocs: 0 })
@@ -152,7 +158,8 @@ const sortMap: Record<string, string> = {
 
 export const getTours = cached(
   'tours',
-  emptyPage<ServiceCardVM>(),
+  (_locale: Locale, tourType: 'daily' | 'experience', ..._rest: unknown[]) =>
+    fallbackTourListing(tourType),
   async (
     locale: Locale,
     tourType: 'daily' | 'experience',
@@ -232,7 +239,7 @@ const tourOfferCard = (doc: Doc): OfferVM => {
  * Tagged `tours` rather than `offers` so that editing the tour — the document that
  * actually owns this content — is what refreshes the carousel.
  */
-export const getTourOffers = cached('tours', [] as OfferVM[], async (locale: Locale) => {
+export const getTourOffers = cached('tours', fallbackTourOffers, async (locale: Locale) => {
   const payload = await getPayloadClient()
   const now = new Date().toISOString()
 
@@ -298,7 +305,7 @@ const spotlightCard = (doc: Doc, spotlight: 'new' | 'top'): SpotlightTourVM => {
 
 export const getSpotlightTours = cached(
   'tours',
-  { new: [] as SpotlightTourVM[], top: [] as SpotlightTourVM[] },
+  fallbackSpotlightTours,
   async (locale: Locale) => {
     const payload = await getPayloadClient()
 
@@ -394,7 +401,7 @@ const galleryOf = (v: unknown) =>
 
 export const getTourBySlug = cached(
   'tours',
-  null as TourDetailVM | null,
+  (_locale: Locale, slug: string, tourType: 'daily' | 'experience') => findFallbackTour(slug, tourType),
   async (locale: Locale, slug: string, tourType: 'daily' | 'experience') => {
     const doc = await findOneBySlug('tours', locale, slug, { tourType: { equals: tourType } })
     if (!doc) return null
@@ -462,7 +469,7 @@ export const getTourBySlug = cached(
 
 export const getHotelBySlug = cached(
   'hotels',
-  null as HotelDetailVM | null,
+  (_locale: Locale, slug: string) => findFallbackHotel(slug),
   async (locale: Locale, slug: string) => {
     const doc = await findOneBySlug('hotels', locale, slug)
     if (!doc) return null
@@ -525,7 +532,8 @@ const vehiclePrices = (v: unknown) =>
 
 export const getTransferByType = cached(
   'transfers',
-  null as TransferDetailVM | null,
+  (_locale: Locale, transferType: 'airport' | 'intercity' | 'custom') =>
+    findFallbackTransfer(transferType),
   async (locale: Locale, transferType: 'airport' | 'intercity' | 'custom') => {
     const payload = await getPayloadClient()
     const result = await payload.find({
@@ -622,7 +630,7 @@ export const getTransferByType = cached(
 
 export const getBicycleBySlug = cached(
   'bicycles',
-  null as BicycleDetailVM | null,
+  (_locale: Locale, slug: string) => findFallbackBicycle(slug),
   async (locale: Locale, slug: string) => {
     const doc = await findOneBySlug('bicycles', locale, slug)
     if (!doc) return null

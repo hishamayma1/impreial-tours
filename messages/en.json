@@ -51,6 +51,8 @@
     "resultsFor": "Showing journeys for {destination}"
   },
   "hero": {
+    "title": "Curated Journeys Through Egypt",
+    "subtitle": "Private tours, Nile cruises and hand-picked stays, planned by people who know the ground.",
     "primaryCta": "Explore Journeys",
     "secondaryCta": "Plan With Us",
     "trust": {
