@@ -7,6 +7,7 @@ import { altText } from './alt-text'
 import { seedServices } from './seed-services'
 import { seedNavigation } from './seed-navigation'
 import { revalidateRemote } from './revalidate-remote'
+import { SEED_USER_AGENT, extensionFor } from './fetch-asset'
 
 type AssetKey = keyof typeof assets
 type MediaIds = Record<string, string>
@@ -23,12 +24,12 @@ const uploadAssets = async (payload: Payload): Promise<MediaIds> => {
 
   for (const [key, url] of Object.entries(assets) as Array<[AssetKey, string]>) {
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, { headers: { 'User-Agent': SEED_USER_AGENT } })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
       const buffer = Buffer.from(await response.arrayBuffer())
       const contentType = response.headers.get('content-type') ?? 'image/jpeg'
-      const extension = contentType.includes('png') ? 'png' : 'jpg'
+      const extension = extensionFor(contentType)
 
       const doc = await withRetry(() =>
         payload.create({

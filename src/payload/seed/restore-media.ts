@@ -4,6 +4,7 @@ import { getPayload } from 'payload'
 import config from '../../payload.config'
 import assets from './assets.json' with { type: 'json' }
 import { altText } from './alt-text'
+import { SEED_USER_AGENT, extensionFor } from './fetch-asset'
 
 /**
  * Re-downloads the binaries behind existing Media documents.
@@ -25,6 +26,12 @@ import { altText } from './alt-text'
  * name against the document that already holds it — so an unconditional re-run would
  * rewrite `hero.webp` as `hero-1.webp`, then `hero-2.webp`, leaving orphaned copies
  * behind every time. Pass --force to re-download anyway.
+ *
+ * Every source in `assets.json` is a Wikimedia Commons file, addressed through
+ * Commons' own `Special:FilePath/<file>` redirect so a re-run still finds the image
+ * even if it is later renamed on-wiki. Commons hosts only public-domain or
+ * Creative-Commons-licensed media, with the exact license stated on each file's own
+ * page — check that page before reusing an image anywhere outside this demo seed.
  */
 
 type AssetKey = keyof typeof assets
@@ -60,12 +67,12 @@ const restore = async () => {
     }
 
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, { headers: { 'User-Agent': SEED_USER_AGENT } })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
       const buffer = Buffer.from(await response.arrayBuffer())
       const contentType = response.headers.get('content-type') ?? 'image/jpeg'
-      const extension = contentType.includes('png') ? 'png' : 'jpg'
+      const extension = extensionFor(contentType)
 
       await payload.update({
         collection: 'media',
