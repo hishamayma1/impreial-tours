@@ -31,6 +31,7 @@ export const HotelCard = async ({
   index: number
 }) => {
   const t = await getTranslations('services')
+  const filters = await getTranslations('filters')
 
   const amenities = item.meta.slice(0, VISIBLE_AMENITIES)
   const hidden = item.meta.length - amenities.length
@@ -54,7 +55,7 @@ export const HotelCard = async ({
           <span className="absolute start-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/55 px-2.5 py-1 font-body-md text-caption text-white backdrop-blur-sm">
             <span aria-hidden>{'★'.repeat(item.rating)}</span>
             {/* The stars are decorative; the count is what a screen reader hears. */}
-            <span className="sr-only">{t('starsValue', { count: String(item.rating) })}</span>
+            <span className="sr-only">{filters('starsValue', { count: String(item.rating) })}</span>
           </span>
         ) : null}
       </div>
