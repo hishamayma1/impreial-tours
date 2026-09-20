@@ -25,6 +25,7 @@ const STATIC_PATHS = [
   '',
   '/about',
   '/contact',
+  '/privacy-policy',
   // The combined catalogue. Only the bare path: every filtered view of it is a
   // near-duplicate that already asks not to be indexed.
   '/tours',

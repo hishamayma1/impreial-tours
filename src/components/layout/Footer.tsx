@@ -45,6 +45,14 @@ export const Footer = async ({ locale }: { locale: Locale }) => {
               { label: nav('bicycles'), href: '/bicycles' },
             ],
           },
+          {
+            title: nav('about'),
+            links: [
+              { label: nav('about'), href: '/about' },
+              { label: nav('contact'), href: '/contact' },
+              { label: nav('privacyPolicy'), href: '/privacy-policy' },
+            ],
+          },
         ]
 
   return (

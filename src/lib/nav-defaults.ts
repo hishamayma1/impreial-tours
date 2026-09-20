@@ -49,6 +49,7 @@ export const buildDefaultNav = (t: Translate, enabledServices?: string[]): NavIt
   { label: t('bicycles'), href: '/bicycles', service: 'bicycles' },
   { label: t('about'), href: '/about' },
   { label: t('contact'), href: '/contact' },
+  { label: t('privacyPolicy'), href: '/privacy-policy' },
   ]
 
   // Section 5: an item whose service is switched off in SiteSettings disappears
