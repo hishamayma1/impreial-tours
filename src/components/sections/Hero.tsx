@@ -26,17 +26,19 @@ type HeroProps = {
  * hero's `z-10`/`z-30`, so it stays above and clickable.
  *
  * Nothing clips at section level. The search widget hangs half its own height below
- * the hero's bottom edge (`translate-y-1/2`), and Services reserves `pt-[180px]` for
- * exactly that overhang — so an `overflow-hidden` here sheared the widget in two along
- * the section boundary, taking the inputs and the submit button with it. The clipping
- * lives on the image layer instead, which is the only child that ever needed it.
+ * the hero's bottom edge (`translate-y-1/2`), and Services reserves top padding for
+ * exactly that overhang (more of it below `md`, where the widget's fields stack into
+ * a taller single column instead of a row — see the comment there) — so an
+ * `overflow-hidden` here sheared the widget in two along the section boundary, taking
+ * the inputs and the submit button with it. The clipping lives on the image layer
+ * instead, which is the only child that ever needed it.
  *
  * Done here rather than by making the Header `fixed`: that would take it out of flow
  * for every inner page too, and PageHeader's 64px top padding is less than the 80px
  * of header, so those titles would slide underneath it.
  */
 export const Hero = ({ hero, labels }: HeroProps) => (
-  <section className="relative -mt-20 flex h-[92vh] min-h-[720px] w-full items-center justify-center">
+  <section className="relative -mt-20 flex h-[92vh] min-h-[620px] w-full items-center justify-center sm:min-h-[720px]">
     <div className="absolute inset-0 overflow-hidden">
       <CmsImage image={hero.image} alt="" sizes="100vw" priority />
     </div>

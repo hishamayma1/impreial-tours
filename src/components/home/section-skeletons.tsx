@@ -31,7 +31,7 @@ export const HeroSkeleton = () => (
  * that band — it would hold a two-up grid of 4:3 cards and then shift on resolve.
  */
 export const ServicesSkeleton = ({ count = 5 }: { count?: number }) => (
-  <section className="pb-section-v-padding pt-[180px]">
+  <section className="pb-section-v-padding pt-[220px] md:pt-[180px]">
     <Container>
       <Skeleton className="mx-auto mb-4 h-3 w-28" />
       <Skeleton className="mx-auto mb-16 h-8 w-72" />

@@ -64,7 +64,11 @@ export const Services = ({ heading, services, exploreLabel, cta }: ServicesProps
   return (
     <Container
       as="section"
-      className="pb-section-v-padding pt-[180px]"
+      // Reserves room for SearchWidget's overhang off the bottom of the Hero above
+      // (see Hero.tsx). Below `md`, SearchWidget renders as a short one-line trigger
+      // rather than the full form, so it needs less room than the desktop widget, not
+      // more — but it is a different height, so it still needs its own value here.
+      className="pb-section-v-padding pt-[220px] md:pt-[180px]"
       aria-labelledby="services-heading"
     >
       <SectionHeading

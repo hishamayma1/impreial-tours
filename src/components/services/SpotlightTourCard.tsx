@@ -155,14 +155,17 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
             ) : null}
 
             {/*
-              Collapsed to nothing at rest and opened on hover or keyboard focus. The
-              grid-rows trick animates to the text's real height without hard-coding
-              one, and `invisible` keeps the clipped copy out of the tab order and off
-              the screen-reader's path while it is closed.
+              Open by default; collapsed to nothing at rest from `md` up, where hover
+              can reveal it instead. Hover has no equivalent on a touch screen, so
+              gating the summary behind `group-hover` with no fallback — the original
+              behavior here — left it permanently unreadable on a phone, not merely
+              undiscoverable. The grid-rows trick animates to the text's real height
+              without hard-coding one, and `invisible` keeps the clipped copy out of
+              the tab order and off the screen-reader's path while it is closed.
             */}
             {item.summary ? (
-              <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-out group-hover:grid-rows-[1fr] group-focus-within:grid-rows-[1fr]">
-                <p className="invisible overflow-hidden font-body-md text-caption leading-relaxed text-white/70 opacity-0 transition-[opacity,visibility] duration-300 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] md:group-focus-within:grid-rows-[1fr]">
+                <p className="visible overflow-hidden font-body-md text-caption leading-relaxed text-white/70 opacity-100 transition-[opacity,visibility] duration-300 md:invisible md:opacity-0 md:group-hover:visible md:group-hover:opacity-100 md:group-focus-within:visible md:group-focus-within:opacity-100">
                   <span className="mt-3 block line-clamp-3">{item.summary}</span>
                 </p>
               </div>

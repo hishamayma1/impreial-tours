@@ -43,6 +43,8 @@
     "date": "Datum wählen",
     "tourType": "Tourart",
     "submit": "Suchen",
+    "open": "Suchen & filtern",
+    "close": "Schließen",
     "types": {
       "private": "Privat",
       "group": "Gruppe",

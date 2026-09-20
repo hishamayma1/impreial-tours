@@ -43,6 +43,8 @@
     "date": "Fecha",
     "tourType": "Tipo de circuito",
     "submit": "Buscar",
+    "open": "Buscar y filtrar",
+    "close": "Cerrar",
     "types": {
       "private": "Privado",
       "group": "En grupo",
