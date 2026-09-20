@@ -6,6 +6,7 @@ import { DetailHero } from '@/components/services/DetailHero'
 import { DetailSection, FactRow } from '@/components/services/DetailSection'
 import { RoomCard } from '@/components/services/RoomCard'
 import { RichText } from '@/components/ui/RichText'
+import { CancellationPolicy } from '@/components/shared/CancellationPolicy'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
@@ -143,6 +144,12 @@ const HotelDetailPage = async ({ params }: { params: Promise<PageParams> }) => {
           <RichText data={hotel.policies} className="max-w-3xl" />
         </DetailSection>
       ) : null}
+
+      <DetailSection title={t('cancellationPolicy')}>
+        <div className="max-w-3xl">
+          <CancellationPolicy override={hotel.cancellationPolicy} />
+        </div>
+      </DetailSection>
     </>
   )
 }

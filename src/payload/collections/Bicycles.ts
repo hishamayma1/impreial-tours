@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { publishedOrStaff, canWriteService, canDeleteService, canPublishService } from '../access'
 import { slugField } from '../fields/slug'
+import { cancellationPolicyField } from '../fields/cancellationPolicy'
 import { revalidateCollection, revalidateCollectionOnDelete } from '../hooks/revalidate'
 
 const isRental = (_: unknown, sibling: Record<string, unknown>) => sibling?.bikeType === 'rental'
@@ -394,5 +395,6 @@ export const Bicycles: CollectionConfig = {
         { name: 'maxGroupSize', type: 'number', min: 1 },
       ],
     },
+    cancellationPolicyField,
   ],
 }

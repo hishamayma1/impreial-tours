@@ -463,6 +463,7 @@ export const getTourBySlug = cached(
             pricePerPerson: numOrNull(t?.pricePerPerson) ?? 0,
           }))
         : [],
+      cancellationPolicy: doc.cancellationPolicy ?? null,
     } satisfies TourDetailVM
   },
 )
@@ -516,6 +517,7 @@ export const getHotelBySlug = cached(
             multiplier: numOrNull(s?.multiplier) ?? 1,
           }))
         : [],
+      cancellationPolicy: doc.cancellationPolicy ?? null,
     } satisfies HotelDetailVM
   },
 )
@@ -613,6 +615,7 @@ export const getTransferByType = cached(
             vehiclePricing: vehiclePrices(r?.vehiclePricing),
           }))
         : [],
+      cancellationPolicy: doc.cancellationPolicy ?? null,
     } satisfies TransferDetailVM
   },
   /**
@@ -625,7 +628,7 @@ export const getTransferByType = cached(
    * components that index into one — which is not a stale price, it is a 500 on a
    * booking page. Bump this again the next time the shape changes.
    */
-  'transfers:v2',
+  'transfers:v3',
 )
 
 export const getBicycleBySlug = cached(
@@ -721,6 +724,7 @@ export const getBicycleBySlug = cached(
             image: toImage(s?.image, 'card'),
           }))
         : [],
+      cancellationPolicy: doc.cancellationPolicy ?? null,
     } satisfies BicycleDetailVM
   },
   /**
@@ -733,7 +737,7 @@ export const getBicycleBySlug = cached(
    * into all three, which is a 500 on the booking page rather than a stale price. Bump
    * it again the next time this shape changes.
    */
-  'bicycle-detail:v2',
+  'bicycle-detail:v3',
 )
 
 // ---------------------------------------------------------------------------

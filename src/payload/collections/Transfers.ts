@@ -1,6 +1,7 @@
 import type { Field, CollectionConfig } from 'payload'
 import { publishedOrStaff, canWriteService, canDeleteService, canPublishService } from '../access'
 import { slugField } from '../fields/slug'
+import { cancellationPolicyField } from '../fields/cancellationPolicy'
 import { revalidateCollection, revalidateCollectionOnDelete } from '../hooks/revalidate'
 
 /**
@@ -254,5 +255,6 @@ export const Transfers: CollectionConfig = {
         },
       ],
     },
+    cancellationPolicyField,
   ],
 }

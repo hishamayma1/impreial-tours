@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TransferBookingForm } from '@/components/transfers/TransferBookingForm'
 import { TransferHero } from '@/components/transfers/TransferShell'
+import { CancellationPolicy } from '@/components/shared/CancellationPolicy'
 import { Container } from '@/components/ui/Container'
 import { PhasePlaceholder } from '@/components/ui/PhasePlaceholder'
 import { locales, type Locale } from '@/i18n/routing'
@@ -33,12 +34,13 @@ const AirportTransferPage = async ({ params }: { params: Promise<{ locale: strin
   const { locale } = await params
   setRequestLocale(locale)
 
-  const [transfer, settings, t, f, parent] = await Promise.all([
+  const [transfer, settings, t, f, parent, s] = await Promise.all([
     getTransferByType(locale as Locale, 'airport'),
     getSiteSettings(locale as Locale),
     getTranslations('transfers.airport'),
     getTranslations('transfers.form'),
     getTranslations('transfers'),
+    getTranslations('services'),
   ])
 
   // Only facts the document actually carries — an unconfigured transfer gets a clean
@@ -82,6 +84,17 @@ const AirportTransferPage = async ({ params }: { params: Promise<{ locale: strin
       ) : null}
 
       {!transfer ? <PhasePlaceholder note={t('description')} /> : null}
+
+      {transfer ? (
+        <Container className="py-12 md:py-16">
+          <div className="mx-auto max-w-2xl border-t border-hairline pt-12">
+            <h2 className="mb-6 font-headline-section text-headline-section text-primary">
+              {s('cancellationPolicy')}
+            </h2>
+            <CancellationPolicy override={transfer.cancellationPolicy} />
+          </div>
+        </Container>
+      ) : null}
     </div>
   )
 }

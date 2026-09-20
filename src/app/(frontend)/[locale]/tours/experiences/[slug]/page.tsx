@@ -14,6 +14,7 @@ import {
 } from '@/components/tour/TourContentBlocks'
 import { TourGallery } from '@/components/tour/TourGallery'
 import { RichText } from '@/components/ui/RichText'
+import { CancellationPolicy } from '@/components/shared/CancellationPolicy'
 import { Container } from '@/components/ui/Container'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
@@ -98,6 +99,7 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
     tour.included.length || tour.notIncluded.length ? { id: 'included', label: t('included') } : null,
     tour.priceTiers.length ? { id: 'pricing', label: t('groupPricing') } : null,
     tour.meetingPoint ? { id: 'meeting-point', label: t('meetingPoint') } : null,
+    { id: 'cancellation-policy', label: t('cancellationPolicy') },
   ].filter((section): section is NonNullable<typeof section> => Boolean(section))
 
   return (
@@ -198,6 +200,16 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
                 </p>
               </TourSection>
             ) : null}
+
+            <TourSection
+              id="cancellation-policy"
+              title={t('cancellationPolicy')}
+              className="border-t border-hairline"
+            >
+              <div className="max-w-2xl">
+                <CancellationPolicy override={tour.cancellationPolicy} />
+              </div>
+            </TourSection>
           </div>
         </div>
       </Container>

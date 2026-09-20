@@ -6,6 +6,7 @@ import {
   canPublishService,
 } from '../access'
 import { slugField } from '../fields/slug'
+import { cancellationPolicyField } from '../fields/cancellationPolicy'
 import { revalidateCollection, revalidateCollectionOnDelete } from '../hooks/revalidate'
 
 const isDaily = (_: unknown, siblingData: Record<string, unknown>) =>
@@ -358,5 +359,6 @@ export const Tours: CollectionConfig = {
         },
       ],
     },
+    cancellationPolicyField,
   ],
 }

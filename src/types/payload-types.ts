@@ -307,6 +307,24 @@ export interface Tour {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Leave blank to use the standard company-wide cancellation policy. Fill in only to override it for this listing.
+   */
+  cancellationPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -546,6 +564,24 @@ export interface Hotel {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Leave blank to use the standard company-wide cancellation policy. Fill in only to override it for this listing.
+   */
+  cancellationPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -659,6 +695,24 @@ export interface Transfer {
    * Custom trips carry no pricing — submissions land in Quote Requests for manual quoting. The form itself is switched on by SiteSettings.enableCustomQuote.
    */
   customNote?: string | null;
+  /**
+   * Leave blank to use the standard company-wide cancellation policy. Fill in only to override it for this listing.
+   */
+  cancellationPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -829,6 +883,24 @@ export interface Bicycle {
       }[]
     | null;
   maxGroupSize?: number | null;
+  /**
+   * Leave blank to use the standard company-wide cancellation policy. Fill in only to override it for this listing.
+   */
+  cancellationPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1530,6 +1602,7 @@ export interface ToursSelect<T extends boolean = true> {
         priceOverride?: T;
         id?: T;
       };
+  cancellationPolicy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1594,6 +1667,7 @@ export interface HotelsSelect<T extends boolean = true> {
         multiplier?: T;
         id?: T;
       };
+  cancellationPolicy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1679,6 +1753,7 @@ export interface TransfersSelect<T extends boolean = true> {
         id?: T;
       };
   customNote?: T;
+  cancellationPolicy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1790,6 +1865,7 @@ export interface BicyclesSelect<T extends boolean = true> {
         id?: T;
       };
   maxGroupSize?: T;
+  cancellationPolicy?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

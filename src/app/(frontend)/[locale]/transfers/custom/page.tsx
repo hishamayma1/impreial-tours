@@ -3,10 +3,12 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { PageHeader } from '@/components/layout/PageHeader'
 import { CustomQuoteForm } from '@/components/booking/CustomQuoteForm'
+import { CancellationPolicy } from '@/components/shared/CancellationPolicy'
 import { Container } from '@/components/ui/Container'
 import { locales, type Locale } from '@/i18n/routing'
 import { buildAlternates } from '@/lib/seo'
 import { getSiteSettings } from '@/lib/payload/queries'
+import { getTransferByType } from '@/lib/payload/services'
 
 const PATH = '/transfers/custom'
 
@@ -31,11 +33,13 @@ const CustomTripPage = async ({ params }: { params: Promise<{ locale: string }> 
   const { locale } = await params
   setRequestLocale(locale)
 
-  const [t, parent, quote, settings] = await Promise.all([
+  const [t, parent, quote, settings, s, transfer] = await Promise.all([
     getTranslations('transfers.custom'),
     getTranslations('transfers'),
     getTranslations('quote'),
     getSiteSettings(locale as Locale),
+    getTranslations('services'),
+    getTransferByType(locale as Locale, 'custom'),
   ])
 
   // SiteSettings.enableCustomQuote is the kill switch for this form (Section 3). The
@@ -56,6 +60,15 @@ const CustomTripPage = async ({ params }: { params: Promise<{ locale: string }> 
             </p>
           </div>
         )}
+      </Container>
+
+      <Container size="narrow" className="pb-14 md:pb-20">
+        <div className="border-t border-hairline pt-12">
+          <h2 className="mb-6 font-headline-section text-headline-section text-primary">
+            {s('cancellationPolicy')}
+          </h2>
+          <CancellationPolicy override={transfer?.cancellationPolicy} />
+        </div>
       </Container>
     </div>
   )

@@ -121,6 +121,7 @@ export type TourDetailVM = {
   basePricePerPerson: number | null
   singleSupplement: number | null
   priceTiers: Array<{ minPax: number; maxPax: number; pricePerPerson: number }>
+  cancellationPolicy: unknown
 }
 
 export type HotelDetailVM = {
@@ -159,6 +160,7 @@ export type HotelDetailVM = {
     endDate: string
     multiplier: number
   }>
+  cancellationPolicy: unknown
 }
 
 export type VehiclePriceVM = {
@@ -226,6 +228,7 @@ export type TransferDetailVM = {
     note: string
     vehiclePricing: VehiclePriceVM[]
   }>
+  cancellationPolicy: unknown
 }
 
 /**
@@ -325,6 +328,7 @@ export type BicycleDetailVM = {
     distanceFromStartKm: number | null
     image: ImageVM | null
   }>
+  cancellationPolicy: unknown
 }
 
 /** Maps each locale to that language's slug for the same document. */

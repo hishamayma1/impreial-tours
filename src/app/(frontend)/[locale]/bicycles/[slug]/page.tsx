@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { GuidedRidePlanner } from '@/components/bicycles/GuidedRidePlanner'
 import { RentalPlanner } from '@/components/bicycles/RentalPlanner'
+import { CancellationPolicy } from '@/components/shared/CancellationPolicy'
 import { CmsImage } from '@/components/ui/CmsImage'
 import { Container } from '@/components/ui/Container'
 import { Icon, type IconName } from '@/components/ui/Icon'
@@ -390,6 +391,12 @@ const BicycleDetailPage = async ({ params }: { params: Promise<PageParams> }) =>
                 </ul>
               </Section>
             ) : null}
+
+            <Section title={t('cancellationPolicy')}>
+              <div className="max-w-2xl">
+                <CancellationPolicy override={bike.cancellationPolicy} />
+              </div>
+            </Section>
           </div>
 
           {/* --- the booking column ---------------------------------------- */}

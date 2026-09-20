@@ -81,6 +81,7 @@ export const FALLBACK_TOURS: TourDetailVM[] = [
     basePricePerPerson: null,
     singleSupplement: null,
     priceTiers: [],
+    cancellationPolicy: null,
   },
   {
     id: 'offline-tour-museum',
@@ -113,6 +114,7 @@ export const FALLBACK_TOURS: TourDetailVM[] = [
     basePricePerPerson: null,
     singleSupplement: null,
     priceTiers: [],
+    cancellationPolicy: null,
   },
   {
     id: 'offline-tour-nile-cruise',
@@ -153,6 +155,7 @@ export const FALLBACK_TOURS: TourDetailVM[] = [
       { minPax: 2, maxPax: 4, pricePerPerson: 890 },
       { minPax: 5, maxPax: 12, pricePerPerson: 790 },
     ],
+    cancellationPolicy: null,
   },
   {
     id: 'offline-tour-desert-safari',
@@ -187,6 +190,7 @@ export const FALLBACK_TOURS: TourDetailVM[] = [
     basePricePerPerson: 340,
     singleSupplement: 60,
     priceTiers: [{ minPax: 2, maxPax: 8, pricePerPerson: 340 }],
+    cancellationPolicy: null,
   },
 ]
 
@@ -306,6 +310,7 @@ export const FALLBACK_HOTELS: HotelDetailVM[] = [
       },
     ],
     seasonalRates: [{ label: 'Peak season', startDate: '2026-12-01', endDate: '2027-02-28', multiplier: 1.25 }],
+    cancellationPolicy: null,
   },
   {
     id: 'offline-hotel-luxor',
@@ -338,6 +343,7 @@ export const FALLBACK_HOTELS: HotelDetailVM[] = [
       },
     ],
     seasonalRates: [],
+    cancellationPolicy: null,
   },
 ]
 
@@ -396,6 +402,7 @@ export const FALLBACK_TRANSFERS: Record<'airport' | 'intercity' | 'custom', Tran
       { id: 'offline-zone-downtown', zoneName: 'Downtown Cairo', areas: ['Downtown', 'Zamalek', 'Garden City'], vehiclePricing: [{ vehicleClass: 'Sedan', maxPassengers: 3, maxLuggage: 2, price: 35 }, { vehicleClass: 'Van', maxPassengers: 8, maxLuggage: 8, price: 55 }] },
     ],
     routes: [],
+    cancellationPolicy: null,
   },
   intercity: {
     id: 'offline-transfer-intercity',
@@ -415,6 +422,7 @@ export const FALLBACK_TRANSFERS: Record<'airport' | 'intercity' | 'custom', Tran
     routes: [
       { id: 'offline-route-cairo-luxor', fromCity: 'Cairo', toCity: 'Luxor', distanceKm: 670, estimatedDurationMin: 480, oneWayOnly: false, note: 'Overnight stop recommended.', vehiclePricing: [{ vehicleClass: 'SUV', maxPassengers: 4, maxLuggage: 4, price: 220 }] },
     ],
+    cancellationPolicy: null,
   },
   custom: {
     id: 'offline-transfer-custom',
@@ -432,6 +440,7 @@ export const FALLBACK_TRANSFERS: Record<'airport' | 'intercity' | 'custom', Tran
     extras: [],
     zones: [],
     routes: [],
+    cancellationPolicy: null,
   },
 }
 
@@ -485,6 +494,7 @@ export const FALLBACK_BICYCLES: BicycleDetailVM[] = [
     bikeIncluded: true,
     startTimes: [],
     routePlan: [],
+    cancellationPolicy: null,
   },
   {
     id: 'offline-bicycle-tour',
@@ -526,6 +536,7 @@ export const FALLBACK_BICYCLES: BicycleDetailVM[] = [
     routePlan: [
       { stopName: 'Oasis springs', stopDescription: 'A rest stop at the hot springs.', distanceFromStartKm: 10, image: null },
     ],
+    cancellationPolicy: null,
   },
 ]
 
