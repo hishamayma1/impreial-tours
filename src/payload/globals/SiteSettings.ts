@@ -57,7 +57,19 @@ export const SiteSettings: GlobalConfig = {
       defaultValue: true,
       admin: { description: 'Shows the custom-trip form at /transfers/custom.' },
     },
-    { name: 'defaultCurrency', type: 'text', defaultValue: 'USD' },
+    {
+      name: 'defaultCurrency',
+      type: 'select',
+      defaultValue: 'USD',
+      admin: {
+        description:
+          'The currency shown to a visitor before they pick one themselves. Must also be listed below, under Currencies.',
+      },
+      options: [
+        { label: 'US Dollar (USD)', value: 'USD' },
+        { label: 'Egyptian Pound (EGP)', value: 'EGP' },
+      ],
+    },
     { name: 'logo', type: 'upload', relationTo: 'media' },
     {
       name: 'defaultSeo',
@@ -85,7 +97,7 @@ export const SiteSettings: GlobalConfig = {
       maxRows: 2,
       admin: {
         description:
-          'Offered in the header currency switcher. The first row is the default and should be USD, which is the currency every price is authored in.',
+          'Offered in the header currency switcher. Which one a visitor sees first is set above, by Default currency — USD is the currency every price is authored in, so rates here are relative to it.',
       },
       fields: [
         {

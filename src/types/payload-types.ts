@@ -2608,7 +2608,10 @@ export interface SiteSetting {
    * Shows the custom-trip form at /transfers/custom.
    */
   enableCustomQuote?: boolean | null;
-  defaultCurrency?: string | null;
+  /**
+   * The currency shown to a visitor before they pick one themselves. Must also be listed below, under Currencies.
+   */
+  defaultCurrency?: ('USD' | 'EGP') | null;
   logo?: (string | null) | Media;
   defaultSeo?: {
     title?: string | null;
@@ -2616,7 +2619,7 @@ export interface SiteSetting {
     ogImage?: (string | null) | Media;
   };
   /**
-   * Offered in the header currency switcher. The first row is the default and should be USD, which is the currency every price is authored in.
+   * Offered in the header currency switcher. Which one a visitor sees first is set above, by Default currency — USD is the currency every price is authored in, so rates here are relative to it.
    */
   currencies?:
     | {

@@ -250,15 +250,28 @@ export const toSiteSettings = (doc: Doc): SiteSettingsVM => ({
     : ['tours', 'hotels', 'transfers', 'bicycles'],
   enableCustomQuote: doc.enableCustomQuote !== false,
   logo: toImage(doc.logo, 'thumbnail'),
-  currencies: Array.isArray(doc.currencies)
-    ? doc.currencies
-        .filter((currency: Doc) => str(currency?.code))
-        .map((currency: Doc) => ({
-          code: str(currency.code),
-          symbol: str(currency.symbol, '$'),
-          rate: typeof currency.rate === 'number' ? currency.rate : 1,
-        }))
-    : [],
+  /**
+   * `defaultCurrency` (Site Settings) decides which of these an unhydrated visitor
+   * sees first — everywhere that reads this array takes `[0]` as the default, so
+   * moving the matching row to the front is the whole mechanism. A code that no
+   * longer appears among `currencies` (removed, or never matched) leaves the
+   * author's own row order in place rather than silently doing nothing.
+   */
+  currencies: (() => {
+    const list = Array.isArray(doc.currencies)
+      ? doc.currencies
+          .filter((currency: Doc) => str(currency?.code))
+          .map((currency: Doc) => ({
+            code: str(currency.code),
+            symbol: str(currency.symbol, '$'),
+            rate: typeof currency.rate === 'number' ? currency.rate : 1,
+          }))
+      : []
+    const defaultCode = str(doc.defaultCurrency)
+    const defaultIndex = list.findIndex((currency) => currency.code === defaultCode)
+    if (defaultIndex <= 0) return list
+    return [list[defaultIndex], ...list.slice(0, defaultIndex), ...list.slice(defaultIndex + 1)]
+  })(),
   defaultSeo: {
     title: str(doc.defaultSeo?.title),
     description: str(doc.defaultSeo?.description),
