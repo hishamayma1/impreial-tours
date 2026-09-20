@@ -11,3 +11,6 @@ atlas-credentials.env
 
 # Optimization tooling, not part of the app
 /optimize-web
+
+.vercel
+.env*

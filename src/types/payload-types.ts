@@ -345,6 +345,8 @@ export interface Media {
    */
   alt: string;
   credit?: string | null;
+  _key?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -358,6 +360,7 @@ export interface Media {
   focalY?: number | null;
   sizes?: {
     thumbnail?: {
+      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -366,6 +369,7 @@ export interface Media {
       filename?: string | null;
     };
     card?: {
+      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -374,6 +378,7 @@ export interface Media {
       filename?: string | null;
     };
     portrait?: {
+      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -382,6 +387,7 @@ export interface Media {
       filename?: string | null;
     };
     wide?: {
+      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -390,6 +396,7 @@ export interface Media {
       filename?: string | null;
     };
     hero?: {
+      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -398,6 +405,7 @@ export interface Media {
       filename?: string | null;
     };
     og?: {
+      _key?: string | null;
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -2071,6 +2079,8 @@ export interface DestinationsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   credit?: T;
+  _key?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2088,6 +2098,7 @@ export interface MediaSelect<T extends boolean = true> {
         thumbnail?:
           | T
           | {
+              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -2098,6 +2109,7 @@ export interface MediaSelect<T extends boolean = true> {
         card?:
           | T
           | {
+              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -2108,6 +2120,7 @@ export interface MediaSelect<T extends boolean = true> {
         portrait?:
           | T
           | {
+              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -2118,6 +2131,7 @@ export interface MediaSelect<T extends boolean = true> {
         wide?:
           | T
           | {
+              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -2128,6 +2142,7 @@ export interface MediaSelect<T extends boolean = true> {
         hero?:
           | T
           | {
+              _key?: T;
               url?: T;
               width?: T;
               height?: T;
@@ -2138,6 +2153,7 @@ export interface MediaSelect<T extends boolean = true> {
         og?:
           | T
           | {
+              _key?: T;
               url?: T;
               width?: T;
               height?: T;

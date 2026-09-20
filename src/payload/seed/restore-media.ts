@@ -1,5 +1,3 @@
-import { existsSync } from 'fs'
-import path from 'path'
 import { getPayload } from 'payload'
 import config from '../../payload.config'
 import assets from './assets.json' with { type: 'json' }
@@ -10,20 +8,21 @@ import { SEED_USER_AGENT, extensionFor } from './fetch-asset'
  * Re-downloads the binaries behind existing Media documents.
  *
  * The database and the uploaded files live in two different places: documents go to
- * MongoDB, but `Media.upload.staticDir` writes the actual images to `public/media/` on local
- * disk, and that directory is gitignored. So a machine that clones the repo and points
- * at an already-seeded database gets every Media document and none of the files —
- * `/api/media/file/<name>` then 500s and the whole site renders with broken imagery
- * while looking, from the database's point of view, perfectly healthy.
+ * MongoDB, but the actual images live on UploadThing (see `uploadthingStorage` in
+ * payload.config.ts). A machine that clones the repo and points at an already-seeded
+ * database gets every Media document; a document whose upload never made it to
+ * UploadThing (or was deleted there) still carries no `url`, and the site renders
+ * with broken imagery while looking, from the database's point of view, perfectly
+ * healthy.
  *
  * `npm run seed` would fix it only by wiping and recreating all content, discarding
  * anything edited in the dashboard since. This restores the files in place instead:
  * each document keeps its `id`, so every relationship pointing at it stays valid, and
  * Payload regenerates the six resized variants from the re-uploaded original.
  *
- * Safe to re-run: a document whose file is already on disk is skipped. That check
- * matters because Payload treats each re-upload as a new file and de-duplicates the
- * name against the document that already holds it — so an unconditional re-run would
+ * Safe to re-run: a document that already has a `url` is skipped. That check matters
+ * because Payload treats each re-upload as a new file and de-duplicates the name
+ * against the document that already holds it — so an unconditional re-run would
  * rewrite `hero.webp` as `hero-1.webp`, then `hero-2.webp`, leaving orphaned copies
  * behind every time. Pass --force to re-download anyway.
  *
@@ -43,7 +42,6 @@ const restore = async () => {
   payload.logger.info(`--- restoring binaries for ${docs.length} media documents ---`)
 
   const force = process.argv.includes('--force')
-  const staticDir = path.resolve(process.cwd(), 'public', 'media')
 
   let restored = 0
   let skipped = 0
@@ -55,7 +53,7 @@ const restore = async () => {
     const key = filename.replace(/\.[^.]+$/, '') as AssetKey
     const url = assets[key]
 
-    if (!force && filename && existsSync(path.join(staticDir, filename))) {
+    if (!force && doc.url) {
       present += 1
       continue
     }

@@ -43,6 +43,7 @@
     "@payloadcms/email-nodemailer": "^3.89.0",
     "@payloadcms/next": "^3.89.0",
     "@payloadcms/richtext-lexical": "^3.89.0",
+    "@payloadcms/storage-uploadthing": "^3.89.0",
     "@payloadcms/ui": "^3.89.0",
     "clsx": "^2.1.1",
     "graphql": "^16.9.0",
@@ -55,6 +56,7 @@
     "react-hook-form": "^7.86.0",
     "sharp": "0.34.2",
     "tailwind-merge": "^2.5.4",
+    "uploadthing": "^7.7.4",
     "zod": "^4.4.3",
     "zustand": "^5.0.3"
   },

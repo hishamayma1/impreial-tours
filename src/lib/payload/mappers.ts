@@ -32,18 +32,16 @@ const str = (value: unknown, fallback = ''): string =>
  * Falls back to whatever Payload recorded when a document predates this and carries no
  * filename, so an older row degrades to the slower URL instead of to a broken image.
  */
-const publicUrl = (filename: string, fallback: string): string =>
-  filename ? `/media/${filename}` : fallback
-
 export const toImage = (value: unknown, sizePreference?: string): ImageVM | null => {
   if (!value || typeof value !== 'object') return null
   const doc = value as Doc
   const size = sizePreference ? doc.sizes?.[sizePreference] : undefined
 
-  // Size variant first, then the original — mirroring the old `size.url || doc.url`
-  // chain, so a variant that was never generated still falls back to the full image.
-  const url =
-    publicUrl(str(size?.filename), str(size?.url)) || publicUrl(str(doc.filename), str(doc.url))
+  // Uploads live on UploadThing now, so `url` (set by the storage adapter) is the
+  // real, fetchable address for both the original and each size variant — no local
+  // `/media/<filename>` path to reconstruct. Size variant first, then the original,
+  // so a variant that was never generated still falls back to the full image.
+  const url = str(size?.url) || str(doc.url)
   if (!url) return null
 
   return {

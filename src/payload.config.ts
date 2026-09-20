@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url'
 import { buildConfig } from 'payload'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { uploadthingStorage } from '@payloadcms/storage-uploadthing'
 import sharp from 'sharp'
 
 import { locales, defaultLocale, localeLabels } from './i18n/routing'
@@ -124,4 +125,13 @@ export default buildConfig({
 
   cors: [serverURL],
   csrf: [serverURL],
+  plugins: [
+    uploadthingStorage({
+      collections: { media: true },
+      options: {
+        token: process.env.UPLOADTHING_TOKEN,
+        acl: 'public-read',
+      },
+    }),
+  ],
 })

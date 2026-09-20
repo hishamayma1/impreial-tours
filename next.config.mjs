@@ -22,6 +22,8 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      // UploadThing serves every app's files from a per-app subdomain of ufs.sh.
+      { protocol: 'https', hostname: '**.ufs.sh' },
       ...[process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'].map((url) => {
         const { protocol, hostname, port } = new URL(url)
         return { protocol: protocol.replace(':', ''), hostname, port }
