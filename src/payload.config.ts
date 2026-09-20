@@ -127,7 +127,16 @@ export default buildConfig({
   csrf: [serverURL],
   plugins: [
     uploadthingStorage({
-      collections: { media: true },
+      /**
+       * `disablePayloadAccessControl` makes the adapter compute `url` (and each size's
+       * `url`) fresh on every read, straight from UploadThing's storage key
+       * (`https://utfs.io/f/<key>`), instead of Payload's default: a value it writes
+       * once at upload/save time and never recomputes. Without this, `url` freezes at
+       * whatever it happened to be on the last save — for docs created before this
+       * plugin existed, that's `<old serverURL>/api/media/file/<name>`, which 404s
+       * forever regardless of any config change afterwards.
+       */
+      collections: { media: { disablePayloadAccessControl: true } },
       options: {
         token: process.env.UPLOADTHING_TOKEN,
         acl: 'public-read',
