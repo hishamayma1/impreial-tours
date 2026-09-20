@@ -18,8 +18,10 @@ export const CurrencySwitcher = ({ currencies, className }: CurrencySwitcherProp
   const open = useUIStore((state) => state.currencyMenuOpen)
   const setOpen = useUIStore((state) => state.setCurrencyMenu)
   const currency = usePreferencesStore((state) => state.currency)
+  const chosen = usePreferencesStore((state) => state.chosen)
   const hydrated = usePreferencesStore((state) => state.hydrated)
   const setCurrency = usePreferencesStore((state) => state.setCurrency)
+  const syncDefaultCurrency = usePreferencesStore((state) => state.syncDefaultCurrency)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -39,19 +41,30 @@ export const CurrencySwitcher = ({ currencies, className }: CurrencySwitcherProp
   }, [open, setOpen])
 
   /**
-   * Heals a persisted choice that is no longer on offer.
+   * Two jobs, split by whether this visitor has ever actually clicked a currency:
    *
-   * The selection lives in localStorage, so someone who picked EUR or GBP before the
-   * switcher was reduced to USD and EGP still has that code in their browser. Nothing
-   * else breaks — every price falls back to the base currency — but the button would
-   * read "EUR" over prices printed in dollars, which is worse than either being
-   * wrong on its own. Rewriting the stored value settles it for good rather than
-   * papering over it on each render.
+   * Nobody has (`chosen` is false) — keep tracking SiteSettings.defaultCurrency for
+   * as long as that's true, so changing it in the dashboard reaches every visitor who
+   * hasn't overridden it, not just new ones. `syncDefaultCurrency` updates the value
+   * without setting `chosen`, so this keeps applying on every subsequent change too.
+   *
+   * Somebody has (`chosen` is true) — heals a persisted pick that is no longer on
+   * offer. Someone who picked EUR or GBP before the switcher was reduced to USD and
+   * EGP still has that code in their browser; nothing else breaks (every price falls
+   * back to the base currency), but the button would read "EUR" over prices printed
+   * in dollars. This still runs through `setCurrency`, which is correct: an
+   * unavailable pick being reassigned is itself a choice, made on the visitor's
+   * behalf, and should stay pinned rather than drift with the default afterwards.
    */
   useEffect(() => {
     if (!hydrated || currencies.length === 0) return
-    if (!currencies.some((option) => option.code === currency)) setCurrency(currencies[0].code)
-  }, [hydrated, currencies, currency, setCurrency])
+    const fallback = currencies[0].code
+    if (chosen) {
+      if (!currencies.some((option) => option.code === currency)) setCurrency(fallback)
+      return
+    }
+    if (currency !== fallback) syncDefaultCurrency(fallback)
+  }, [hydrated, currencies, currency, chosen, setCurrency, syncDefaultCurrency])
 
   if (currencies.length === 0) return null
 

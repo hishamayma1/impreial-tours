@@ -7,39 +7,41 @@ import type { CurrencyVM } from '@/types/content'
 
 type PreferencesState = {
   currency: string
+  /**
+   * Distinguishes a visitor's own pick (the switcher's onClick calls `setCurrency`)
+   * from the app quietly resolving the site's default. Without this flag, the two
+   * looked identical once written — `currency: 'EGP'` either way — so CurrencySwitcher
+   * had no way to tell "this visitor chose EGP" from "this visitor got EGP because
+   * that happened to be the default when they first loaded the page". The second
+   * case must keep tracking SiteSettings.defaultCurrency for as long as nobody has
+   * actually chosen otherwise; the first must not be overridden by a later admin
+   * change. `syncDefaultCurrency` updates the former without touching this flag.
+   */
+  chosen: boolean
   hydrated: boolean
   setCurrency: (code: string) => void
+  syncDefaultCurrency: (code: string) => void
   setHydrated: (hydrated: boolean) => void
 }
 
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
-      /**
-       * Empty rather than hard-coded 'USD': every reader of this value already
-       * falls back to `currencies[0]` (the site's configured default, from
-       * SiteSettings.defaultCurrency — see toSiteSettings) whenever the code
-       * doesn't match one on offer, and an empty string never matches. Starting
-       * this at 'USD' baked that in permanently on first hydration (see the
-       * healing effect in CurrencySwitcher), which is what made the dashboard's
-       * default currency setting look like it did nothing — every visitor's
-       * browser had already decided "USD" before the site's own default was
-       * ever consulted.
-       */
       currency: '',
+      chosen: false,
       hydrated: false,
-      setCurrency: (currency) => set({ currency }),
+      setCurrency: (currency) => set({ currency, chosen: true }),
+      syncDefaultCurrency: (currency) => set({ currency }),
       setHydrated: (hydrated) => set({ hydrated }),
     }),
     {
       // Bumped to `.v2`: every visitor before this fix already had 'USD' written
-      // here under the old key (see the comment on `currency` above), which this
-      // change alone would otherwise never override for a returning browser. The
-      // old key is simply abandoned — a few stray bytes in localStorage, not
-      // worth a migration.
+      // here under the old key, permanently, with no `chosen` flag to tell it apart
+      // from a real pick. The old key is simply abandoned — a few stray bytes in
+      // localStorage, not worth a migration.
       name: 'imperial-tours.preferences.v2',
       storage: createJSONStorage(() => localStorage),
-      partialize: ({ currency }) => ({ currency }),
+      partialize: ({ currency, chosen }) => ({ currency, chosen }),
       onRehydrateStorage: () => (state) => state?.setHydrated(true),
     },
   ),
