@@ -2,6 +2,7 @@ import payload from 'payload'
 import config from '@payload-config'
 
 import { locales, type Locale } from '../../i18n/routing'
+import { STARTER_DESTINATIONS, TRANSFER_EXTRAS as EXTRAS } from './services-data'
 
 /**
  * Seeds the airports an Egyptian operator actually flies clients into, and attaches
@@ -59,31 +60,6 @@ const AIRPORTS = [
       en: { name: 'Aswan International', city: 'Aswan' },
       es: { name: 'Aeropuerto Internacional de Asuán', city: 'Asuán' },
       de: { name: 'Internationaler Flughafen Assuan', city: 'Assuan' },
-    },
-  },
-]
-
-/**
- * Two add-ons that read as real options rather than filler, one priced per booking and
- * one per passenger, so the form's two pricing modes are both exercised.
- */
-const EXTRAS = [
-  {
-    price: 8,
-    perPassenger: false,
-    copy: {
-      en: { label: 'Child seat', description: 'Fitted and checked before pick-up.' },
-      es: { label: 'Silla infantil', description: 'Instalada y revisada antes de la recogida.' },
-      de: { label: 'Kindersitz', description: 'Vor der Abholung eingebaut und geprüft.' },
-    },
-  },
-  {
-    price: 5,
-    perPassenger: true,
-    copy: {
-      en: { label: 'Chilled water and towels', description: 'Waiting in the car on arrival.' },
-      es: { label: 'Agua fría y toallas', description: 'Esperando en el coche a tu llegada.' },
-      de: { label: 'Gekühltes Wasser und Tücher', description: 'Bei der Ankunft im Wagen bereit.' },
     },
   },
 ]
@@ -154,19 +130,6 @@ const run = async () => {
   }
 
   const existingExtras = (transfer.extras ?? []) as Doc[]
-
-  /**
-   * Starter drop-off points, one set per zone, added only where a zone has none.
-   *
-   * These are what the customer picks from — the pick is what selects the zone, and so
-   * the price — so a zone with an empty list leaves the booking form with nothing to
-   * offer. An editor is expected to replace these with the hotels they actually serve;
-   * a zone that already has its own list is left completely alone.
-   */
-  const STARTER_DESTINATIONS = [
-    ['Four Seasons Nile Plaza', 'Kempinski Nile', 'Zamalek', 'Garden City', 'Downtown Cairo'],
-    ['Marriott Mena House', 'Great Pyramid Inn', 'Giza Plateau', 'Sphinx Entrance', 'Saqqara'],
-  ]
 
   /**
    * Each locale is attempted independently, and a failure is reported rather than
