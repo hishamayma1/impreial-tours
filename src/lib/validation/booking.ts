@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { locales } from '@/i18n/routing'
+import { isValidPhone } from '@/lib/booking/validate'
 
 /**
  * One schema, used by both the client form and the route handler. The server
@@ -16,7 +17,11 @@ export const contactSchema = z.object({
   firstName: nonEmpty(80),
   lastName: z.string().trim().max(80).optional().default(''),
   email: z.string().trim().email().max(200),
-  phone: z.string().trim().max(40).optional().default(''),
+  /**
+   * Required: every booking is confirmed with the customer by phone or WhatsApp. 7–15
+   * digits, with the spaces, dashes and brackets people type, optionally led by '+'.
+   */
+  phone: z.string().trim().max(40).refine(isValidPhone),
   country: z.string().trim().max(80).optional().default(''),
   notes: z.string().trim().max(2000).optional().default(''),
 })
@@ -84,6 +89,17 @@ export const bicycleSelectionSchema = z.object({
   delivery: z.boolean().optional().default(false),
 })
 
+/** Day tours and experiences: the departure time and, on an experience, single rooms. */
+export const tourOptionsSchema = z.object({
+  startTime: z
+    .string()
+    .trim()
+    .regex(/^(\d{2}:\d{2})?$/)
+    .optional()
+    .default(''),
+  singleRooms: z.number().int().min(0).max(40).optional().default(0),
+})
+
 export const createBookingSchema = z
   .object({
     serviceType: z.enum(['dailyTour', 'experience', 'hotel', 'transfer', 'bicycle']),
@@ -98,6 +114,7 @@ export const createBookingSchema = z
     hotelSelection: z.array(roomSelectionSchema).max(10).optional().default([]),
     transferDetails: transferDetailsSchema.nullable().optional(),
     bicycleSelection: bicycleSelectionSchema.nullable().optional(),
+    tourOptions: tourOptionsSchema.nullable().optional(),
     contact: contactSchema,
     /**
      * Honeypot. A human never sees this input, so any value at all is a bot.
@@ -108,6 +125,11 @@ export const createBookingSchema = z
      */
     company: z.string().max(200).optional().default(''),
   })
+  // Every service is held against a date — a tour, a stay, a transfer and a bike alike.
+  .refine((data) => Boolean(data.dates.start), {
+    message: 'A booking needs a date',
+    path: ['dates', 'start'],
+  })
   .refine((data) => data.serviceType !== 'hotel' || data.hotelSelection.length > 0, {
     message: 'A hotel booking needs at least one room',
     path: ['hotelSelection'],
@@ -116,6 +138,14 @@ export const createBookingSchema = z
     (data) =>
       data.serviceType !== 'hotel' || (Boolean(data.dates.start) && Boolean(data.dates.end)),
     { message: 'A stay needs both a check-in and a check-out date', path: ['dates'] },
+  )
+  .refine(
+    (data) =>
+      data.serviceType !== 'hotel' ||
+      !data.dates.start ||
+      !data.dates.end ||
+      data.dates.end > data.dates.start,
+    { message: 'Check-out must be after check-in', path: ['dates', 'end'] },
   )
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>

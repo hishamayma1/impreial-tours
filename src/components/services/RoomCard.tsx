@@ -156,6 +156,19 @@ export const RoomCard = async ({ hotel, room, currencies, index }: Props) => {
           hotel={{ id: hotel.id, slug: hotel.slug, name: hotel.name }}
           heroImageUrl={hotel.heroImage?.url ?? null}
           room={room}
+          pricing={{
+            kind: 'hotel',
+            roomTypes: hotel.roomTypes.map((type) => ({
+              id: type.id,
+              roomName: type.roomName,
+              maxOccupancy: type.maxOccupancy,
+              extraBedPrice: type.extraBedPrice,
+              pricing: type.pricing,
+            })),
+            seasonalRates: hotel.seasonalRates,
+            checkInTime: hotel.checkInTime,
+            checkOutTime: hotel.checkOutTime,
+          }}
           currencies={currencies}
         />
       </div>

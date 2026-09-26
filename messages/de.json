@@ -567,11 +567,12 @@
     "title": "Ihre Buchung",
     "description": "Prüfen Sie Ihre Auswahl, ergänzen Sie Ihre Daten und bestätigen Sie.",
     "confirmation": {
-      "title": "Buchung bestätigt",
-      "description": "Vielen Dank — eine Bestätigung mit Ihrer Referenznummer ist auf dem Weg in Ihr Postfach.",
+      "title": "Anfrage erhalten",
+      "description": "Vielen Dank – Ihre Anfrage wurde an unser Team gesendet.",
       "reference": "Buchungsreferenz",
       "emailNote": "Wir haben Ihnen eine Bestätigung per E-Mail geschickt. Unser Team meldet sich in Kürze, um die Einzelheiten abzustimmen.",
-      "backHome": "Zurück zur Startseite"
+      "backHome": "Zurück zur Startseite",
+      "quoteNote": "Ihre Anfrage liegt bei unserem Team. Wir melden uns in Kürze mit einem Preis – per WhatsApp, wenn Sie dort fortfahren, sonst per E-Mail oder Telefon."
     },
     "steps": {
       "details": "Ihre Reise",
@@ -599,7 +600,156 @@
       "email": "E-Mail",
       "phone": "Telefon",
       "country": "Land",
-      "notes": "Gibt es etwas, das wir wissen sollten?"
+      "notes": "Gibt es etwas, das wir wissen sollten?",
+      "phoneHint": "Mit Ländervorwahl – wir kontaktieren Sie eventuell per WhatsApp",
+      "notesPlaceholder": "Hotel für die Abholung, Ernährungswünsche, Barrierefreiheit…",
+      "notesHotel": "Ankunftszeit, Bettenwunsch, besonderer Anlass…"
+    },
+    "chooseDate": "Datum wählen",
+    "chooseTime": "Uhrzeit wählen",
+    "perPerson": "pro Person",
+    "decrease": "Verringern",
+    "increase": "Erhöhen",
+    "yes": "Ja",
+    "submitting": "Buchung wird gesendet…",
+    "reviewIntro": "Prüfen Sie alles unten. Tippen Sie oben auf einen abgeschlossenen Schritt, um ihn zu ändern.",
+    "confirmNote": "Es wird jetzt nichts berechnet. Unser Team prüft die Verfügbarkeit und meldet sich zur Bestätigung.",
+    "serviceNames": {
+      "dailyTour": "Tagesausflug",
+      "experience": "Mehrtägige Reise",
+      "hotel": "Hotelaufenthalt",
+      "transfer": "Privattransfer",
+      "bikeRental": "Fahrradverleih",
+      "guidedRide": "Geführte Radtour"
+    },
+    "empty": {
+      "title": "Noch nichts zu buchen",
+      "body": "Ihre Buchung ist leer – vielleicht wurde sie bereits gesendet oder in einem neuen Tab geöffnet. Wählen Sie aus, was Sie buchen möchten, und klicken Sie dort auf „Jetzt buchen“.",
+      "transferBody": "Transfers werden direkt auf der Transferseite gebucht – wählen Sie dort Ihre Strecke und buchen Sie in einem Schritt.",
+      "cta": {
+        "tour": "Touren ansehen",
+        "hotel": "Hotels ansehen",
+        "bike": "Fahrräder ansehen",
+        "car": "Transfer buchen"
+      }
+    },
+    "errors": {
+      "required": "Dieses Feld ist erforderlich",
+      "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+      "phoneInvalid": "Bitte geben Sie eine gültige Telefonnummer mit Ländervorwahl ein, z. B. +20 100 123 4567",
+      "dateRequired": "Bitte wählen Sie ein Datum",
+      "datePast": "Dieses Datum liegt in der Vergangenheit – bitte wählen Sie ein zukünftiges",
+      "checkoutAfterCheckin": "Die Abreise muss nach der Anreise liegen",
+      "roomsRequired": "Keine Zimmer ausgewählt. Gehen Sie zurück zur Hotelseite und reservieren Sie ein Zimmer.",
+      "adultsMin": "Mindestens ein Erwachsener ist erforderlich",
+      "groupTooLarge": "Diese Buchung erlaubt bis zu {count} Personen",
+      "startTimeRequired": "Bitte wählen Sie eine Startzeit",
+      "singleRoomsTooMany": "Es kann nicht mehr Einzelzimmer als Reisende geben",
+      "roomGuestsTooMany": "Zu viele Gäste für dieses Zimmer",
+      "quantityMin": "Bitte mindestens eins wählen",
+      "quantityTooMany": "Nur {count} verfügbar",
+      "durationRequired": "Bitte wählen Sie die Dauer",
+      "itemMissing": "Nichts zum Buchen ausgewählt",
+      "fixBelow": "Bitte prüfen Sie die markierten Felder unten.",
+      "server": {
+        "validation": "Einige Angaben fehlen oder sind ungültig. Bitte prüfen Sie jeden Schritt und versuchen Sie es erneut.",
+        "date_past": "Das gewählte Datum liegt in der Vergangenheit. Bitte wählen Sie ein zukünftiges Datum.",
+        "date_required": "Bitte wählen Sie ein Datum für Ihre Buchung.",
+        "dates_invalid": "Die Abreise muss nach der Anreise liegen.",
+        "group_too_large": "Ihre Gruppe ist größer als für dieses Angebot erlaubt. Bitte verringern Sie die Personenzahl.",
+        "not_found": "Dieses Angebot ist nicht mehr verfügbar. Bitte wählen Sie ein anderes.",
+        "unavailable": "Für diese Auswahl konnten wir keinen Preis berechnen. Bitte gehen Sie zurück und wählen Sie erneut.",
+        "rate_limited": "Zu viele Versuche. Bitte warten Sie eine Minute und versuchen Sie es erneut.",
+        "out_of_stock": "Für diese Anzahl sind nicht genügend Fahrräder verfügbar.",
+        "generic": "Beim Senden Ihrer Buchung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      }
+    },
+    "tour": {
+      "date": "Datum der Tour",
+      "departureDate": "Abreisedatum",
+      "startTime": "Startzeit",
+      "duration": "Dauer",
+      "days": "{count, plural, one {# Tag} other {# Tage}}",
+      "adultsHint": "Ab 12 Jahren",
+      "childrenHint": "2–11 Jahre",
+      "infantsHint": "Unter 2 · kostenlos",
+      "groupMax": "Maximal {count} Reisende pro Buchung",
+      "accommodation": "Unterkunft",
+      "singleRooms": "Einzelzimmer",
+      "singleRoomsHint": "Reisende ohne geteiltes Zimmer · je +{amount}"
+    },
+    "hotel": {
+      "checkIn": "Anreise",
+      "checkOut": "Abreise",
+      "fromTime": "Ab {time}",
+      "untilTime": "Bis {time}",
+      "nights": "{count, plural, one {# Nacht} other {# Nächte}}",
+      "nightsLabel": "Aufenthaltsdauer",
+      "seasonalRate": "Saisonpreis",
+      "rooms": "Ihre Zimmer",
+      "room": "Zimmer",
+      "perPersonNight": "pro Person / Nacht",
+      "remove": "Entfernen",
+      "guestsPerRoom": "Gäste in diesem Zimmer",
+      "maxGuests": "Für bis zu {count} Personen",
+      "roomCount": "Anzahl der Zimmer",
+      "addMoreHint": "Um einen anderen Zimmertyp hinzuzufügen, reservieren Sie ihn auf der Hotelseite – er wird hier ergänzt.",
+      "totalGuests": "Gäste insgesamt"
+    },
+    "bike": {
+      "pickupDate": "Abholdatum",
+      "pickupTime": "Abholzeit",
+      "returnTime": "Rückgabezeit",
+      "weekendNote": "Wochenendtarif: +{pct} % freitags und samstags",
+      "duration": "Mietdauer",
+      "hours": "Stunden",
+      "returnBy": "Rückgabe bis {time}",
+      "bikes": "Anzahl der Fahrräder",
+      "rideDate": "Datum der Tour",
+      "rideEnds": "Endet gegen {time}",
+      "riders": "Teilnehmende",
+      "minAge": "Mindestalter {age}",
+      "delivery": "Lieferung ins Hotel",
+      "weekend": "Wochenendtarif"
+    },
+    "count": {
+      "adults": "{count, plural, one {# Erwachsener} other {# Erwachsene}}",
+      "children": "{count, plural, one {# Kind} other {# Kinder}}",
+      "infants": "{count, plural, one {# Kleinkind} other {# Kleinkinder}}",
+      "guests": "{count, plural, one {# Gast} other {# Gäste}}"
+    },
+    "rows": {
+      "from": "Von",
+      "to": "Nach"
+    },
+    "lines": {
+      "adults": "Erwachsene",
+      "children": "Kinder",
+      "travellers": "Reisende",
+      "riders": "Teilnehmende",
+      "singleSupplement": "Einzelzimmerzuschlag",
+      "weekendSurcharge": "Wochenendzuschlag",
+      "delivery": "Lieferung ins Hotel",
+      "privateGroup": "Private Gruppe",
+      "roundTrip": "Hin- und Rückfahrt"
+    },
+    "summary": {
+      "statusPending": "Bestätigung ausstehend",
+      "statusQuote": "Angebot angefragt",
+      "reference": "Buchungsnummer",
+      "quoteReference": "Angebotsnummer",
+      "submittedOn": "Gesendet am {date}",
+      "leadGuest": "Hauptgast",
+      "priceBreakdown": "Preisaufstellung",
+      "total": "Gesamt",
+      "estimatedTotal": "Voraussichtlicher Gesamtpreis",
+      "recordedIn": "Erfasst als {amount}",
+      "priceToFollow": "Unser Team sendet Ihnen in Kürze einen Preis.",
+      "paymentNote": "Es wurde nichts berechnet. Bewahren Sie Ihre Nummer auf – unser Team meldet sich zur Bestätigung und Zahlung.",
+      "estimateNote": "Der endgültige Preis wird von unserem Team mit der Buchungsbestätigung bestätigt.",
+      "screenshotHint": "Machen Sie einen Screenshot dieser Übersicht für Ihre Unterlagen.",
+      "print": "Drucken oder als PDF speichern",
+      "continueWhatsapp": "Weiter auf WhatsApp"
     }
   },
   "pages": {

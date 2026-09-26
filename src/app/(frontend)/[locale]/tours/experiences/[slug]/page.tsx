@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { TourHero } from '@/components/tour/TourHero'
 import { SectionNav } from '@/components/tour/SectionNav'
 import { BookingPanel } from '@/components/tour/BookingPanel'
+import { BookTourButton } from '@/components/tour/BookTourButton'
 import { TourSection } from '@/components/tour/TourSection'
 import {
   HighlightList,
@@ -128,7 +129,25 @@ const ExperienceDetailPage = async ({ params }: { params: Promise<PageParams> })
                   : null
               }
               facts={facts}
-              href={`/booking/tour?item=${tour.slug}`}
+              bookButton={
+                <BookTourButton
+                  tour={{
+                    id: tour.id,
+                    slug: tour.slug,
+                    title: tour.title,
+                    image: tour.heroImage?.url ?? null,
+                    basePrice: tour.basePricePerPerson,
+                  }}
+                  pricing={{
+                    kind: 'experience',
+                    basePricePerPerson: tour.basePricePerPerson,
+                    singleSupplement: tour.singleSupplement,
+                    priceTiers: tour.priceTiers,
+                    groupSizeMax: tour.groupSizeMax,
+                    durationDays: tour.durationDays,
+                  }}
+                />
+              }
               currencies={settings.currencies}
             />
           </div>

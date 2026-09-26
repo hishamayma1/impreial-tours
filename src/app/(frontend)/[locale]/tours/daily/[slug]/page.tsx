@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { TourHero } from '@/components/tour/TourHero'
 import { SectionNav } from '@/components/tour/SectionNav'
 import { BookingPanel } from '@/components/tour/BookingPanel'
+import { BookTourButton } from '@/components/tour/BookTourButton'
 import { TourSection } from '@/components/tour/TourSection'
 import { HighlightList, InclusionColumns } from '@/components/tour/TourContentBlocks'
 import { TourGallery } from '@/components/tour/TourGallery'
@@ -101,7 +102,24 @@ const DailyTourDetailPage = async ({ params }: { params: Promise<PageParams> }) 
         tour.childPrice ? { label: t('childPriceLabel'), amount: tour.childPrice } : null
       }
       facts={facts}
-      href={`/booking/tour?item=${tour.slug}`}
+      bookButton={
+        <BookTourButton
+          tour={{
+            id: tour.id,
+            slug: tour.slug,
+            title: tour.title,
+            image: tour.heroImage?.url ?? null,
+            basePrice: tour.pricePerPerson,
+          }}
+          pricing={{
+            kind: 'dailyTour',
+            pricePerPerson: tour.pricePerPerson,
+            childPrice: tour.childPrice,
+            startTimes: tour.startTimes,
+            groupSizeMax: tour.groupSizeMax,
+          }}
+        />
+      }
       currencies={settings.currencies}
       instantConfirmation={tour.instantConfirmation}
       departures={tour.startTimes}

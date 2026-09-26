@@ -3,17 +3,78 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-import type { Occupancy } from '@/lib/pricing'
+import type { Occupancy, PriceTier, RoomTypeInput, SeasonalRate } from '@/lib/pricing'
+import type { RentalBand } from '@/lib/rental-pricing'
 
 export type ServiceType = 'dailyTour' | 'experience' | 'hotel' | 'transfer' | 'bicycle'
 
-/** Just enough of the product to render the summary — never the whole catalogue record. */
+/**
+ * The pricing rules of the chosen product, copied from the page the visitor booked from.
+ *
+ * The checkout route is static and has no item in its URL, so without these the wizard
+ * could only guess at a price — which is how it used to show a hotel total with no
+ * nights in it. Carrying the rules lets the wizard run the exact functions the server
+ * runs (lib/pricing.ts) and show the figure that will actually be recorded.
+ *
+ * Display only: the server re-reads every one of these from the CMS on submit.
+ */
+export type ItemPricing =
+  | {
+      kind: 'dailyTour'
+      pricePerPerson: number | null
+      childPrice: number | null
+      startTimes: string[]
+      groupSizeMax: number | null
+    }
+  | {
+      kind: 'experience'
+      basePricePerPerson: number | null
+      singleSupplement: number | null
+      priceTiers: PriceTier[]
+      groupSizeMax: number | null
+      durationDays: number | null
+    }
+  | {
+      kind: 'hotel'
+      roomTypes: Array<RoomTypeInput & { id: string; roomName: string; maxOccupancy: number }>
+      seasonalRates: SeasonalRate[]
+      checkInTime: string
+      checkOutTime: string
+    }
+  | {
+      kind: 'bikeRental'
+      config: {
+        pricingMode: 'both' | 'bands' | 'hourly'
+        hourlyRate: number | null
+        extraHourRate: number | null
+        minHours: number
+        maxHours: number
+        hourStep: number
+        deliveryFee: number | null
+        weekendSurchargePct: number | null
+      }
+      bands: RentalBand[]
+      pickupSlots: string[]
+      inventory: number | null
+      deposit: number | null
+    }
+  | {
+      kind: 'guidedRide'
+      pricePerPerson: number | null
+      startTimes: string[]
+      durationHours: number | null
+      maxGroupSize: number | null
+      minAge: number | null
+    }
+
+/** Just enough of the product to render and price the checkout — never the whole record. */
 export type ItemSnapshot = {
   id: string
   slug: string
   label: string
   image?: string | null
   basePrice?: number | null
+  pricing?: ItemPricing
 }
 
 export type RoomSelection = {
@@ -49,6 +110,13 @@ export type BicycleSelection = {
   unitPrice: number
 }
 
+/** What a tour booking needs beyond a date and a headcount. */
+export type TourOptions = {
+  startTime: string
+  /** Experiences only: travellers who want a room to themselves (single supplement). */
+  singleRooms: number
+}
+
 export type ContactDetails = {
   firstName: string
   lastName: string
@@ -67,6 +135,7 @@ type BookingState = {
   hotelSelection: RoomSelection[]
   transferDetails: TransferDetails | null
   bicycleSelection: BicycleSelection | null
+  tourOptions: TourOptions
   extras: Array<{ id: string; label: string; price: number }>
   contact: ContactDetails
   currentStep: number
@@ -77,9 +146,14 @@ type BookingState = {
   setTravelers: (travelers: Partial<BookingState['travelers']>) => void
   addRoom: (room: RoomSelection) => void
   removeRoom: (roomTypeId: string, occupancy: Occupancy) => void
-  updateOccupancy: (roomTypeId: string, occupancy: Occupancy, guests: number) => void
+  updateRoom: (
+    roomTypeId: string,
+    occupancy: Occupancy,
+    patch: Partial<Pick<RoomSelection, 'guests' | 'quantity'>>,
+  ) => void
   setTransferDetails: (details: Partial<TransferDetails>) => void
   setBicycleSelection: (selection: Partial<BicycleSelection>) => void
+  setTourOptions: (options: Partial<TourOptions>) => void
   setContact: (contact: Partial<ContactDetails>) => void
   nextStep: () => void
   prevStep: () => void
@@ -108,6 +182,7 @@ const initialState = {
   hotelSelection: [],
   transferDetails: null,
   bicycleSelection: null,
+  tourOptions: { startTime: '', singleRooms: 0 },
   extras: [],
   contact: emptyContact,
   currentStep: 0,
@@ -116,8 +191,8 @@ const initialState = {
 type BookingActions = Pick<
   BookingState,
   | 'setService' | 'setDates' | 'setTravelers' | 'addRoom' | 'removeRoom'
-  | 'updateOccupancy' | 'setTransferDetails' | 'setBicycleSelection' | 'setContact'
-  | 'nextStep' | 'prevStep' | 'goToStep' | 'reset' | 'setHydrated'
+  | 'updateRoom' | 'setTransferDetails' | 'setBicycleSelection' | 'setTourOptions'
+  | 'setContact' | 'nextStep' | 'prevStep' | 'goToStep' | 'reset' | 'setHydrated'
 >
 
 /**
@@ -137,8 +212,27 @@ export const useBookingStore = create<BookingState>()(
       ...initialState,
       hydrated: false,
 
+      /**
+       * Starts a checkout for one product.
+       *
+       * Choosing a different product clears everything chosen for the last one. Without
+       * that, a room reserved at one hotel stayed in the basket when the visitor went on
+       * to reserve at another, and the server — finding no such room at the second
+       * hotel — silently dropped it. The contact details survive: they describe the
+       * person, not the product.
+       */
       setService: (serviceType, item) =>
-        set({ serviceType, itemId: item.id, itemSnapshot: item }),
+        set((state) => {
+          const sameItem = state.itemId === item.id && state.serviceType === serviceType
+          if (sameItem) return { itemSnapshot: item, currentStep: 0 }
+          return {
+            ...initialState,
+            contact: state.contact,
+            serviceType,
+            itemId: item.id,
+            itemSnapshot: item,
+          }
+        }),
 
       setDates: (start, end) => set({ dates: { start, end } }),
 
@@ -154,7 +248,10 @@ export const useBookingStore = create<BookingState>()(
           if (index === -1) return { hotelSelection: [...state.hotelSelection, room] }
 
           const next = [...state.hotelSelection]
-          next[index] = { ...next[index], quantity: next[index].quantity + room.quantity }
+          next[index] = {
+            ...next[index],
+            quantity: Math.min(10, next[index].quantity + room.quantity),
+          }
           return { hotelSelection: next }
         }),
 
@@ -165,10 +262,10 @@ export const useBookingStore = create<BookingState>()(
           ),
         })),
 
-      updateOccupancy: (roomTypeId, occupancy, guests) =>
+      updateRoom: (roomTypeId, occupancy, patch) =>
         set((state) => ({
           hotelSelection: state.hotelSelection.map((r) =>
-            r.roomTypeId === roomTypeId && r.occupancy === occupancy ? { ...r, guests } : r,
+            r.roomTypeId === roomTypeId && r.occupancy === occupancy ? { ...r, ...patch } : r,
           ),
         })),
 
@@ -193,6 +290,9 @@ export const useBookingStore = create<BookingState>()(
           },
         })),
 
+      setTourOptions: (options) =>
+        set((state) => ({ tourOptions: { ...state.tourOptions, ...options } })),
+
       setContact: (contact) => set((state) => ({ contact: { ...state.contact, ...contact } })),
 
       nextStep: () =>
@@ -206,48 +306,25 @@ export const useBookingStore = create<BookingState>()(
     }),
     {
       name: 'imperial-tours.booking',
+      // Bumped with the snapshot's new pricing field: a basket saved by the previous
+      // build has no rules to price with, so it is dropped rather than shown at zero.
+      version: 2,
+      migrate: () => ({ ...initialState }) as never,
       storage: createJSONStorage(() => sessionStorage),
       partialize: ({
-        serviceType, itemId, itemSnapshot, dates, travelers,
-        hotelSelection, transferDetails, bicycleSelection, extras, contact,
+        serviceType, itemId, itemSnapshot, dates, travelers, hotelSelection,
+        transferDetails, bicycleSelection, tourOptions, extras, contact,
       }) => ({
-        serviceType, itemId, itemSnapshot, dates, travelers,
-        hotelSelection, transferDetails, bicycleSelection, extras, contact,
+        serviceType, itemId, itemSnapshot, dates, travelers, hotelSelection,
+        transferDetails, bicycleSelection, tourOptions, extras, contact,
       }),
       onRehydrateStorage: () => (state) => state?.setHydrated(true),
     },
   ),
 )
 
-/**
- * Running total for the summary panel. A plain function over state rather than a
- * selector returning a new object, so subscribing components do not re-render on
- * every unrelated change (Section 6's performance rules).
- */
-export const selectEstimatedTotal = (state: BookingState): number => {
-  let total = 0
-
-  for (const room of state.hotelSelection) {
-    total += room.unitPrice * room.guests * room.quantity
-  }
-
-  if (state.transferDetails) {
-    total += state.transferDetails.unitPrice * (state.transferDetails.roundTrip ? 2 : 1)
-  }
-
-  if (state.bicycleSelection) {
-    total += state.bicycleSelection.unitPrice * state.bicycleSelection.quantity
-  }
-
-  if (
-    state.itemSnapshot?.basePrice &&
-    (state.serviceType === 'dailyTour' || state.serviceType === 'experience')
-  ) {
-    const { adults, children } = state.travelers
-    total += state.itemSnapshot.basePrice * (adults + children)
-  }
-
-  for (const extra of state.extras) total += extra.price
-
-  return Math.round(total * 100) / 100
-}
+export type BookingStateSnapshot = Pick<
+  BookingState,
+  | 'serviceType' | 'itemSnapshot' | 'dates' | 'travelers' | 'hotelSelection'
+  | 'transferDetails' | 'bicycleSelection' | 'tourOptions' | 'extras' | 'contact'
+>

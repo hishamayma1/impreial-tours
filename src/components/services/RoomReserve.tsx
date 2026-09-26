@@ -7,6 +7,7 @@ import { Icon } from '@/components/ui/Icon'
 import { useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { useBookingStore } from '@/stores'
+import type { ItemPricing } from '@/stores/booking-store'
 import { formatPrice, usePreferencesStore } from '@/stores/preferences-store'
 import type { CurrencyVM } from '@/types/content'
 import type { HotelDetailVM } from '@/types/services'
@@ -17,6 +18,8 @@ type Props = {
   hotel: Pick<HotelDetailVM, 'id' | 'slug' | 'name'>
   heroImageUrl: string | null
   room: HotelDetailVM['roomTypes'][number]
+  /** The hotel's rates and seasons, so the checkout can price the stay the way the server will. */
+  pricing: Extract<ItemPricing, { kind: 'hotel' }>
   currencies: CurrencyVM[]
 }
 
@@ -34,7 +37,7 @@ const GUESTS: Record<Occupancy, number> = { single: 1, double: 2, triple: 3 }
  * It is also the only interactive part of the card, so it is the only part that ships
  * as a client component — the photograph, the badges and the copy stay server-rendered.
  */
-export const RoomReserve = ({ hotel, heroImageUrl, room, currencies }: Props) => {
+export const RoomReserve = ({ hotel, heroImageUrl, room, pricing, currencies }: Props) => {
   const t = useTranslations('services')
   const locale = useLocale()
   const router = useRouter()
@@ -90,13 +93,15 @@ export const RoomReserve = ({ hotel, heroImageUrl, room, currencies }: Props) =>
       label: hotel.name,
       image: heroImageUrl,
       basePrice: unitPrice,
+      pricing,
     })
 
     addRoom({
       roomTypeId: room.id,
       roomName: room.roomName,
       occupancy,
-      guests: GUESTS[occupancy],
+      // Never more guests than the room sleeps, whatever the occupancy band implies.
+      guests: Math.min(GUESTS[occupancy], room.maxOccupancy || GUESTS[occupancy]),
       quantity: 1,
       unitPrice,
     })
