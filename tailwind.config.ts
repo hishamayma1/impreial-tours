@@ -134,6 +134,19 @@ const config: Config = {
         widget: '0 20px 50px -12px rgba(0,0,0,0.15)',
         nav: '0 8px 30px -12px rgba(0,0,0,0.12)',
       },
+      /*
+        The date picker's month-change animations (see `cal-*` in keyframes below).
+        Named here because DatePicker hands eight of them to DayPicker as class names,
+        and `animate-cal-in-left` reads far better there than the arbitrary value.
+      */
+      animation: {
+        'cal-in-left': 'cal-in-left 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'cal-in-right': 'cal-in-right 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'cal-out-left': 'cal-out-left 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'cal-out-right': 'cal-out-right 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'cal-fade-in': 'cal-fade-in 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
+        'cal-fade-out': 'cal-fade-out 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards',
+      },
       keyframes: {
         /* Loader keyframes — transform/opacity only, so they stay off the main thread. */
         'loader-spin': {
@@ -152,6 +165,17 @@ const config: Config = {
           from: { opacity: '0', transform: 'translateY(-6px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
+        /*
+          The date picker's month change (react-day-picker's `animate`): the new month's
+          weeks slide in from the side they come from while the old ones slide out the
+          other way, and the caption cross-fades. Transform and opacity only.
+        */
+        'cal-in-left': { from: { transform: 'translateX(-100%)' }, to: { transform: 'translateX(0)' } },
+        'cal-in-right': { from: { transform: 'translateX(100%)' }, to: { transform: 'translateX(0)' } },
+        'cal-out-left': { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-100%)' } },
+        'cal-out-right': { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(100%)' } },
+        'cal-fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
+        'cal-fade-out': { from: { opacity: '1' }, to: { opacity: '0' } },
         /* Typewriter caret. Opacity only, so it never triggers layout or paint cost. */
         'caret-blink': {
           '0%, 49%': { opacity: '1' },

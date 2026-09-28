@@ -3,10 +3,15 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-export const TOUR_TYPES = ['private', 'group', 'yacht', 'villa'] as const
+/**
+ * The catalogue's own two kinds of tour, plus 'any' for both. These map straight onto
+ * the `/tours?type=` filter, so the search hands over to the listing without translating.
+ */
+export const TOUR_TYPES = ['any', 'daily', 'experience'] as const
 export type TourType = (typeof TOUR_TYPES)[number]
 
 export type SearchCriteria = {
+  /** A destination slug, or '' for anywhere. */
   destination: string
   travelDate: string
   tourType: TourType
@@ -28,7 +33,7 @@ type SearchState = SearchCriteria & {
 const initial: SearchCriteria = {
   destination: '',
   travelDate: '',
-  tourType: 'private',
+  tourType: 'any',
   guests: 2,
 }
 
@@ -59,6 +64,15 @@ export const useSearchStore = create<SearchState>()(
     }),
     {
       name: 'imperial-tours.search',
+      // v1: destination became a slug and the tour types became the catalogue's.
+      // Anything stored by v0 — free text like "Cairo/Giza", 'private' — would match
+      // nothing in the new lists, so it is dropped rather than carried over.
+      version: 1,
+      migrate: (persisted) => ({
+        ...(persisted as Partial<SearchCriteria>),
+        destination: '',
+        tourType: 'any',
+      }),
       storage: createJSONStorage(() => sessionStorage),
       partialize: ({ destination, travelDate, tourType, guests }) => ({
         destination,

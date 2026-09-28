@@ -154,7 +154,14 @@ export const RentalPlanner = ({
 
     // The store carries the visitor's choices to the checkout; the server re-prices
     // from the CMS regardless, so nothing here is trusted as a price.
-    setService('bicycle', { id, slug, label: title, image, basePrice: quote.unitPrice })
+    setService('bicycle', {
+      id,
+      slug,
+      label: title,
+      image,
+      basePrice: quote.unitPrice,
+      pricing: { kind: 'bikeRental', config: pricing, bands, pickupSlots, inventory, deposit },
+    })
     setBicycleSelection({
       durationLabel: durationText,
       durationHours: hours,
@@ -170,7 +177,7 @@ export const RentalPlanner = ({
     // selection — carry the chosen pickup date over so the visitor is not asked to
     // pick the same date twice.
     setDates(date, null)
-    router.push(`/booking/bike?item=${slug}`)
+    router.push('/booking/bike')
   }
 
   const control =

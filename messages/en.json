@@ -46,12 +46,11 @@
     "open": "Search & filter",
     "close": "Close",
     "types": {
-      "private": "Private",
-      "group": "Group",
-      "yacht": "Yacht",
-      "villa": "Villa"
+      "any": "All tour types",
+      "daily": "Day tour",
+      "experience": "Full experience"
     },
-    "resultsFor": "Showing journeys for {destination}"
+    "anyDestination": "Anywhere in Egypt"
   },
   "hero": {
     "title": "Curated Journeys Through Egypt",
@@ -567,11 +566,12 @@
     "title": "Your booking",
     "description": "Review your selection, add your details and confirm.",
     "confirmation": {
-      "title": "Booking confirmed",
-      "description": "Thank you — a confirmation with your reference number is on its way to your inbox.",
+      "title": "Request received",
+      "description": "Thank you — your request has been sent to our team.",
       "reference": "Booking reference",
       "emailNote": "We have emailed you a confirmation. Our team will be in touch shortly to finalise the details.",
-      "backHome": "Back to home"
+      "backHome": "Back to home",
+      "quoteNote": "Your request is with our team. We will reply with a price shortly — by WhatsApp if you continue there, otherwise by email or phone."
     },
     "steps": {
       "details": "Your trip",
@@ -599,7 +599,156 @@
       "email": "Email",
       "phone": "Phone",
       "country": "Country",
-      "notes": "Anything we should know?"
+      "notes": "Anything we should know?",
+      "phoneHint": "Include your country code — we may contact you on WhatsApp",
+      "notesPlaceholder": "Hotel name for pickup, dietary needs, accessibility…",
+      "notesHotel": "Arrival time, bed preference, special occasion…"
+    },
+    "chooseDate": "Choose a date",
+    "chooseTime": "Choose a time",
+    "perPerson": "per person",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "yes": "Yes",
+    "submitting": "Sending your booking…",
+    "reviewIntro": "Check everything below. Tap a completed step above to change it.",
+    "confirmNote": "No payment is taken now. Our team confirms availability and contacts you to finalise.",
+    "serviceNames": {
+      "dailyTour": "Day tour",
+      "experience": "Multi-day experience",
+      "hotel": "Hotel stay",
+      "transfer": "Private transfer",
+      "bikeRental": "Bike rental",
+      "guidedRide": "Guided bike ride"
+    },
+    "empty": {
+      "title": "Nothing to book yet",
+      "body": "Your booking is empty — it may have been sent already, or opened in a new tab. Choose what you would like to book and press “Book now” on its page.",
+      "transferBody": "Transfers are booked directly on the transfer page — choose your route there and you can book in one step.",
+      "cta": {
+        "tour": "Browse tours",
+        "hotel": "Browse hotels",
+        "bike": "Browse bikes",
+        "car": "Book a transfer"
+      }
+    },
+    "errors": {
+      "required": "This field is required",
+      "emailInvalid": "Enter a valid email address",
+      "phoneInvalid": "Enter a valid phone number with country code, e.g. +20 100 123 4567",
+      "dateRequired": "Please choose a date",
+      "datePast": "This date has passed — please choose a future date",
+      "checkoutAfterCheckin": "Check-out must be after check-in",
+      "roomsRequired": "No rooms selected. Go back to the hotel page and reserve a room.",
+      "adultsMin": "At least one adult is required",
+      "groupTooLarge": "This booking allows up to {count} people",
+      "startTimeRequired": "Please choose a start time",
+      "singleRoomsTooMany": "There cannot be more single rooms than travellers",
+      "roomGuestsTooMany": "Too many guests for this room",
+      "quantityMin": "Choose at least one",
+      "quantityTooMany": "Only {count} available",
+      "durationRequired": "Please choose how long you need",
+      "itemMissing": "Nothing selected to book",
+      "fixBelow": "Please check the highlighted fields below.",
+      "server": {
+        "validation": "Some details are missing or invalid. Please check each step and try again.",
+        "date_past": "The date you chose has passed. Please choose a future date.",
+        "date_required": "Please choose a date for your booking.",
+        "dates_invalid": "Check-out must be after check-in.",
+        "group_too_large": "Your group is larger than this service allows. Please reduce the number of people.",
+        "not_found": "This service is no longer available. Please choose another.",
+        "unavailable": "We could not price this selection. Please go back and choose again.",
+        "rate_limited": "Too many attempts. Please wait a minute and try again.",
+        "out_of_stock": "Not enough bikes are available for that quantity.",
+        "generic": "Something went wrong while sending your booking. Please try again."
+      }
+    },
+    "tour": {
+      "date": "Tour date",
+      "departureDate": "Departure date",
+      "startTime": "Start time",
+      "duration": "Duration",
+      "days": "{count, plural, one {# day} other {# days}}",
+      "adultsHint": "Age 12+",
+      "childrenHint": "Age 2–11",
+      "infantsHint": "Under 2 · free",
+      "groupMax": "Maximum {count} travellers per booking",
+      "accommodation": "Accommodation",
+      "singleRooms": "Single rooms",
+      "singleRoomsHint": "Travellers not sharing a room · +{amount} each"
+    },
+    "hotel": {
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "fromTime": "From {time}",
+      "untilTime": "Until {time}",
+      "nights": "{count, plural, one {# night} other {# nights}}",
+      "nightsLabel": "Length of stay",
+      "seasonalRate": "Seasonal rate",
+      "rooms": "Your rooms",
+      "room": "Room",
+      "perPersonNight": "per person / night",
+      "remove": "Remove",
+      "guestsPerRoom": "Guests in this room",
+      "maxGuests": "Sleeps up to {count}",
+      "roomCount": "Number of rooms",
+      "addMoreHint": "To add a different room type, go back to the hotel page and reserve it — it will be added here.",
+      "totalGuests": "Total guests"
+    },
+    "bike": {
+      "pickupDate": "Pickup date",
+      "pickupTime": "Pickup time",
+      "returnTime": "Return time",
+      "weekendNote": "Weekend rate: +{pct}% on Fridays and Saturdays",
+      "duration": "Rental duration",
+      "hours": "Hours",
+      "returnBy": "Return by {time}",
+      "bikes": "Number of bikes",
+      "rideDate": "Ride date",
+      "rideEnds": "Ends around {time}",
+      "riders": "Riders",
+      "minAge": "Minimum age {age}",
+      "delivery": "Hotel delivery",
+      "weekend": "Weekend rate"
+    },
+    "count": {
+      "adults": "{count, plural, one {# adult} other {# adults}}",
+      "children": "{count, plural, one {# child} other {# children}}",
+      "infants": "{count, plural, one {# infant} other {# infants}}",
+      "guests": "{count, plural, one {# guest} other {# guests}}"
+    },
+    "rows": {
+      "from": "From",
+      "to": "To"
+    },
+    "lines": {
+      "adults": "Adults",
+      "children": "Children",
+      "travellers": "Travellers",
+      "riders": "Riders",
+      "singleSupplement": "Single supplement",
+      "weekendSurcharge": "Weekend surcharge",
+      "delivery": "Hotel delivery",
+      "privateGroup": "Private group",
+      "roundTrip": "round trip"
+    },
+    "summary": {
+      "statusPending": "Awaiting confirmation",
+      "statusQuote": "Quote requested",
+      "reference": "Booking reference",
+      "quoteReference": "Quote reference",
+      "submittedOn": "Submitted {date}",
+      "leadGuest": "Lead guest",
+      "priceBreakdown": "Price breakdown",
+      "total": "Total",
+      "estimatedTotal": "Estimated total",
+      "recordedIn": "Recorded as {amount}",
+      "priceToFollow": "Our team will send you a price shortly.",
+      "paymentNote": "No payment has been taken. Keep your reference — our team will contact you to confirm and arrange payment.",
+      "estimateNote": "Final price is confirmed by our team when your booking is confirmed.",
+      "screenshotHint": "Take a screenshot of this summary to keep for your records.",
+      "print": "Print or save as PDF",
+      "continueWhatsapp": "Continue on WhatsApp"
     }
   },
   "pages": {

@@ -46,12 +46,11 @@
     "open": "Buscar y filtrar",
     "close": "Cerrar",
     "types": {
-      "private": "Privado",
-      "group": "En grupo",
-      "yacht": "Yate",
-      "villa": "Villa"
+      "any": "Todos los tipos",
+      "daily": "Excursión de un día",
+      "experience": "Experiencia completa"
     },
-    "resultsFor": "Mostrando viajes a {destination}"
+    "anyDestination": "Todo Egipto"
   },
   "hero": {
     "title": "Viajes a Medida por Egipto",
@@ -567,11 +566,12 @@
     "title": "Su reserva",
     "description": "Revise su selección, añada sus datos y confirme.",
     "confirmation": {
-      "title": "Reserva confirmada",
-      "description": "Gracias: le enviaremos por correo electrónico una confirmación con su número de referencia.",
+      "title": "Solicitud recibida",
+      "description": "Gracias: tu solicitud se ha enviado a nuestro equipo.",
       "reference": "Referencia de la reserva",
       "emailNote": "Le hemos enviado una confirmación por correo electrónico. Nuestro equipo se pondrá en contacto en breve para concretar los detalles.",
-      "backHome": "Volver al inicio"
+      "backHome": "Volver al inicio",
+      "quoteNote": "Tu solicitud está con nuestro equipo. Te responderemos con un precio en breve: por WhatsApp si continúas allí o, si no, por correo o teléfono."
     },
     "steps": {
       "details": "Su viaje",
@@ -599,7 +599,156 @@
       "email": "Correo electrónico",
       "phone": "Teléfono",
       "country": "País",
-      "notes": "¿Algo que debamos saber?"
+      "notes": "¿Algo que debamos saber?",
+      "phoneHint": "Incluye el prefijo internacional; puede que te contactemos por WhatsApp",
+      "notesPlaceholder": "Hotel para la recogida, necesidades alimentarias, accesibilidad…",
+      "notesHotel": "Hora de llegada, preferencia de cama, ocasión especial…"
+    },
+    "chooseDate": "Elige una fecha",
+    "chooseTime": "Elige una hora",
+    "perPerson": "por persona",
+    "decrease": "Reducir",
+    "increase": "Aumentar",
+    "yes": "Sí",
+    "submitting": "Enviando tu reserva…",
+    "reviewIntro": "Revisa todo a continuación. Pulsa un paso completado arriba para cambiarlo.",
+    "confirmNote": "No se realiza ningún cobro ahora. Nuestro equipo confirma la disponibilidad y te contacta para finalizar.",
+    "serviceNames": {
+      "dailyTour": "Excursión de un día",
+      "experience": "Experiencia de varios días",
+      "hotel": "Estancia en hotel",
+      "transfer": "Traslado privado",
+      "bikeRental": "Alquiler de bicicleta",
+      "guidedRide": "Ruta guiada en bicicleta"
+    },
+    "empty": {
+      "title": "Aún no hay nada que reservar",
+      "body": "Tu reserva está vacía: puede que ya se haya enviado o que se abriera en una pestaña nueva. Elige lo que quieres reservar y pulsa «Reservar ahora» en su página.",
+      "transferBody": "Los traslados se reservan directamente en la página de traslados: elige allí tu ruta y reserva en un solo paso.",
+      "cta": {
+        "tour": "Ver excursiones",
+        "hotel": "Ver hoteles",
+        "bike": "Ver bicicletas",
+        "car": "Reservar un traslado"
+      }
+    },
+    "errors": {
+      "required": "Este campo es obligatorio",
+      "emailInvalid": "Introduce un correo electrónico válido",
+      "phoneInvalid": "Introduce un teléfono válido con prefijo internacional, p. ej. +20 100 123 4567",
+      "dateRequired": "Elige una fecha",
+      "datePast": "Esta fecha ya ha pasado; elige una fecha futura",
+      "checkoutAfterCheckin": "La salida debe ser posterior a la entrada",
+      "roomsRequired": "No hay habitaciones seleccionadas. Vuelve a la página del hotel y reserva una habitación.",
+      "adultsMin": "Se necesita al menos un adulto",
+      "groupTooLarge": "Esta reserva admite hasta {count} personas",
+      "startTimeRequired": "Elige una hora de inicio",
+      "singleRoomsTooMany": "No puede haber más habitaciones individuales que viajeros",
+      "roomGuestsTooMany": "Demasiados huéspedes para esta habitación",
+      "quantityMin": "Elige al menos uno",
+      "quantityTooMany": "Solo hay {count} disponibles",
+      "durationRequired": "Elige cuánto tiempo lo necesitas",
+      "itemMissing": "No hay nada seleccionado para reservar",
+      "fixBelow": "Revisa los campos marcados a continuación.",
+      "server": {
+        "validation": "Faltan datos o no son válidos. Revisa cada paso e inténtalo de nuevo.",
+        "date_past": "La fecha elegida ya ha pasado. Elige una fecha futura.",
+        "date_required": "Elige una fecha para tu reserva.",
+        "dates_invalid": "La salida debe ser posterior a la entrada.",
+        "group_too_large": "Tu grupo supera lo que permite este servicio. Reduce el número de personas.",
+        "not_found": "Este servicio ya no está disponible. Elige otro.",
+        "unavailable": "No hemos podido calcular el precio de esta selección. Vuelve atrás y elige de nuevo.",
+        "rate_limited": "Demasiados intentos. Espera un minuto e inténtalo de nuevo.",
+        "out_of_stock": "No hay suficientes bicicletas disponibles para esa cantidad.",
+        "generic": "Algo salió mal al enviar tu reserva. Inténtalo de nuevo."
+      }
+    },
+    "tour": {
+      "date": "Fecha de la excursión",
+      "departureDate": "Fecha de salida",
+      "startTime": "Hora de inicio",
+      "duration": "Duración",
+      "days": "{count, plural, one {# día} other {# días}}",
+      "adultsHint": "Desde 12 años",
+      "childrenHint": "De 2 a 11 años",
+      "infantsHint": "Menores de 2 · gratis",
+      "groupMax": "Máximo {count} viajeros por reserva",
+      "accommodation": "Alojamiento",
+      "singleRooms": "Habitaciones individuales",
+      "singleRoomsHint": "Viajeros que no comparten habitación · +{amount} cada uno"
+    },
+    "hotel": {
+      "checkIn": "Entrada",
+      "checkOut": "Salida",
+      "fromTime": "Desde las {time}",
+      "untilTime": "Hasta las {time}",
+      "nights": "{count, plural, one {# noche} other {# noches}}",
+      "nightsLabel": "Duración de la estancia",
+      "seasonalRate": "Tarifa de temporada",
+      "rooms": "Tus habitaciones",
+      "room": "Habitación",
+      "perPersonNight": "por persona / noche",
+      "remove": "Quitar",
+      "guestsPerRoom": "Huéspedes en esta habitación",
+      "maxGuests": "Hasta {count} personas",
+      "roomCount": "Número de habitaciones",
+      "addMoreHint": "Para añadir otro tipo de habitación, vuelve a la página del hotel y resérvala: se añadirá aquí.",
+      "totalGuests": "Total de huéspedes"
+    },
+    "bike": {
+      "pickupDate": "Fecha de recogida",
+      "pickupTime": "Hora de recogida",
+      "returnTime": "Hora de devolución",
+      "weekendNote": "Tarifa de fin de semana: +{pct}% los viernes y sábados",
+      "duration": "Duración del alquiler",
+      "hours": "Horas",
+      "returnBy": "Devolver antes de las {time}",
+      "bikes": "Número de bicicletas",
+      "rideDate": "Fecha de la ruta",
+      "rideEnds": "Termina hacia las {time}",
+      "riders": "Ciclistas",
+      "minAge": "Edad mínima {age}",
+      "delivery": "Entrega en el hotel",
+      "weekend": "Tarifa de fin de semana"
+    },
+    "count": {
+      "adults": "{count, plural, one {# adulto} other {# adultos}}",
+      "children": "{count, plural, one {# niño} other {# niños}}",
+      "infants": "{count, plural, one {# bebé} other {# bebés}}",
+      "guests": "{count, plural, one {# huésped} other {# huéspedes}}"
+    },
+    "rows": {
+      "from": "Desde",
+      "to": "Hasta"
+    },
+    "lines": {
+      "adults": "Adultos",
+      "children": "Niños",
+      "travellers": "Viajeros",
+      "riders": "Ciclistas",
+      "singleSupplement": "Suplemento individual",
+      "weekendSurcharge": "Recargo de fin de semana",
+      "delivery": "Entrega en el hotel",
+      "privateGroup": "Grupo privado",
+      "roundTrip": "ida y vuelta"
+    },
+    "summary": {
+      "statusPending": "Pendiente de confirmación",
+      "statusQuote": "Presupuesto solicitado",
+      "reference": "Referencia de la reserva",
+      "quoteReference": "Referencia del presupuesto",
+      "submittedOn": "Enviado el {date}",
+      "leadGuest": "Titular",
+      "priceBreakdown": "Desglose del precio",
+      "total": "Total",
+      "estimatedTotal": "Total estimado",
+      "recordedIn": "Registrado como {amount}",
+      "priceToFollow": "Nuestro equipo te enviará un precio en breve.",
+      "paymentNote": "No se ha realizado ningún cobro. Guarda tu referencia: nuestro equipo te contactará para confirmar y gestionar el pago.",
+      "estimateNote": "El precio final lo confirma nuestro equipo al confirmar tu reserva.",
+      "screenshotHint": "Haz una captura de pantalla de este resumen para conservarlo.",
+      "print": "Imprimir o guardar como PDF",
+      "continueWhatsapp": "Continuar en WhatsApp"
     }
   },
   "pages": {

@@ -3,10 +3,12 @@ import { CmsImage } from '@/components/ui/CmsImage'
 import { Icon, type IconName } from '@/components/ui/Icon'
 import type { HomePageVM } from '@/types/content'
 
-import { SearchWidget } from './SearchWidget'
+import { SearchWidget, type DestinationOption } from './SearchWidget'
 
 type HeroProps = {
   hero: HomePageVM['hero']
+  /** Published destinations, offered by the search widget's destination picker. */
+  destinations: DestinationOption[]
   /** Localised chrome. Passed in so the Hero itself stays free of translation calls. */
   labels: {
     primaryCta: string
@@ -27,8 +29,8 @@ type HeroProps = {
  *
  * Nothing clips at section level. The search widget hangs half its own height below
  * the hero's bottom edge (`translate-y-1/2`), and Services reserves top padding for
- * exactly that overhang (more of it below `md`, where the widget's fields stack into
- * a taller single column instead of a row — see the comment there) — so an
+ * exactly that overhang (a smaller amount below `md`, where the widget is a short
+ * one-line trigger rather than the full form — see the comment there) — so an
  * `overflow-hidden` here sheared the widget in two along the section boundary, taking
  * the inputs and the submit button with it. The clipping lives on the image layer
  * instead, which is the only child that ever needed it.
@@ -37,8 +39,8 @@ type HeroProps = {
  * for every inner page too, and PageHeader's 64px top padding is less than the 80px
  * of header, so those titles would slide underneath it.
  */
-export const Hero = ({ hero, labels }: HeroProps) => (
-  <section className="relative -mt-20 flex h-[92vh] min-h-[620px] w-full items-center justify-center sm:min-h-[720px]">
+export const Hero = ({ hero, destinations, labels }: HeroProps) => (
+  <section className="relative -mt-20 flex h-[92svh] min-h-[620px] md:h-[92vh] w-full items-center justify-center sm:min-h-[720px]">
     <div className="absolute inset-0 overflow-hidden">
       <CmsImage image={hero.image} alt="" sizes="100vw" priority />
     </div>
@@ -54,23 +56,22 @@ export const Hero = ({ hero, labels }: HeroProps) => (
     />
     <div aria-hidden className="absolute inset-0 bg-brand/10" />
 
-    <div className="relative z-10 mx-auto mt-[-6vh] flex w-full max-w-7xl flex-col items-center px-6 md:px-grid-margin">
-      <h1 className="mb-6 max-w-5xl text-balance text-center font-display-hero text-display-hero-mobile leading-[1.05] text-white drop-shadow-lg md:text-[80px]">
+    <div className="relative z-10 mx-auto mt-[-4vh] flex w-full max-w-7xl flex-col items-center px-6 md:mt-[-6vh] md:px-grid-margin">
+      {/*
+        No subtitle under the headline: the hero is kept to the headline, the two
+        CTAs and the trust strip. `hero.subtitle` is still read by the page metadata
+        as the description fallback, so it is only dropped from the visible hero.
+      */}
+      <h1 className="mb-8 max-w-4xl text-balance text-center font-display-hero text-[30px] leading-[1.15] text-white drop-shadow-lg sm:text-[36px] sm:leading-[1.1] md:mb-10 md:text-[60px]">
         {hero.title}
       </h1>
 
-      {hero.subtitle ? (
-        <p className="mb-10 max-w-2xl text-center font-body-lg text-body-lg text-white/90">
-          {hero.subtitle}
-        </p>
-      ) : null}
-
       {/*
-        The hero used to end at the subtitle, leaving the search widget as the only
+        The hero used to end at the headline, leaving the search widget as the only
         way out of it — a dead end for anyone who does not yet know their destination.
         Two explicit exits: browse the catalogue, or hand us the trip to plan.
       */}
-      <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
+      <div className="flex w-full max-w-sm flex-col items-center gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:gap-4">
         <ButtonLink
           href="/tours/daily"
           size="lg"
@@ -94,7 +95,7 @@ export const Hero = ({ hero, labels }: HeroProps) => (
       </div>
 
       {/* Reassurance directly under the CTAs, where the hesitation actually happens. */}
-      <ul className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+      <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:mt-10 md:gap-x-6 md:gap-y-3">
         {labels.trust.map((item) => (
           <li
             key={item.label}
@@ -107,8 +108,8 @@ export const Hero = ({ hero, labels }: HeroProps) => (
       </ul>
     </div>
 
-    <div className="absolute bottom-0 left-0 z-30 w-full translate-y-1/2 px-4">
-      <SearchWidget defaultDestination={hero.defaultDestination} />
+    <div className="absolute bottom-0 left-0 z-30 w-full translate-y-1/2 px-6 md:px-4">
+      <SearchWidget defaultDestination={hero.defaultDestination} destinations={destinations} />
     </div>
   </section>
 )

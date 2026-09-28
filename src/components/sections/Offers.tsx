@@ -24,9 +24,15 @@ export const Offers = ({ heading, offers, cta }: OffersProps) => {
   if (offers.length === 0) return null
 
   return (
-    <section className="bg-surface-container-low py-[120px]" aria-labelledby="offers-heading">
-      <Container className="grid grid-cols-1 items-center gap-grid-gutter md:grid-cols-10">
-        <div className="md:col-span-4">
+    <section className="bg-surface-container-low py-16 md:py-[120px]" aria-labelledby="offers-heading">
+      <Container className="grid grid-cols-1 items-center gap-8 md:grid-cols-10 md:gap-grid-gutter">
+        {/*
+          `contents` below `md` lets the heading, the carousel and the CTAs reorder as
+          siblings in the one-column grid: on a phone the two stacked full-width
+          buttons would otherwise sit between the heading and the offers it introduces,
+          pushing the slides a whole screen further down.
+        */}
+        <div className="contents md:col-span-4 md:block">
           <SectionHeading
             headingId="offers-heading"
             eyebrow={heading.eyebrow}
@@ -46,10 +52,10 @@ export const Offers = ({ heading, offers, cta }: OffersProps) => {
             primary={cta.primary}
             secondary={cta.secondary}
             align="left"
-            className="mt-8"
+            className="order-2 md:order-none md:mt-8"
           />
         </div>
-        <div className="md:col-span-6">
+        <div className="order-1 md:order-none md:col-span-6">
           <OffersCarousel offers={offers} />
         </div>
       </Container>

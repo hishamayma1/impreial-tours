@@ -10,11 +10,10 @@ import { cn } from '@/lib/utils'
  * any difference in offset is a layout shift on the LCP element itself.
  */
 export const HeroSkeleton = () => (
-  <section className="relative -mt-20 flex h-[92vh] min-h-[720px] w-full items-center justify-center">
+  <section className="relative -mt-20 flex h-[92svh] min-h-[620px] sm:min-h-[720px] md:h-[92vh] w-full items-center justify-center">
     <Skeleton className="absolute inset-0 rounded-none" />
-    <div className="relative z-10 mx-auto mt-[-6vh] flex w-full max-w-7xl flex-col items-center px-6 md:px-grid-margin">
-      <Skeleton className="mb-6 h-16 w-full max-w-3xl" />
-      <Skeleton className="mb-10 h-6 w-full max-w-xl" />
+    <div className="relative z-10 mx-auto mt-[-4vh] flex w-full max-w-7xl flex-col items-center px-6 md:mt-[-6vh] md:px-grid-margin">
+      <Skeleton className="mb-8 h-24 w-full max-w-2xl md:mb-10 md:h-32" />
       {/* The two hero CTAs and the trust strip below them. */}
       <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
         <Skeleton className="h-14 w-52" />
@@ -31,10 +30,10 @@ export const HeroSkeleton = () => (
  * that band — it would hold a two-up grid of 4:3 cards and then shift on resolve.
  */
 export const ServicesSkeleton = ({ count = 5 }: { count?: number }) => (
-  <section className="pb-section-v-padding pt-[220px] md:pt-[180px]">
+  <section className="pb-16 pt-24 md:pb-section-v-padding md:pt-[180px]">
     <Container>
       <Skeleton className="mx-auto mb-4 h-3 w-28" />
-      <Skeleton className="mx-auto mb-16 h-8 w-72" />
+      <Skeleton className="mx-auto mb-8 h-8 w-72 md:mb-16" />
       <CardCarousel as="div" className="md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: count }, (_, index) => (
           <div key={index} className={index === 0 ? 'md:col-span-2 lg:col-span-2' : undefined}>
@@ -69,10 +68,10 @@ const columnClasses: Record<2 | 3, string> = {
 
 /** Generic band used for the below-the-fold home sections. */
 export const SectionSkeleton = ({ columns = 3 }: { columns?: 2 | 3 }) => (
-  <section className="py-[120px]">
+  <section className="py-16 md:py-[120px]">
     <Container>
       <Skeleton className="mx-auto mb-4 h-3 w-28" />
-      <Skeleton className="mx-auto mb-12 h-8 w-72" />
+      <Skeleton className="mx-auto mb-8 h-8 w-72 md:mb-12" />
       <CardCarousel as="div" className={columnClasses[columns]}>
         {Array.from({ length: columns }, (_, index) => (
           <div key={index}>
@@ -92,8 +91,8 @@ export const SectionSkeleton = ({ columns = 3 }: { columns?: 2 | 3 }) => (
  * equal cards on white, so the whole band changed colour and proportion on resolve.
  */
 export const OffersSkeleton = () => (
-  <section className="bg-surface-container-low py-[120px]">
-    <Container className="grid grid-cols-1 items-center gap-grid-gutter md:grid-cols-10">
+  <section className="bg-surface-container-low py-16 md:py-[120px]">
+    <Container className="grid grid-cols-1 items-center gap-8 md:grid-cols-10 md:gap-grid-gutter">
       <div className="md:col-span-4">
         <Skeleton className="mb-4 h-3 w-24" />
         <Skeleton className="mb-6 h-8 w-64" />
@@ -101,7 +100,7 @@ export const OffersSkeleton = () => (
         <Skeleton className="h-4 w-3/4 max-w-sm" />
       </div>
       <div className="md:col-span-6">
-        <Skeleton className="aspect-[4/3] w-full rounded-2xl" />
+        <Skeleton className="aspect-[4/5] w-full rounded-2xl sm:aspect-[16/10] md:aspect-[4/3]" />
       </div>
     </Container>
   </section>
@@ -114,7 +113,7 @@ export const OffersSkeleton = () => (
  * has already scrolled all the way down to it.
  */
 export const PlanJourneySkeleton = () => (
-  <section className="bg-brand py-section-v-padding">
+  <section className="bg-brand py-16 md:py-section-v-padding">
     <Container className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-grid-gutter">
       <div className="lg:col-span-6 xl:col-span-5">
         <Skeleton className="mb-5 h-8 w-40 rounded-full bg-white/15" />
@@ -144,7 +143,7 @@ export const PlanJourneySkeleton = () => (
  * generic skeleton would flash a light block across a full-bleed dark section.
  */
 export const TopToursSkeleton = ({ count = 3 }: { count?: number }) => (
-  <section className="bg-brand py-section-v-padding">
+  <section className="bg-brand py-16 md:py-section-v-padding">
     <Container>
       <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-2xl">
@@ -170,7 +169,7 @@ export const TopToursSkeleton = ({ count = 3 }: { count?: number }) => (
  * across a full-bleed dark section.
  */
 export const TestimonialsSkeleton = () => (
-  <section className="bg-brand py-section-v-padding">
+  <section className="bg-brand py-16 md:py-section-v-padding">
     <Container size="narrow" className="flex flex-col items-center text-center">
       <Skeleton className="mb-8 h-3 w-32 bg-white/15" />
       <Skeleton className="mb-4 h-8 w-full max-w-2xl bg-white/15" />

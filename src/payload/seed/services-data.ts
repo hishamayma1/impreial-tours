@@ -684,3 +684,41 @@ export const bicycleSeeds: SeedBicycle[] = [
 ]
 
 export const serviceLocales: Locale[] = ['en', 'es', 'de']
+
+/**
+ * Two add-ons that read as real options rather than filler, one priced per booking and
+ * one per passenger, so the form's two pricing modes are both exercised.
+ */
+export const TRANSFER_EXTRAS = [
+  {
+    price: 8,
+    perPassenger: false,
+    copy: {
+      en: { label: 'Child seat', description: 'Fitted and checked before pick-up.' },
+      es: { label: 'Silla infantil', description: 'Instalada y revisada antes de la recogida.' },
+      de: { label: 'Kindersitz', description: 'Vor der Abholung eingebaut und geprüft.' },
+    },
+  },
+  {
+    price: 5,
+    perPassenger: true,
+    copy: {
+      en: { label: 'Chilled water and towels', description: 'Waiting in the car on arrival.' },
+      es: { label: 'Agua fría y toallas', description: 'Esperando en el coche a tu llegada.' },
+      de: { label: 'Gekühltes Wasser und Tücher', description: 'Bei der Ankunft im Wagen bereit.' },
+    },
+  },
+]
+
+/**
+ * Starter drop-off points, one set per zone, added only where a zone has none.
+ *
+ * These are what the customer picks from — the pick is what selects the zone, and so
+ * the price — so a zone with an empty list leaves the booking form with nothing to
+ * offer. An editor is expected to replace these with the hotels they actually serve;
+ * a zone that already has its own list is left completely alone.
+ */
+export const STARTER_DESTINATIONS = [
+  ['Four Seasons Nile Plaza', 'Kempinski Nile', 'Zamalek', 'Garden City', 'Downtown Cairo'],
+  ['Marriott Mena House', 'Great Pyramid Inn', 'Giza Plateau', 'Sphinx Entrance', 'Saqqara'],
+]

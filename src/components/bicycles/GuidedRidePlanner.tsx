@@ -61,6 +61,7 @@ export const GuidedRidePlanner = ({
   const setBicycleSelection = useBookingStore((state) => state.setBicycleSelection)
   const setService = useBookingStore((state) => state.setService)
   const setDates = useBookingStore((state) => state.setDates)
+  const setTravelers = useBookingStore((state) => state.setTravelers)
 
   const [date, setDate] = useState('')
   const [startTime, setStartTime] = useState(startTimes[0] ?? '')
@@ -91,7 +92,21 @@ export const GuidedRidePlanner = ({
   const onReserve = () => {
     if (!canReserve || overCapacity) return
 
-    setService('bicycle', { id, slug, label: title, image, basePrice: pricePerPerson ?? 0 })
+    setService('bicycle', {
+      id,
+      slug,
+      label: title,
+      image,
+      basePrice: pricePerPerson ?? 0,
+      pricing: {
+        kind: 'guidedRide',
+        pricePerPerson,
+        startTimes,
+        durationHours,
+        maxGroupSize,
+        minAge,
+      },
+    })
     setBicycleSelection({
       durationLabel: durationHours ? `${durationHours} h` : '',
       durationHours: durationHours ?? 0,
@@ -107,7 +122,9 @@ export const GuidedRidePlanner = ({
     // selection — carry the chosen ride date over so the visitor is not asked to pick
     // the same date twice.
     setDates(date, null)
-    router.push(`/booking/bike?item=${slug}`)
+    // A guided ride is billed per rider; the booking records riders as its headcount.
+    setTravelers({ adults: quantity, children: 0, infants: 0 })
+    router.push('/booking/bike')
   }
 
   const control =

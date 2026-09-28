@@ -7,6 +7,9 @@ import { DatePicker } from '@/components/ui/DatePicker'
 import { Icon } from '@/components/ui/Icon'
 import { useRouter } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
+import { formatISODate, todayISO } from '@/lib/date'
+import { saveBookingSummary, type BookingSummaryData } from '@/lib/booking/summary'
+import { isValidEmail, isValidPhone } from '@/lib/booking/validate'
 import { cn } from '@/lib/utils'
 import { formatPrice } from '@/stores/preferences-store'
 import { usePreferencesStore } from '@/stores'
@@ -128,6 +131,7 @@ const Select = ({ id, value, onChange, children, invalid }: {
 export const TransferBookingForm = ({ transfer, variant, currencies }: Props) => {
   const t = useTranslations('transfers.form')
   const s = useTranslations('services')
+  const b = useTranslations('booking')
   const locale = useLocale() as Locale
   const router = useRouter()
 
@@ -240,7 +244,9 @@ export const TransferBookingForm = ({ transfer, variant, currencies }: Props) =>
       if (!customTo.trim()) next.customTo = t('errorRequired')
     }
     if (!date) next.date = t('errorRequired')
-    else if (date < new Date().toISOString().slice(0, 10)) next.date = t('errorPastDate')
+    // The visitor's own calendar day — toISOString() would be UTC's, and refuse
+    // "today" to anyone east of Greenwich after midnight UTC.
+    else if (date < todayISO()) next.date = t('errorPastDate')
     if (!time) next.time = t('errorRequired')
     if (!isCustom && !vehicleClass) next.vehicleClass = t('errorPickVehicle')
     if (chosenVehicle?.tooSmall) next.vehicleClass = t('errorTooSmall')
@@ -249,8 +255,10 @@ export const TransferBookingForm = ({ transfer, variant, currencies }: Props) =>
     // Email is the only way a confirmation reaches anyone, so it is required and its
     // shape is checked rather than merely its presence.
     if (!email.trim()) next.email = t('errorRequired')
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) next.email = t('errorEmail')
+    else if (!isValidEmail(email)) next.email = t('errorEmail')
     if (!phone.trim()) next.phone = t('errorRequired')
+    // The same rule the server applies, so a number it would refuse is caught here.
+    else if (!isValidPhone(phone)) next.phone = b('errors.phoneInvalid')
 
     setErrors(next)
     return Object.keys(next).length === 0
@@ -272,6 +280,34 @@ export const TransferBookingForm = ({ transfer, variant, currencies }: Props) =>
     const name = airport ? `${airport.name} (${airport.code})` : ''
     return direction === 'arrival' ? dropoff : name
   }
+
+  /** The receipt rows, in the order a driver would read them. */
+  const summaryRows = (): BookingSummaryData['rows'] => {
+    const rows: BookingSummaryData['rows'] = []
+    const push = (label: string, value: string | number) => {
+      if (value !== '' && value !== 0) rows.push({ label, value: String(value) })
+    }
+    if (variant === 'airport') push(t('direction'), t(direction))
+    push(b('rows.from'), pickupLabel())
+    push(b('rows.to'), dropoffLabel())
+    push(t('date'), formatISODate(date, locale))
+    push(t('time'), time)
+    if (roundTrip) push(t('roundTrip'), b('yes'))
+    push(t('passengers'), passengers)
+    push(t('luggage'), luggage)
+    if (variant === 'airport' && direction === 'arrival') push(t('flightNumber'), flightNumber)
+    push(t('vehicle'), vehicleClass)
+    push(t('notes'), notes.trim())
+    return rows
+  }
+
+  const summaryBase = () => ({
+    createdAt: new Date().toISOString(),
+    serviceLabel: b('serviceNames.transfer'),
+    itemLabel: transfer.title,
+    rows: summaryRows(),
+    contact: { name: `${firstName} ${lastName}`.trim(), email: email.trim(), phone: phone.trim() },
+  })
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -314,12 +350,23 @@ export const TransferBookingForm = ({ transfer, variant, currencies }: Props) =>
           }),
         })
 
-        const data = await response.json()
+        const data = await response.json().catch(() => ({}))
         if (!response.ok || !data.success) throw new Error(data.error || 'server')
 
-        setReference(data.reference ?? null)
+        const bookingReference: string | null = data.bookingReference ?? null
+        setReference(bookingReference)
         setStatus('booked')
-        if (data.bookingId) router.push(`/booking/confirmation/${data.bookingId}`)
+        if (bookingReference) {
+          saveBookingSummary({
+            ...summaryBase(),
+            reference: bookingReference,
+            kind: 'booking',
+            // The server's priced lines and total — what was actually recorded.
+            lines: Array.isArray(data.lines) ? data.lines : [],
+            total: typeof data.total === 'number' ? data.total : total,
+          })
+          router.push(`/booking/confirmation/${bookingReference}`)
+        }
         return
       }
 
@@ -343,11 +390,25 @@ export const TransferBookingForm = ({ transfer, variant, currencies }: Props) =>
         }),
       })
 
-      const data = await response.json()
+      const data = await response.json().catch(() => ({}))
       if (!response.ok || !data.success) throw new Error(data.error || 'server')
 
-      setReference(data.reference ?? null)
+      // The quote route answers with `quoteId`, not `reference` — reading the wrong
+      // key is why a quoted customer was never shown their reference.
+      const quoteReference: string | null = data.quoteId ?? null
+      setReference(quoteReference)
       setStatus('quoted')
+      if (quoteReference) {
+        saveBookingSummary({
+          ...summaryBase(),
+          reference: quoteReference,
+          kind: 'quote',
+          lines: [],
+          total: null,
+          whatsappUrl: data.whatsappUrl ?? null,
+        })
+        router.push(`/booking/confirmation/${quoteReference}`)
+      }
     } catch (error) {
       setServerError(error instanceof Error ? error.message : 'server')
       setStatus('error')
@@ -868,7 +929,11 @@ export const TransferBookingForm = ({ transfer, variant, currencies }: Props) =>
 
       {status === 'error' ? (
         <p role="alert" className="mt-4 rounded-xl border border-error/30 bg-error/5 p-3 font-body-md text-body-md text-error">
-          {serverError === 'rate_limited' ? t('errorRateLimited') : t('errorServer')}
+          {serverError === 'rate_limited'
+            ? t('errorRateLimited')
+            : serverError === 'date_past' || serverError === 'validation'
+              ? b(`errors.server.${serverError}`)
+              : t('errorServer')}
         </p>
       ) : null}
     </form>

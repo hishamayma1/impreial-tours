@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server'
 
-import { ButtonLink } from '@/components/ui/Button'
 import { Price } from '@/components/ui/Price'
 import { FactIcon } from '@/components/services/FactIcon'
 import type { CurrencyVM } from '@/types/content'
@@ -17,7 +16,8 @@ type BookingPanelProps = {
   priceNote: string
   secondaryPrice?: { label: string; amount: number } | null
   facts: PanelFact[]
-  href: string
+  /** The booking action — a client button that seeds the checkout with this tour. */
+  bookButton: React.ReactNode
   currencies: CurrencyVM[]
   instantConfirmation?: boolean
   departures?: string[]
@@ -39,7 +39,7 @@ export const BookingPanel = async ({
   priceNote,
   secondaryPrice,
   facts,
-  href,
+  bookButton,
   currencies,
   instantConfirmation,
   departures = [],
@@ -123,9 +123,7 @@ export const BookingPanel = async ({
         ) : null}
 
         <div className="p-6 pt-5">
-          <ButtonLink href={href} variant="navy" size="lg" className="w-full justify-center">
-            {t('bookNow')}
-          </ButtonLink>
+          {bookButton}
         </div>
       </div>
     </aside>

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { getPayloadClient } from '@/lib/payload/client'
 import { createBookingSchema, type CreateBookingInput } from '@/lib/validation/booking'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { isWeekendDate } from '@/lib/booking/estimate'
 import {
   calculateHotelTotal,
   calculateDailyTourTotal,
@@ -48,6 +49,16 @@ export const POST = async (request: Request) => {
     return NextResponse.json({ success: true, reference: null, bookingId: null })
   }
 
+  /**
+   * No bookings in the past. Compared against yesterday in UTC rather than today, so a
+   * visitor east of Greenwich booking for their own "today" is never refused because
+   * the server's clock is still on the day before.
+   */
+  const earliest = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10)
+  if (input.dates.start && input.dates.start < earliest) {
+    return badRequest('date_past')
+  }
+
   try {
     const payload = await getPayloadClient()
 
@@ -90,6 +101,15 @@ export const POST = async (request: Request) => {
       refId = String(tour.id)
       label = String(tour.title ?? '')
 
+      const party = input.travelers.adults + input.travelers.children
+      if (typeof tour.groupSizeMax === 'number' && tour.groupSizeMax > 0 && party > tour.groupSizeMax) {
+        return badRequest('group_too_large')
+      }
+
+      const options = input.tourOptions ?? { startTime: '', singleRooms: 0 }
+      // Never more single rooms than there are travellers to sleep in them.
+      const singleRooms = Math.min(options.singleRooms, party)
+
       const breakdown =
         input.serviceType === 'dailyTour'
           ? calculateDailyTourTotal({
@@ -103,12 +123,17 @@ export const POST = async (request: Request) => {
             })
           : calculateExperienceTotal({
               experience: { pricing: tour.pricing, departureDates: tour.departureDates },
-              travellers: input.travelers.adults + input.travelers.children,
+              travellers: party,
+              singleRooms,
               departureDate: input.dates.start,
             })
 
       lines.push(...breakdown.lines)
-      serviceDetails.tour = { departureDate: input.dates.start }
+      serviceDetails.tour = {
+        departureDate: input.dates.start,
+        startTime: options.startTime,
+        singleRooms: input.serviceType === 'experience' ? singleRooms : 0,
+      }
     }
 
     // --- Transfers ---------------------------------------------------------
@@ -190,11 +215,36 @@ export const POST = async (request: Request) => {
       refId = String(bike.id)
       label = String(bike.title ?? '')
 
+      const selection = input.bicycleSelection
+      /**
+       * A guided ride is billed per rider, and the rider count is the one the visitor
+       * chose on the ride's planner — carried as the selection's quantity. Billing the
+       * wizard's adult headcount instead (which defaults to two) charged a solo rider
+       * for a second seat.
+       */
+      const riders = selection?.quantity ?? input.travelers.adults + input.travelers.children
+
+      if (bike.bikeType === 'tour') {
+        if (typeof bike.maxGroupSize === 'number' && bike.maxGroupSize > 0 && riders > bike.maxGroupSize) {
+          return badRequest('group_too_large')
+        }
+      } else if (
+        typeof bike.inventory === 'number' &&
+        bike.inventory > 0 &&
+        (selection?.quantity ?? 1) > bike.inventory
+      ) {
+        return badRequest('out_of_stock')
+      }
+
+      // Derived from the date, not taken from the request: the surcharge is the
+      // shop's rule, not something the customer opts out of.
+      const weekend = isWeekendDate(input.dates.start)
+
       const breakdown =
         bike.bikeType === 'tour'
           ? calculateBicycleTourTotal({
               pricePerPerson: bike.pricePerPerson,
-              riders: input.travelers.adults + input.travelers.children,
+              riders,
             })
           : calculateBicycleRentalTotal({
               bands: bike.rentalPricing ?? [],
@@ -211,12 +261,17 @@ export const POST = async (request: Request) => {
               hourStep: bike.hourStep,
               deliveryFee: bike.deliveryFee,
               weekendSurchargePct: bike.weekendSurchargePct,
-              weekend: input.bicycleSelection?.weekend,
-              delivery: input.bicycleSelection?.delivery,
+              weekend,
+              delivery: selection?.delivery,
             })
 
       lines.push(...breakdown.lines)
-      serviceDetails.bicycle = input.bicycleSelection ?? {}
+      serviceDetails.bicycle = {
+        ...(selection ?? {}),
+        quantity: bike.bikeType === 'tour' ? riders : (selection?.quantity ?? 1),
+        pickupDate: input.dates.start ?? '',
+        weekend,
+      }
     }
 
     if (!lines.length) {
@@ -238,7 +293,10 @@ export const POST = async (request: Request) => {
         paymentStatus: 'unpaid',
         source: 'website',
         customer: { ...input.contact, locale: input.locale },
-        travelers: input.travelers,
+        travelers:
+          input.serviceType === 'bicycle' && input.bicycleSelection
+            ? { adults: input.bicycleSelection.quantity, children: 0, infants: 0 }
+            : input.travelers,
         dates: { startDate: input.dates.start, endDate: input.dates.end },
         lineItems: lines.map((line) => ({
           itemType: itemTypeFor(input.serviceType),
@@ -253,16 +311,36 @@ export const POST = async (request: Request) => {
       } as never,
     })
 
+    const record = booking as Doc
+
+    /**
+     * The priced lines go back with the reference so the customer's receipt shows the
+     * figures that were recorded, line for line, rather than the browser's estimate.
+     * `reference` and `bookingId` repeat the reference under the names the transfer
+     * form has always read, which is why that form never showed one.
+     */
     return NextResponse.json({
       success: true,
-      bookingReference: (booking as Doc).bookingReference,
-      total: (booking as Doc).pricing?.total ?? 0,
+      bookingReference: record.bookingReference,
+      reference: record.bookingReference,
+      bookingId: record.bookingReference,
+      total: record.pricing?.total ?? 0,
+      currency: record.pricing?.currency ?? 'USD',
+      lines: lines.map((line) => ({
+        label: line.label,
+        quantity: line.quantity,
+        unitPrice: line.unitPrice,
+        subtotal: line.subtotal,
+      })),
     })
   } catch (error) {
     console.error('[api/bookings] failed', error)
     return NextResponse.json({ success: false, error: 'server' }, { status: 500 })
   }
 }
+
+const badRequest = (error: string) =>
+  NextResponse.json({ success: false, error }, { status: 400 })
 
 const notFound = () =>
   NextResponse.json({ success: false, error: 'not_found' }, { status: 404 })

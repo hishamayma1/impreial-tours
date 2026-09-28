@@ -197,7 +197,7 @@ const CarouselTrack = ({ offers, index, groupId, reducedMotion, cta }: CarouselT
           aria-roledescription="slide"
           aria-label={slideIndex + 1 + ' / ' + offers.length}
           aria-hidden={slideIndex !== index}
-          className="relative aspect-[16/9] w-full flex-shrink-0 overflow-hidden"
+          className="relative aspect-[4/5] w-full flex-shrink-0 overflow-hidden sm:aspect-[16/10] md:aspect-[16/9]"
         >
           {/*
             The whole slide is the link, not just the button: the image and headline
@@ -228,14 +228,18 @@ const CarouselTrack = ({ offers, index, groupId, reducedMotion, cta }: CarouselT
               sizes="(max-width: 768px) 100vw, 60vw"
               className="transition-transform duration-700 group-hover:scale-105"
             />
+            {/*
+              Bottom-up on phones, where the copy sits at the foot of a portrait
+              slide; left-to-right from `md`, where it sits beside the photograph.
+            */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-r from-brand/80 via-brand/20 to-transparent"
+              className="absolute inset-0 bg-gradient-to-t from-brand/90 via-brand/35 to-transparent md:bg-gradient-to-r md:from-brand/80 md:via-brand/20"
             />
 
-            <div className="absolute inset-y-0 left-0 flex w-full flex-col justify-center p-8 md:w-2/3 md:p-12">
+            <div className="absolute inset-y-0 left-0 flex w-full flex-col justify-end p-6 sm:p-8 md:w-2/3 md:justify-center md:p-12">
               {offer.badges.length > 0 ? (
-                <ul className="mb-6 flex flex-wrap gap-3">
+                <ul className="mb-4 flex flex-wrap gap-2 md:mb-6 md:gap-3">
                   {offer.badges.map((badge) => (
                     <li
                       key={badge.text}
@@ -250,7 +254,7 @@ const CarouselTrack = ({ offers, index, groupId, reducedMotion, cta }: CarouselT
                 </ul>
               ) : null}
 
-              <h3 className="mb-8 font-headline-card text-3xl leading-tight text-white md:text-4xl">
+              <h3 className="mb-5 line-clamp-3 font-headline-card text-2xl leading-tight text-white sm:text-3xl md:mb-8 md:line-clamp-none md:text-4xl">
                 {offer.title}
               </h3>
 
@@ -259,7 +263,7 @@ const CarouselTrack = ({ offers, index, groupId, reducedMotion, cta }: CarouselT
                   A span, not a link — the whole slide is already the anchor. It keeps
                   the button's look and its hover state follows the slide's `group`.
                 */}
-                <span className="inline-flex items-center justify-center rounded-full border border-white/70 px-8 py-4 font-label-caps text-label-caps uppercase tracking-widest text-white transition-colors group-hover:bg-white group-hover:text-brand">
+                <span className="inline-flex items-center justify-center rounded-full border border-white/70 px-6 py-3 font-label-caps md:px-8 md:py-4 text-label-caps uppercase tracking-widest text-white transition-colors group-hover:bg-white group-hover:text-brand">
                   {cta}
                 </span>
               </div>

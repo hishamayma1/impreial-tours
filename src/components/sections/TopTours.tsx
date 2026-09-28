@@ -63,7 +63,7 @@ export const TopTours = ({ heading, groups, currencies, labels, cta }: TopToursP
   const tabs = candidates.filter((tab): tab is SpotlightTab => tab !== null)
 
   return (
-    <section className="relative overflow-hidden bg-brand py-section-v-padding" aria-labelledby="top-tours-heading">
+    <section className="relative overflow-hidden bg-brand py-16 md:py-section-v-padding" aria-labelledby="top-tours-heading">
       {/*
         Two soft radial washes, drawn behind everything. They keep a full-bleed navy
         band from reading as a flat rectangle without costing an image request, and
@@ -104,7 +104,7 @@ export const TopTours = ({ heading, groups, currencies, labels, cta }: TopToursP
           primary={cta.primary}
           secondary={cta.secondary}
           tone="light"
-          className="mt-16"
+          className="mt-10 md:mt-16"
         />
       </Container>
     </section>

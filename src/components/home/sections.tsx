@@ -9,6 +9,7 @@ import { Testimonials } from '@/components/sections/Testimonials'
 import { PlanJourney } from '@/components/sections/PlanJourney'
 import type { Locale } from '@/i18n/routing'
 import {
+  getDestinationOptions,
   getFeaturedDestinations,
   getHomePage,
   getServices,
@@ -54,10 +55,17 @@ const buildHeading = (
 const PLAN_ANCHOR = '#plan'
 
 export const HeroSection = async ({ locale }: Props) => {
-  const [home, t] = await Promise.all([getHomePage(locale), getTranslations('hero')])
+  const [home, destinations, t] = await Promise.all([
+    getHomePage(locale),
+    // Every published destination, for the search widget's picker — the same list
+    // the catalogue's own destination filter offers, so every choice has a match.
+    getDestinationOptions(locale),
+    getTranslations('hero'),
+  ])
 
   return (
     <Hero
+      destinations={destinations}
       hero={{
         ...home.hero,
         // The hero heading is the page's only `<h1>` and its LCP text — never leave it
