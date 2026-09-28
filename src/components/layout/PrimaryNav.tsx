@@ -22,15 +22,13 @@ type PrimaryNavProps = {
 }
 
 /**
- * Link colour is read from the header's `data-state`, not from a prop: over the hero
- * the bar is transparent and the links must be white, and once it turns solid they
- * must be navy on white. Publishing that as a data attribute is what lets the labels
- * stay server-rendered strings.
+ * Navy on the white pill-shaped bar, brand blue on hover. One size down below 1400px,
+ * where seven labels at full size no longer fit inside the pill beside the brand,
+ * the switchers and the CTA.
  */
 const triggerBase =
-  'relative inline-flex items-center gap-1 font-body-md text-body-md tracking-wider transition-colors duration-300 ' +
-  'text-white/85 hover:text-white ' +
-  'group-data-[state=solid]/header:text-on-surface-variant group-data-[state=solid]/header:hover:text-brand'
+  'relative inline-flex items-center gap-1 whitespace-nowrap font-body-md text-sm tracking-wide transition-colors duration-300 min-[1400px]:text-body-md min-[1400px]:tracking-wider ' +
+  'text-on-surface-variant hover:text-brand'
 
 /**
  * The hover rule is a scaled pseudo-element rather than `text-decoration`, so it
@@ -240,7 +238,7 @@ export const PrimaryNav = ({ items, featuredByHub }: PrimaryNavProps) => {
       }}
       className="hidden lg:block"
     >
-      <nav aria-label="Primary" className="flex gap-8">
+      <nav aria-label="Primary" className="flex gap-5 min-[1400px]:gap-8">
         {items.map((item) => {
           const key = `${item.href}-${item.label}`
 
@@ -358,10 +356,14 @@ export const PrimaryNav = ({ items, featuredByHub }: PrimaryNavProps) => {
                * ancestor because it is sticky. Spanning the full width is what makes a
                * horizontal layout possible at all, and it sidesteps the clamping a
                * trigger-anchored panel needs near either edge of the window.
+               *
+               * A floating rounded card under the pill-shaped bar, inset by the same
+               * 12px and capped at the same 1600px, so its edges line up with the
+               * pill's rather than running under the frame to the window's edge.
                */
-              className="absolute inset-x-0 top-full origin-top border-b border-outline-variant/40 bg-surface-container-lowest shadow-nav motion-safe:animate-[nav-panel-in_180ms_ease-out]"
+              className="absolute inset-x-3 top-full mx-auto max-w-[1600px] origin-top overflow-hidden rounded-3xl border border-outline-variant/40 bg-surface-container-lowest shadow-nav motion-safe:animate-[nav-panel-in_180ms_ease-out]"
             >
-              <div className="mx-auto w-full max-w-[1600px] px-6 py-7 md:px-grid-margin">
+              <div className="w-full px-6 py-7 md:px-8">
                 <div className={cn('grid gap-x-10 gap-y-7', featuredNode && 'lg:grid-cols-[288px_1fr]')}>
                   {/*
                     The destinations, read top to bottom as a list rather than scanned
