@@ -1,16 +1,31 @@
 'use client'
 
 import { useId, useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, Controller, type Resolver } from 'react-hook-form'
 import { useTranslations, useLocale } from 'next-intl'
 
 import { Button } from '@/components/ui/Button'
 import { DatePicker } from '@/components/ui/DatePicker'
 import { Icon } from '@/components/ui/Icon'
-import { leadSchema, type LeadInput, type LeadFormValues } from '@/lib/validation/lead'
+import type { LeadInput, LeadFormValues } from '@/lib/validation/lead'
 import type { Locale } from '@/i18n/routing'
 import { cn } from '@/lib/utils'
+
+/**
+ * Zod and the lead schema are loaded on first validation rather than with the page.
+ * This form sits far below the fold on the home page, and zod alone was ~38 kB gzip of
+ * the home page's first-load JS. React Hook Form's default `onSubmit` mode means the
+ * resolver first runs on submit, and `warmValidation` starts the download as soon as
+ * the visitor focuses any field — so by then it is already in hand.
+ */
+const loadValidation = () =>
+  Promise.all([import('@hookform/resolvers/zod'), import('@/lib/validation/lead')])
+const warmValidation = () => void loadValidation()
+
+const leadResolver: Resolver<LeadFormValues, unknown, LeadInput> = async (values, context, options) => {
+  const [{ zodResolver }, { leadSchema }] = await loadValidation()
+  return zodResolver(leadSchema)(values, context, options)
+}
 
 const INTERESTS = ['tours', 'hotels', 'transfers', 'bicycles'] as const
 
@@ -45,7 +60,7 @@ export const PlanJourneyForm = () => {
     control,
     formState: { errors, isSubmitting },
   } = useForm<LeadFormValues, unknown, LeadInput>({
-    resolver: zodResolver(leadSchema),
+    resolver: leadResolver,
     defaultValues: {
       name: '',
       phone: '',
@@ -125,6 +140,7 @@ export const PlanJourneyForm = () => {
   return (
     <form
       onSubmit={onSubmit}
+      onFocus={warmValidation}
       noValidate
       className="relative rounded-3xl border border-hairline bg-surface-container-lowest p-6 shadow-widget md:p-8"
     >

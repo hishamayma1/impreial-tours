@@ -2,16 +2,27 @@
 
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import dynamic from 'next/dynamic'
 import { useLocale } from 'next-intl'
-import { DayPicker, type Locale as DayPickerLocale, type Matcher as DayPickerMatcher } from 'react-day-picker'
-import { de, enUS, es } from 'react-day-picker/locale'
 
 import { Icon } from '@/components/ui/Icon'
 import { usePresence } from '@/hooks/use-presence'
 import { dateToISO, formatISODate, isoToDate, todayISO } from '@/lib/date'
 import { cn } from '@/lib/utils'
 
-const dayPickerLocales: Record<string, DayPickerLocale> = { en: enUS, es, de }
+/**
+ * The calendar grid is its own chunk — see DatePickerCalendar.tsx. `loadCalendar` is
+ * also called on the trigger's first hover/focus/touch, so the chunk is normally in
+ * hand before the click that opens the panel. The placeholder holds roughly the
+ * grid's height so the panel does not open as a sliver and then jump.
+ */
+const loadCalendar = () => import('./DatePickerCalendar')
+const DatePickerCalendar = dynamic(loadCalendar, {
+  ssr: false,
+  loading: () => <div aria-hidden className="h-[300px]" />,
+})
+// Idempotent: the bundler caches the module, so repeat calls cost nothing.
+const warmCalendar = () => void loadCalendar()
 
 /** Matches Tailwind's `md` breakpoint: below it the calendar is a bottom sheet. */
 const MOBILE_QUERY = '(max-width: 767px)'
@@ -79,6 +90,8 @@ export const DatePicker = ({
   const [reducedMotion, setReducedMotion] = useState(false)
   // Kept mounted through the close so both panels can animate out, not just in.
   const panel = usePresence(open, mobile ? SHEET_MS : DROPDOWN_MS)
+  // Re-runs placement while open; set by the placement effect below.
+  const replaceRef = useRef<() => void>(() => {})
 
   useEffect(() => {
     if (!open) return
@@ -138,10 +151,12 @@ export const DatePicker = ({
   useLayoutEffect(() => {
     if (!open) return
 
-    const place = () => {
+    const readMedia = () => {
       setMobile(window.matchMedia(MOBILE_QUERY).matches)
       setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    }
 
+    const place = () => {
       const rect = rootRef.current?.getBoundingClientRect()
       if (!rect) return
 
@@ -157,103 +172,77 @@ export const DatePicker = ({
       const above = !fitsBelow && fitsAbove
       const top = above ? rect.top - 8 - height : rect.bottom + 8
 
-      setPanelStyle({ top, left, width: rect.width, above })
+      // Returning the previous object when nothing moved lets React skip the render.
+      setPanelStyle((prev) =>
+        prev &&
+        prev.top === top &&
+        prev.left === left &&
+        prev.width === rect.width &&
+        prev.above === above
+          ? prev
+          : { top, left, width: rect.width, above },
+      )
     }
 
+    /**
+     * Scroll fires many times per frame on a phone, and each `place` forces a layout
+     * read. Coalesced to one pass per frame; the media queries are only re-read on
+     * resize, since scrolling cannot change them.
+     */
+    let frame = 0
+    let mediaDirty = false
+    const schedule = () => {
+      if (!frame) {
+        frame = window.requestAnimationFrame(() => {
+          frame = 0
+          if (mediaDirty) {
+            mediaDirty = false
+            readMedia()
+          }
+          place()
+        })
+      }
+    }
+    const onResize = () => {
+      mediaDirty = true
+      schedule()
+    }
+
+    readMedia()
     place()
-    // Second pass once the panel is in the DOM, so the flip uses its real height.
-    const frame = window.requestAnimationFrame(place)
-    window.addEventListener('resize', place)
+    // Second pass once the panel is in the DOM, so the flip uses its real height —
+    // and again when the lazily loaded calendar replaces its placeholder.
+    schedule()
+    replaceRef.current = schedule
+    window.addEventListener('resize', onResize)
     // `capture: true` so a scroll inside any nested scroll container repositions the
     // panel too, not only a scroll of the window itself.
-    window.addEventListener('scroll', place, true)
+    window.addEventListener('scroll', schedule, { capture: true, passive: true })
     return () => {
+      replaceRef.current = () => {}
       window.cancelAnimationFrame(frame)
-      window.removeEventListener('resize', place)
-      window.removeEventListener('scroll', place, true)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('scroll', schedule, true)
     }
   }, [open])
 
   const selected = value ? isoToDate(value) : undefined
   const minDate = isoToDate(min ?? todayISO())
   const maxDate = max ? isoToDate(max) : undefined
-  const disabledMatchers: DayPickerMatcher[] = [
-    ...(minDate ? [{ before: minDate }] : []),
-    ...(maxDate ? [{ after: maxDate }] : []),
-  ]
 
-  const dayPickerClassNames = {
-    root: 'font-body-md',
-    months: 'flex flex-col',
-    // `around` layout renders [PreviousButton, MonthCaption, NextButton, MonthGrid] as
-    // flat siblings of `month` — a 3-column grid puts the first three in one header row
-    // and `month_grid`'s own col-span-3 wraps the day grid onto its own row beneath it.
-    month: 'grid grid-cols-[auto_1fr_auto] items-center gap-x-1 gap-y-3',
-    month_caption: 'flex items-center justify-center py-1',
-    caption_label: 'font-body-md text-body-md font-medium text-primary',
-    nav: 'flex items-center',
-    button_previous:
-      'focus-card grid h-8 w-8 place-items-center rounded-lg text-on-surface-variant transition-colors duration-200 hover:bg-brand/[0.06] hover:text-brand disabled:cursor-not-allowed disabled:opacity-30',
-    button_next:
-      'focus-card grid h-8 w-8 place-items-center rounded-lg text-on-surface-variant transition-colors duration-200 hover:bg-brand/[0.06] hover:text-brand disabled:cursor-not-allowed disabled:opacity-30',
-    chevron: 'h-4 w-4 fill-current',
-    // `table-fixed` pins every column to an equal share of the (now fixed-width) grid —
-    // without it the table's auto layout could compress columns narrower than the
-    // fixed-size day buttons on a cramped container, pushing the digits outside their
-    // circle and the circles outside their cell.
-    month_grid: 'col-span-3 w-full table-fixed border-collapse',
-    weekdays: '',
-    weekday: 'pb-2 text-center font-label-caps text-[11px] uppercase tracking-widest text-on-surface-variant',
-    week: '',
-    day: 'text-center align-middle',
-    day_button:
-      'focus-card mx-auto grid h-9 w-9 place-items-center rounded-full font-body-md text-body-md tabular-nums text-primary transition-colors duration-200 hover:bg-brand/[0.08]',
-    today: '[&>button]:font-semibold [&>button]:text-brand',
-    selected: '[&>button]:bg-brand [&>button]:text-on-primary [&>button]:hover:bg-brand',
-    outside: '[&>button]:text-outline/50',
-    disabled: '[&>button]:cursor-not-allowed [&>button]:text-outline/30 [&>button]:hover:bg-transparent',
-    hidden: 'invisible',
-    // Month-change animation, driven by DayPicker's `animate`. Its default stylesheet
-    // is not loaded here, so the classes it applies mid-transition are defined too;
-    // without them `animate` would leave the outgoing month overlaid on the new one.
-    weeks_before_enter: 'animate-cal-in-left',
-    weeks_before_exit: 'animate-cal-out-left',
-    weeks_after_enter: 'animate-cal-in-right',
-    weeks_after_exit: 'animate-cal-out-right',
-    caption_before_enter: 'animate-cal-fade-in',
-    caption_before_exit: 'animate-cal-fade-out',
-    caption_after_enter: 'animate-cal-fade-in',
-    caption_after_exit: 'animate-cal-fade-out',
-  }
-
-  // Larger targets in the sheet: 44px days and arrows, the minimum comfortable size
-  // for a thumb, against the dropdown's 36px ones sized for a pointer.
-  const sheetClassNames = {
-    ...dayPickerClassNames,
-    month: 'grid grid-cols-[auto_1fr_auto] items-center gap-x-1 gap-y-4',
-    button_previous: dayPickerClassNames.button_previous.replace('h-8 w-8', 'h-11 w-11'),
-    button_next: dayPickerClassNames.button_next.replace('h-8 w-8', 'h-11 w-11'),
-    day_button: dayPickerClassNames.day_button.replace('h-9 w-9', 'h-11 w-11'),
-  }
-
-  const calendar = (classNames: typeof dayPickerClassNames) => (
-    <DayPicker
-      mode="single"
-      autoFocus
-      navLayout="around"
-      // Off under reduced motion rather than neutralised with CSS: DayPicker clears
-      // the outgoing month on `animationend`, which never fires with no animation.
-      animate={!reducedMotion}
+  const calendar = (variant: 'sheet' | 'dropdown') => (
+    <DatePickerCalendar
+      variant={variant}
+      locale={locale}
       selected={selected}
-      defaultMonth={selected ?? minDate}
-      locale={dayPickerLocales[locale] ?? enUS}
-      disabled={disabledMatchers}
+      minDate={minDate}
+      maxDate={maxDate}
+      reducedMotion={reducedMotion}
       onSelect={(date) => {
-        if (!date) return
         onChange(dateToISO(date))
         setOpen(false)
       }}
-      classNames={classNames}
+      onReady={() => replaceRef.current()}
     />
   )
 
@@ -267,6 +256,9 @@ export const DatePicker = ({
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
         aria-labelledby={ariaLabelledBy}
+        onPointerEnter={warmCalendar}
+        onFocus={warmCalendar}
+        onTouchStart={warmCalendar}
         onClick={() => setOpen((value) => !value)}
         className={cn(
           'focus-card flex h-11 w-full items-center justify-between gap-2 rounded-xl border bg-surface-container-lowest px-3.5 text-start font-body-md text-body-md transition-colors duration-200',
@@ -316,7 +308,7 @@ export const DatePicker = ({
               >
                 <span aria-hidden className="mx-auto mb-4 block h-1 w-10 rounded-full bg-outline-variant" />
                 <div className="mx-auto max-w-sm">
-                  {calendar(sheetClassNames)}
+                  {calendar('sheet')}
                 </div>
               </div>
             </>,
@@ -348,7 +340,7 @@ export const DatePicker = ({
                   : cn('pointer-events-none scale-95 opacity-0', panelStyle.above ? 'translate-y-1' : '-translate-y-1'),
               )}
             >
-              {calendar(dayPickerClassNames)}
+              {calendar('dropdown')}
             </div>,
             document.body,
           )

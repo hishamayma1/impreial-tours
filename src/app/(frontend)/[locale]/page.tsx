@@ -23,7 +23,7 @@ import {
   TestimonialsSkeleton,
 } from '@/components/home/section-skeletons'
 import { routing, type Locale } from '@/i18n/routing'
-import { getHomePage } from '@/lib/payload/queries'
+import { getHomePage, getSiteSettings } from '@/lib/payload/queries'
 import { firstFilled } from '@/lib/utils'
 import { buildAlternates } from '@/lib/seo'
 
@@ -39,9 +39,10 @@ export const generateMetadata = async ({ params }: PageProps): Promise<Metadata>
    */
   if (!hasLocale(routing.locales, locale)) return {}
 
-  const [home, t] = await Promise.all([
+  const [home, t, settings] = await Promise.all([
     getHomePage(locale),
     getTranslations({ locale, namespace: 'meta' }),
+    getSiteSettings(locale),
   ])
 
   /**
@@ -53,14 +54,36 @@ export const generateMetadata = async ({ params }: PageProps): Promise<Metadata>
   const title = firstFilled(home.seo.title, home.hero.title, t('tagline'))
   const description = firstFilled(home.seo.description, home.hero.subtitle, t('defaultDescription'))
 
+  /**
+   * A page's `openGraph` replaces the layout's wholesale rather than merging with it,
+   * so leaving `images` undefined here did not inherit the site-wide share image — it
+   * shipped the root, the most-shared URL on the site, with no `og:image` at all.
+   * Falls back to the hero photograph, which makes a better card than the logo the
+   * layout would have used; `type` is restated for the same replace-not-merge reason.
+   * The layout's own choice stays the last resort, so an empty hero cannot blank it.
+   */
+  const imageUrl =
+    home.seo.image?.url ??
+    home.hero.image?.url ??
+    settings.defaultSeo.image?.url ??
+    settings.logo?.url
+  const images = imageUrl ? [imageUrl] : undefined
+
   return {
     title,
     description,
     alternates: buildAlternates(locale as Locale),
     openGraph: {
+      type: 'website',
       title,
       description,
-      images: home.seo.image ? [{ url: home.seo.image.url }] : undefined,
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images,
     },
   }
 }

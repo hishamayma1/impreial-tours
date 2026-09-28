@@ -1,18 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, useFieldArray, Controller, type Resolver } from 'react-hook-form'
 import { useTranslations, useLocale } from 'next-intl'
 
 import { Button } from '@/components/ui/Button'
 import { DatePicker } from '@/components/ui/DatePicker'
-import {
-  quoteRequestSchema,
-  type QuoteRequestInput,
-  type QuoteRequestFormValues,
-} from '@/lib/validation/booking'
+import type { QuoteRequestInput, QuoteRequestFormValues } from '@/lib/validation/booking'
 import type { Locale } from '@/i18n/routing'
+
+/**
+ * Zod is loaded on first validation, not with the page — see PlanJourneyForm for the
+ * same pattern. The resolver first runs on submit (React Hook Form's default mode),
+ * and focusing any field starts the download before then.
+ */
+const loadValidation = () =>
+  Promise.all([import('@hookform/resolvers/zod'), import('@/lib/validation/booking')])
+const warmValidation = () => void loadValidation()
+
+const quoteResolver: Resolver<QuoteRequestFormValues, unknown, QuoteRequestInput> = async (
+  values,
+  context,
+  options,
+) => {
+  const [{ zodResolver }, { quoteRequestSchema }] = await loadValidation()
+  return zodResolver(quoteRequestSchema)(values, context, options)
+}
 
 const inputClass =
   'w-full rounded-lg border border-hairline bg-surface-container-lowest px-3 py-2.5 font-body-md text-body-md text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand'
@@ -40,7 +53,7 @@ export const CustomQuoteForm = () => {
     control,
     formState: { errors, isSubmitting },
   } = useForm<QuoteRequestFormValues, unknown, QuoteRequestInput>({
-    resolver: zodResolver(quoteRequestSchema),
+    resolver: quoteResolver,
     defaultValues: {
       name: '', phone: '', email: '', pickupLocation: '', dropoffLocation: '',
       stops: [], date: '', time: '', passengers: 2, luggage: 2,
@@ -139,7 +152,7 @@ export const CustomQuoteForm = () => {
   )
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-6">
+    <form onSubmit={onSubmit} onFocus={warmValidation} noValidate className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-3">
         <Field name="name" required />
         <Field name="phone" required />

@@ -149,7 +149,13 @@ export const MobileNav = ({ items, cta }: MobileNavProps) => {
                           />
                         </button>
 
+                        {/*
+                          `inert` while collapsed: `grid-rows-[0fr]` + `overflow-hidden`
+                          hides the links visually, but they stayed in the tab order,
+                          so a keyboard user tabbed through invisible destinations.
+                        */}
                         <div
+                          inert={!isExpanded}
                           className={cn(
                             'grid transition-all duration-300 ease-out',
                             isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
