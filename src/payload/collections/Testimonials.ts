@@ -6,8 +6,10 @@ export const Testimonials: CollectionConfig = {
   slug: 'testimonials',
   admin: {
     useAsTitle: 'author',
-    defaultColumns: ['author', 'location', 'order', '_status'],
+    defaultColumns: ['author', 'location', 'rating', 'order', '_status'],
     group: 'Content',
+    description:
+      'Client feedback for the home page carousel. Publish an entry to add it; lower "order" numbers show first.',
   },
   versions: { drafts: true },
   defaultSort: 'order',
@@ -27,6 +29,13 @@ export const Testimonials: CollectionConfig = {
     },
     { name: 'author', type: 'text', required: true },
     { name: 'location', type: 'text', localized: true },
+    {
+      name: 'rating',
+      type: 'number',
+      min: 1,
+      max: 5,
+      admin: { step: 1, description: 'Optional, 1–5. Shown as stars on the card; leave empty for none.' },
+    },
     { name: 'portrait', type: 'upload', relationTo: 'media' },
     { name: 'order', type: 'number', defaultValue: 0, admin: { position: 'sidebar' } },
   ],

@@ -52,10 +52,18 @@ export default buildConfig({
     },
     meta: {
       titleSuffix: ' — Imperial Tours',
+      // The pyramid mark in the browser tab, not Payload's.
+      icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/icon.svg' }],
     },
     components: {
-      // Section 4: the stats row above the dashboard's collection list.
+      // Section 4: greeting, stats and recent activity above the collection list.
       beforeDashboard: ['@/payload/components/Dashboard#Dashboard'],
+      // The site's own logo (from Site Settings) in place of Payload's.
+      graphics: {
+        Logo: '@/payload/components/Brand#BrandLogo',
+        Icon: '@/payload/components/Brand#BrandIcon',
+      },
+      beforeNavLinks: ['@/payload/components/Brand#NavBrand'],
     },
   },
 

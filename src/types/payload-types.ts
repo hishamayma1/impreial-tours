@@ -1239,6 +1239,8 @@ export interface Page {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Client feedback for the home page carousel. Publish an entry to add it; lower "order" numbers show first.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials".
  */
@@ -1250,6 +1252,10 @@ export interface Testimonial {
   quote: string;
   author: string;
   location?: string | null;
+  /**
+   * Optional, 1–5. Shown as stars on the card; leave empty for none.
+   */
+  rating?: number | null;
   portrait?: (string | null) | Media;
   order?: number | null;
   updatedAt: string;
@@ -2286,6 +2292,7 @@ export interface TestimonialsSelect<T extends boolean = true> {
   quote?: T;
   author?: T;
   location?: T;
+  rating?: T;
   portrait?: T;
   order?: T;
   updatedAt?: T;

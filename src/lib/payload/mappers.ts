@@ -145,6 +145,9 @@ export const toTestimonial = (doc: Doc): TestimonialVM => ({
   author: str(doc.author),
   location: str(doc.location),
   portrait: toImage(doc.portrait, 'thumbnail'),
+  // Whole stars, clamped: anything outside 1–5 (or not a number) shows no stars.
+  rating:
+    typeof doc.rating === 'number' && doc.rating >= 1 && doc.rating <= 5 ? Math.round(doc.rating) : null,
 })
 
 export const toPost = (doc: Doc): PostVM => ({

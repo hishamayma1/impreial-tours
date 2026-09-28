@@ -35,6 +35,7 @@
     "currencies:set": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/set-currencies.ts",
     "contact:seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/seed-contact.ts",
     "demo:bicycles": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/demo-bicycles.ts",
+    "demo:testimonials": "cross-env NODE_OPTIONS=--no-deprecation payload run src/payload/seed/demo-testimonials.ts",
     "test:rental": "node --experimental-strip-types tests/rental-pricing.test.ts",
     "test:fallback": "node --experimental-strip-types tests/fallback-data.test.ts",
     "test:booking": "node --experimental-strip-types tests/booking-flow.test.ts",

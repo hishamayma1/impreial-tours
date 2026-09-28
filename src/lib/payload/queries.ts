@@ -135,7 +135,9 @@ export const getTestimonials = cachedByLocale<TestimonialVM[]>('testimonials', [
     locale,
     fallbackLocale: 'en',
     depth: 1,
-    limit: 8,
+    // Room for the carousel to grow as editors publish more; it was 8, which would
+    // have silently dropped every entry past the eighth.
+    limit: 24,
     sort: 'order',
     where: { _status: { equals: 'published' } },
     overrideAccess: true,

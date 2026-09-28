@@ -30,7 +30,7 @@ export const QuoteRequests: CollectionConfig = {
       type: 'select',
       defaultValue: 'new',
       index: true,
-      admin: { position: 'sidebar' },
+      admin: { position: 'sidebar', components: { Cell: '@/payload/components/cells#StatusCell' } },
       options: [
         { label: 'New', value: 'new' },
         { label: 'Contacted', value: 'contacted' },
@@ -43,7 +43,7 @@ export const QuoteRequests: CollectionConfig = {
       name: 'serviceInterest',
       type: 'select',
       defaultValue: 'transfers',
-      admin: { position: 'sidebar' },
+      admin: { position: 'sidebar', components: { Cell: '@/payload/components/cells#TagCell' } },
       options: [
         { label: 'Tours', value: 'tours' },
         { label: 'Hotels', value: 'hotels' },
@@ -87,7 +87,12 @@ export const QuoteRequests: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'date', type: 'date', index: true, admin: { width: '33%' } },
+        {
+          name: 'date',
+          type: 'date',
+          index: true,
+          admin: { width: '33%', components: { Cell: '@/payload/components/cells#DateCell' } },
+        },
         { name: 'time', type: 'text', admin: { width: '33%' } },
         { name: 'vehiclePreference', type: 'text', admin: { width: '33%' } },
       ],
@@ -110,7 +115,7 @@ export const QuoteRequests: CollectionConfig = {
           min: 0,
           // Managers quote; support staff can see the figure but not set it.
           access: { update: isAdminOrManagerFieldLevel },
-          admin: { width: '50%' },
+          admin: { width: '50%', components: { Cell: '@/payload/components/cells#MoneyCell' } },
         },
         {
           name: 'quotedBy',

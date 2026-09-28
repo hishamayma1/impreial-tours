@@ -220,7 +220,10 @@
     "title": "What Our Travellers Say",
     "goTo": "Go to testimonial {index}",
     "ctaPrimary": "Start Planning",
-    "ctaSecondary": "Browse Experiences"
+    "ctaSecondary": "Browse Experiences",
+    "previous": "Previous testimonials",
+    "next": "Next testimonials",
+    "rating": "Rated {rating} out of 5"
   },
   "plan": {
     "eyebrow": "Plan Your Journey",

@@ -220,7 +220,10 @@
     "title": "Lo que dicen nuestros viajeros",
     "goTo": "Ir al testimonio {index}",
     "ctaPrimary": "Empezar a planificar",
-    "ctaSecondary": "Ver experiencias"
+    "ctaSecondary": "Ver experiencias",
+    "previous": "Testimonios anteriores",
+    "next": "Testimonios siguientes",
+    "rating": "Valoración: {rating} de 5"
   },
   "plan": {
     "eyebrow": "Planifica tu viaje",

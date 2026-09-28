@@ -13,6 +13,10 @@ const serviceIs =
   (data: Record<string, unknown>) =>
     types.includes(String(data?.serviceType))
 
+// List-view cells: statuses as coloured pills, the service as a quiet tag.
+const STATUS_CELL = '@/payload/components/cells#StatusCell'
+const TAG_CELL = '@/payload/components/cells#TagCell'
+
 /**
  * One collection for all five services. Reporting, reference numbers and customer
  * history stay in one place; the per-service specifics live in conditional groups
@@ -34,6 +38,7 @@ export const Bookings: CollectionConfig = {
       'dates',
       'pricing',
       'status',
+      'paymentStatus',
     ],
     group: 'Sales',
     listSearchableFields: ['bookingReference'],
@@ -62,7 +67,7 @@ export const Bookings: CollectionConfig = {
       type: 'select',
       required: true,
       index: true,
-      admin: { position: 'sidebar' },
+      admin: { position: 'sidebar', components: { Cell: TAG_CELL } },
       options: [
         { label: 'Daily tour', value: 'dailyTour' },
         { label: 'Full experience', value: 'experience' },
@@ -79,7 +84,7 @@ export const Bookings: CollectionConfig = {
       type: 'select',
       defaultValue: 'pending',
       index: true,
-      admin: { position: 'sidebar' },
+      admin: { position: 'sidebar', components: { Cell: STATUS_CELL } },
       options: [
         { label: 'Pending', value: 'pending' },
         { label: 'Confirmed', value: 'confirmed' },
@@ -92,7 +97,7 @@ export const Bookings: CollectionConfig = {
       name: 'paymentStatus',
       type: 'select',
       defaultValue: 'unpaid',
-      admin: { position: 'sidebar' },
+      admin: { position: 'sidebar', components: { Cell: STATUS_CELL } },
       options: [
         { label: 'Unpaid', value: 'unpaid' },
         { label: 'Deposit paid', value: 'deposit' },
@@ -122,6 +127,7 @@ export const Bookings: CollectionConfig = {
     {
       name: 'customer',
       type: 'group',
+      admin: { components: { Cell: '@/payload/components/cells#CustomerCell' } },
       fields: [
         {
           type: 'row',
@@ -162,6 +168,7 @@ export const Bookings: CollectionConfig = {
     {
       name: 'dates',
       type: 'group',
+      admin: { components: { Cell: '@/payload/components/cells#DateRangeCell' } },
       fields: [
         {
           type: 'row',
@@ -218,6 +225,7 @@ export const Bookings: CollectionConfig = {
       type: 'group',
       // Section 4: booking pricing is admin-only.
       access: { update: isAdminFieldLevel },
+      admin: { components: { Cell: '@/payload/components/cells#PricingCell' } },
       fields: [
         {
           type: 'row',

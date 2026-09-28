@@ -220,7 +220,10 @@
     "title": "Was unsere Reisenden sagen",
     "goTo": "Zu Kundenstimme {index}",
     "ctaPrimary": "Planung starten",
-    "ctaSecondary": "Erlebnisse ansehen"
+    "ctaSecondary": "Erlebnisse ansehen",
+    "previous": "Vorherige Kundenstimmen",
+    "next": "Nächste Kundenstimmen",
+    "rating": "Bewertet mit {rating} von 5"
   },
   "plan": {
     "eyebrow": "Planen Sie Ihre Reise",

@@ -1,59 +1,89 @@
 /**
- * Imperial Tours dashboard skin — dark.
+ * Imperial Tours dashboard skin — the website's design language, on a dark ground.
  *
  * The panel is locked to dark in payload.config.ts (`admin.theme: 'dark'`), so this
- * file only needs to tune Payload's dark palette rather than handle both themes.
+ * file only styles Payload's dark theme.
  *
- * Two rules shaped the colours below:
+ * Where it comes from:
+ *  - Surfaces are the brand navy (#10223b) pushed darker, not neutral grey, so the
+ *    dashboard sits in the same family as the site's navy sections and footer.
+ *  - The accent is the gold of the pyramid mark (`tertiary-fixed-dim`, #e7c092).
+ *    Navy cannot be the accent here — it vanishes on a navy ground — and gold is
+ *    already the brand's second colour.
+ *  - Playfair Display for headings, Inter for everything else, loaded in layout.tsx.
+ *  - Hairline borders, generous radii and uppercase tracked labels, as on the site's
+ *    cards and section eyebrows.
  *
- *  1. Every text colour clears 7:1 against its background (WCAG AAA), measured
- *     rather than eyeballed, because staff read dense booking tables for long
- *     stretches. Body text 16.1:1, headings 17.6:1, muted labels 7.4:1. The only
- *     deliberate exception is --theme-elevation-500 (4.0:1), which is used for
- *     borders and dividers, never for text.
- *  2. The brand navy (#10223b) is far too dark to act as an accent ON a dark
- *     surface — it disappears. The design system's own light tint, #b6c7e8
- *     (`inverse-primary`), is used instead, so the panel still reads as Imperial
- *     Tours without sacrificing legibility. Navy returns only as text ON that
- *     light tint, where the contrast runs the other way.
+ * Contrast is measured, not eyeballed, because staff read dense booking tables all
+ * day: body text 14.8:1 on cards, muted labels ≥ 7.7:1 on every resting surface
+ * (6.9:1 on a hovered row, still well past AA),
+ * gold 10.2:1 on cards, navy-on-gold buttons 9.4:1, every status pill ≥ 8.4:1.
+ * --theme-elevation-500 and below are for borders and fills, never for text.
+ *
+ * Everything custom is prefixed `it-` (Imperial Tours) so it can never collide with a
+ * Payload class.
  */
 
-$brand-navy: #10223b;
-$brand-tint: #b6c7e8;
-$brand-tint-strong: #d5e3ff;
+$navy: #10223b;
+$gold: #e7c092;
+$gold-strong: #f3d6b1;
+$tint: #b6c7e8;
 
 html[data-theme='dark'] {
-  /* Base surfaces: a near-black with a slight blue cast, so it sits in the same
-     family as the brand rather than reading as pure grey. */
-  --theme-bg: #0d1117;
-  --theme-input-bg: #161b22;
+  /* Surfaces, darkest to lightest. */
+  --it-bg: #08121f;
+  --it-nav-bg: #060e19;
+  --it-card: #0e1b2e;
+  --it-raised: #13233b;
+  --it-hover: #182b47;
+  --it-line: #1f3150;
+  --it-line-strong: #2c4265;
 
-  /* Elevation ramp, dark -> light. Payload uses these for cards, borders, muted
-     text and headings, so the whole panel follows from these ten values. */
-  --theme-elevation-0: #0d1117;
-  --theme-elevation-50: #12171f;
-  --theme-elevation-100: #161b22;
-  --theme-elevation-150: #1c232d;
-  --theme-elevation-200: #222b37;
-  --theme-elevation-250: #2a3441;
-  --theme-elevation-300: #33404f;
-  --theme-elevation-400: #47566a;
-  --theme-elevation-500: #64748b;
-  --theme-elevation-600: #94a3b8;  /* muted labels — 7.4:1 on bg, 7.0:1 on cards */
-  --theme-elevation-700: #aebbcc;
-  --theme-elevation-800: #cdd7e3;
-  --theme-elevation-900: #e4eaf1;
-  --theme-elevation-1000: #f4f7fa; /* headings — 17.6:1 */
+  /* Text. */
+  --it-text: #e9eef6;
+  --it-heading: #f7f3ec; /* a touch warm, echoing the site's ivory background */
+  --it-muted: #a6b6cc;
 
-  --theme-text: #e8edf3;
+  /* Accent. */
+  --it-gold: #{$gold};
+  --it-gold-strong: #{$gold-strong};
+  --it-gold-soft: rgb(231 192 146 / 0.12);
+  --it-gold-line: rgb(231 192 146 / 0.35);
 
-  /* Accents. Success doubles as Payload's primary action colour. */
-  --theme-success-50: #16202e;
-  --theme-success-100: #1b2a3d;
-  --theme-success-500: #{$brand-tint};
-  --theme-success-550: #{$brand-tint-strong};
-  --theme-success-600: #{$brand-tint-strong};
-  --theme-success-900: #{$brand-tint-strong};
+  --it-radius: 14px;
+  --it-radius-sm: 10px;
+  --it-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -18px rgb(0 0 0 / 0.7);
+
+  /* Payload's own variables, remapped onto the palette above. */
+  --theme-bg: var(--it-bg);
+  --theme-input-bg: #0b1726;
+  --theme-text: var(--it-text);
+
+  --theme-elevation-0: #08121f;
+  --theme-elevation-50: #0b1726;
+  --theme-elevation-100: #0e1b2e;
+  --theme-elevation-150: #13233b;
+  --theme-elevation-200: #1a2e4a;
+  --theme-elevation-250: #1f3150;
+  --theme-elevation-300: #2c4265;
+  --theme-elevation-400: #44597a;
+  --theme-elevation-500: #64789a;
+  --theme-elevation-600: #a6b6cc; /* muted labels */
+  --theme-elevation-700: #b8c5d8;
+  --theme-elevation-800: #cfd8e6;
+  --theme-elevation-900: #e3e9f2;
+  --theme-elevation-1000: #f7f3ec; /* headings */
+
+  /* Success doubles as Payload's primary action colour: gold. */
+  --theme-success-50: #1d1a14;
+  --theme-success-100: #2a241a;
+  --theme-success-150: #3a3020;
+  --theme-success-500: #{$gold};
+  --theme-success-550: #{$gold-strong};
+  --theme-success-600: #{$gold-strong};
+  --theme-success-650: #{$gold-strong};
+  --theme-success-750: #{$gold-strong};
+  --theme-success-900: #{$gold-strong};
 
   /* Errors: lifted well off the default red, which is unreadable on dark. */
   --theme-error-50: #2a1416;
@@ -61,59 +91,1011 @@ html[data-theme='dark'] {
   --theme-error-500: #ff8a80;
   --theme-error-900: #ffb4ab;
 
-  --theme-warning-500: #e7c092;
+  --theme-warning-500: #{$gold};
   --theme-warning-900: #ffddb6;
+
+  --style-radius-s: 6px;
+  --style-radius-m: 10px;
+  --style-radius-l: 14px;
 }
 
-/* Primary buttons: brand tint behind, navy text on top — the one place the real
-   brand navy is legible on this panel. */
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
 html[data-theme='dark'] {
-  .btn--style-primary {
-    --color: #{$brand-navy};
-
-    background-color: $brand-tint;
-    color: $brand-navy;
-
-    &:hover,
-    &:focus-visible {
-      background-color: $brand-tint-strong;
-      color: $brand-navy;
-    }
+  body {
+    background:
+      radial-gradient(1200px 600px at 100% -10%, rgb(28 58 99 / 0.35), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgb(231 192 146 / 0.05), transparent 60%),
+      var(--it-bg);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .payload-logo,
-  .graphic-logo {
-    color: $brand-tint;
+  ::selection {
+    background: $gold;
+    color: $navy;
   }
 
-  /* Table rows: a visible separator and a hover state, so a wide booking row is
-     easy to track across the screen. */
-  .table {
-    tbody tr {
-      border-bottom: 1px solid var(--theme-elevation-150);
-
-      &:hover {
-        background-color: var(--theme-elevation-100);
-      }
-    }
-
-    thead th {
-      color: var(--theme-elevation-700);
-    }
+  /* Headings in the site's display face. */
+  h1,
+  h2,
+  h3,
+  .render-title,
+  .list-header__title,
+  .collections__label {
+    font-family: var(--it-font-display), Georgia, serif;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    color: var(--it-heading);
   }
 
-  /* Inputs need a border that survives against the panel background — Payload's
-     default is nearly invisible once the surfaces darken. */
-  input,
-  textarea,
-  select,
-  .rs__control {
-    border-color: var(--theme-elevation-250);
+  a {
+    text-underline-offset: 3px;
   }
 
   /* Keyboard focus must never be lost against a dark field. */
   :focus-visible {
-    outline: 2px solid $brand-tint;
-    outline-offset: 1px;
+    outline: 2px solid $gold;
+    outline-offset: 2px;
+  }
+
+  /* Numbers line up in columns and don't jitter as they change. */
+  .table,
+  .it-stat__value,
+  .it-mini-table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* -------------------------------------------------------------------------
+     Navigation
+  ------------------------------------------------------------------------- */
+  .nav {
+    background: var(--it-nav-bg);
+    border-inline-end: 1px solid var(--it-line);
+  }
+
+  .nav-group__toggle {
+    color: var(--it-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .nav__link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-inline: -10px;
+    padding: 8px 10px;
+    border-radius: var(--it-radius-sm);
+    color: var(--it-text);
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+
+    &:hover {
+      background: var(--it-raised);
+      color: var(--it-heading);
+      text-decoration: none;
+    }
+  }
+
+  /* The current page: gold text on a gold wash, with the indicator as a gold bar. */
+  .nav__link:has(.nav__link-indicator) {
+    background: var(--it-gold-soft);
+    color: var(--it-gold);
+    font-weight: 500;
+  }
+
+  .nav__link-indicator {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 3px;
+    background: $gold;
+  }
+
+  .nav__controls {
+    border-top: 1px solid var(--it-line);
+    padding-top: 12px;
+  }
+
+  /* -------------------------------------------------------------------------
+     Top bar
+  ------------------------------------------------------------------------- */
+  .app-header__bg {
+    background: rgb(8 18 31 / 0.78);
+    backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom: 1px solid var(--it-line);
+    opacity: 1;
+  }
+
+  /* Payload sizes the breadcrumb home slot for its 18px glyph; the brand mark needs a
+     little more, or it overflows the slot and sits off-centre. */
+  .step-nav__home {
+    width: 22px;
+    height: 22px;
+  }
+
+  .step-nav {
+    color: var(--it-muted);
+
+    a:hover {
+      color: var(--it-gold);
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     Buttons
+  ------------------------------------------------------------------------- */
+  .btn {
+    border-radius: var(--it-radius-sm);
+    font-weight: 500;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      transform 150ms ease;
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+  }
+
+  /* Gold behind, navy on top — the brand's two colours, 9.4:1. */
+  .btn--style-primary {
+    --color: #{$navy};
+
+    background-color: $gold;
+    color: $navy;
+    box-shadow: 0 8px 20px -12px rgb(231 192 146 / 0.6);
+
+    &:hover,
+    &:focus-visible {
+      background-color: $gold-strong;
+      color: $navy;
+    }
+  }
+
+  .btn--style-secondary {
+    background: transparent;
+    border: 1px solid var(--it-line-strong);
+    box-shadow: none;
+    color: var(--it-text);
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--it-gold-line);
+      background: var(--it-gold-soft);
+      color: var(--it-gold);
+    }
+  }
+
+  .pill {
+    border-radius: 999px;
+  }
+
+  /* -------------------------------------------------------------------------
+     Fields
+  ------------------------------------------------------------------------- */
+  input,
+  textarea,
+  select,
+  .rs__control,
+  .react-select .rs__control {
+    border-color: var(--it-line) !important;
+    border-radius: var(--it-radius-sm);
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  input:hover,
+  textarea:hover,
+  .rs__control:hover {
+    border-color: var(--it-line-strong) !important;
+  }
+
+  input:focus,
+  textarea:focus,
+  .rs__control--is-focused {
+    border-color: $gold !important;
+    box-shadow: 0 0 0 3px var(--it-gold-soft) !important;
+  }
+
+  .field-label {
+    color: var(--it-muted);
+    font-weight: 500;
+  }
+
+  /* -------------------------------------------------------------------------
+     Dashboard collection cards
+  ------------------------------------------------------------------------- */
+  .collections__label {
+    font-size: 22px;
+    margin-top: 12px;
+  }
+
+  .card {
+    background: var(--it-card);
+    border: 1px solid var(--it-line);
+    border-radius: var(--it-radius);
+    box-shadow: var(--it-shadow);
+    transition:
+      border-color 180ms ease,
+      transform 180ms ease,
+      background-color 180ms ease;
+
+    &.card--has-onclick:hover {
+      border-color: var(--it-gold-line);
+      background: var(--it-raised);
+      transform: translateY(-2px);
+    }
+  }
+
+  .card__title {
+    font-weight: 500;
+    color: var(--it-heading);
+  }
+
+  /* -------------------------------------------------------------------------
+     List view
+  ------------------------------------------------------------------------- */
+  .list-header__title {
+    font-size: 32px;
+  }
+
+  .search-filter__input {
+    border-radius: var(--it-radius-sm);
+  }
+
+  .collection-list__tables {
+    margin-top: 8px;
+  }
+
+  /* The table sits in a card: rounded, bordered, scrolling sideways on its own
+     rather than stretching the page. */
+  .table {
+    background: var(--it-card);
+    border: 1px solid var(--it-line);
+    border-radius: var(--it-radius);
+    box-shadow: var(--it-shadow);
+    overflow-x: auto;
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--it-raised);
+      border-bottom: 1px solid var(--it-line);
+      color: var(--it-muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding-block: 12px;
+      white-space: nowrap;
+
+      /* Sort buttons inherit the header style. */
+      button,
+      .sort-header {
+        color: inherit;
+        font: inherit;
+        letter-spacing: inherit;
+        text-transform: inherit;
+      }
+    }
+
+    th,
+    td {
+      vertical-align: middle;
+    }
+
+    td {
+      padding-block: 14px;
+      border-bottom: 1px solid var(--it-line);
+      color: var(--it-text);
+    }
+
+    /* Payload zebra-stripes odd rows; with separators and a hover state the stripes
+       only add noise, so rows share one ground. */
+    tbody tr,
+    tbody tr:nth-child(odd) {
+      background: transparent;
+      transition: background-color 120ms ease;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    /* Track a wide booking row across the screen. */
+    tbody tr:hover {
+      background: var(--it-hover);
+    }
+
+    /* A row picked for a bulk action stays visibly picked. */
+    tbody tr:has(input[type='checkbox']:checked) {
+      background: var(--it-gold-soft);
+      box-shadow: inset 3px 0 0 $gold;
+    }
+
+    /* The first data column (after the bulk-select checkbox, when there is one) is
+       the link into the record: make it read as one. */
+    tbody td:first-child a,
+    tbody td.cell-_select + td a {
+      color: var(--it-heading);
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        color: var(--it-gold);
+      }
+    }
+  }
+
+  .table-wrap--group-by .table {
+    margin-bottom: 20px;
+  }
+
+  .per-page__button-active,
+  .pagination__page--is-current {
+    color: var(--it-gold);
+  }
+
+  /* -------------------------------------------------------------------------
+     Edit view
+  ------------------------------------------------------------------------- */
+  .doc-header__title,
+  .render-title {
+    font-size: clamp(28px, 3vw, 40px);
+  }
+
+  .collapsible,
+  .array-field__row,
+  .blocks-field__row {
+    border-radius: var(--it-radius-sm);
+  }
+
+  /* -------------------------------------------------------------------------
+     Login
+  ------------------------------------------------------------------------- */
+  .template-minimal {
+    background:
+      radial-gradient(700px 420px at 50% 0%, rgb(231 192 146 / 0.1), transparent 70%),
+      radial-gradient(900px 600px at 50% 120%, rgb(28 58 99 / 0.55), transparent 70%),
+      var(--it-bg);
+  }
+
+  .template-minimal__wrap {
+    background: rgb(14 27 46 / 0.85);
+    border: 1px solid var(--it-line);
+    border-radius: 22px;
+    box-shadow: 0 30px 80px -40px rgb(0 0 0 / 0.9);
+    padding: 40px;
+    backdrop-filter: blur(10px);
+  }
+
+  .login__brand {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .login__form .btn--style-primary {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Brand lockups (Brand.tsx)
+--------------------------------------------------------------------------- */
+.it-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--it-heading);
+  text-decoration: none;
+}
+
+.it-brand__mark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: $navy;
+  box-shadow:
+    0 0 0 1px rgb(231 192 146 / 0.45),
+    0 6px 18px -8px rgb(0 0 0 / 0.8);
+
+  img,
+  .it-brand__svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &--sm {
+    width: 22px;
+    height: 22px;
+  }
+
+  &--md {
+    width: 40px;
+    height: 40px;
+  }
+
+  &--lg {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.it-brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.it-brand__name {
+  font-family: var(--it-font-display), Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.it-brand__caption {
+  margin-top: 3px;
+  color: var(--it-gold);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.it-brand--login {
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+
+  .it-brand__text {
+    align-items: center;
+  }
+
+  .it-brand__name {
+    font-size: 26px;
+  }
+}
+
+.it-brand--nav {
+  width: 100%;
+  margin: 4px 0 18px;
+  padding: 4px 0 18px;
+  border-bottom: 1px solid var(--it-line);
+
+  &:hover .it-brand__mark {
+    box-shadow:
+      0 0 0 1px $gold,
+      0 6px 18px -8px rgb(0 0 0 / 0.8);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Dashboard (Dashboard.tsx, DashboardStats.tsx)
+--------------------------------------------------------------------------- */
+.it-dash {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.it-dash__hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px 32px;
+  padding: 28px 32px;
+  border: 1px solid var(--it-line);
+  border-radius: 20px;
+  background:
+    radial-gradient(600px 240px at 100% 0%, rgb(231 192 146 / 0.14), transparent 70%),
+    linear-gradient(135deg, #10223b 0%, #0c1a2d 60%, #0a1628 100%);
+  box-shadow: var(--it-shadow);
+}
+
+.it-dash__eyebrow {
+  margin: 0 0 8px;
+  color: var(--it-gold);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.it-dash__title {
+  margin: 0;
+  font-size: clamp(28px, 3.2vw, 40px);
+  line-height: 1.1;
+}
+
+.it-dash__lede {
+  margin: 10px 0 0;
+  color: var(--it-muted);
+  font-size: 15px;
+}
+
+.it-dash__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.it-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--it-line-strong);
+  border-radius: var(--it-radius-sm);
+  color: var(--it-text);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+
+  &:hover {
+    border-color: var(--it-gold-line);
+    background: var(--it-gold-soft);
+    color: var(--it-gold);
+    text-decoration: none;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &--primary {
+    border-color: $gold;
+    background: $gold;
+    color: $navy;
+    box-shadow: 0 8px 20px -12px rgb(231 192 146 / 0.6);
+
+    &:hover {
+      border-color: $gold-strong;
+      background: $gold-strong;
+      color: $navy;
+    }
+  }
+}
+
+.it-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Stat cards. */
+.it-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.it-stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  border: 1px solid var(--it-line);
+  border-radius: var(--it-radius);
+  background: var(--it-card);
+  box-shadow: var(--it-shadow);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
+
+  &:hover {
+    border-color: var(--it-gold-line);
+    background: var(--it-raised);
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+
+  /* Something is waiting on staff: a gold edge that reads at a glance. */
+  &--urgent {
+    border-color: var(--it-gold-line);
+    background: linear-gradient(180deg, rgb(231 192 146 / 0.08), transparent 70%), var(--it-card);
+
+    .it-stat__hint {
+      color: var(--it-gold);
+    }
+
+    .it-stat__icon {
+      background: $gold;
+      color: $navy;
+    }
+  }
+}
+
+.it-stat__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.it-stat__label {
+  color: var(--it-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.it-stat__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--it-gold-soft);
+  color: var(--it-gold);
+}
+
+.it-stat__value {
+  margin-top: 4px;
+  color: var(--it-heading);
+  font-family: var(--it-font-display), Georgia, serif;
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.it-stat__hint {
+  color: var(--it-muted);
+  font-size: 13px;
+}
+
+/* Activity panels. */
+.it-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Only one panel (a role that can read quotes but not bookings): full width. */
+.it-panels > .it-panel:only-child {
+  grid-column: 1 / -1;
+}
+
+.it-panel {
+  border: 1px solid var(--it-line);
+  border-radius: var(--it-radius);
+  background: var(--it-card);
+  box-shadow: var(--it-shadow);
+  overflow: hidden;
+}
+
+.it-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--it-line);
+}
+
+.it-panel__title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.it-panel__link {
+  color: var(--it-gold);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--it-gold-strong);
+    text-decoration: underline;
+  }
+}
+
+.it-empty {
+  margin: 0;
+  padding: 28px 20px;
+  color: var(--it-muted);
+  text-align: center;
+}
+
+.it-mini-table-wrap {
+  overflow-x: auto;
+}
+
+.it-mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th {
+    padding: 10px 20px;
+    color: var(--it-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-align: start;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 20px;
+    border-top: 1px solid var(--it-line);
+    color: var(--it-text);
+  }
+
+  /* The whole row is the click target — see .it-row-link below. */
+  tbody tr {
+    position: relative;
+    transition: background-color 120ms ease;
+
+    &:hover {
+      background: var(--it-hover);
+    }
+  }
+}
+
+/* One real link per row, stretched over the row by a pseudo-element: the row reads
+   as clickable, but assistive tech still announces a single link, not six. */
+.it-row-link {
+  color: var(--it-heading);
+  font-weight: 600;
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  &:hover {
+    color: var(--it-gold);
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      outline: 2px solid $gold;
+      outline-offset: -2px;
+      border-radius: 6px;
+    }
+  }
+}
+
+.it-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.it-list__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'name pill'
+    'meta pill';
+  align-items: center;
+  gap: 2px 12px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--it-line);
+  transition: background-color 120ms ease;
+
+  &:first-child {
+    border-top: 0;
+  }
+
+  &:hover {
+    background: var(--it-hover);
+  }
+
+  .it-row-link {
+    grid-area: name;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .it-pill {
+    grid-area: pill;
+  }
+}
+
+.it-list__meta {
+  grid-area: meta;
+  color: var(--it-muted);
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------------------
+   Cells and pills (cells.tsx) — shared by list views and the dashboard
+--------------------------------------------------------------------------- */
+.it-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 8px;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  white-space: nowrap;
+
+  --pill-fg: #b4c2d6;
+  --pill-bg: #18263a;
+  --pill-line: #2c3e57;
+
+  color: var(--pill-fg);
+  background: var(--pill-bg);
+  border-color: var(--pill-line);
+
+  &--attention {
+    --pill-fg: #f0c987;
+    --pill-bg: #2a2114;
+    --pill-line: #5c4726;
+  }
+
+  &--progress {
+    --pill-fg: #a9c4f0;
+    --pill-bg: #132743;
+    --pill-line: #2a4a78;
+  }
+
+  &--success {
+    --pill-fg: #8fd4a8;
+    --pill-bg: #0f2a24;
+    --pill-line: #22573f;
+  }
+
+  &--danger {
+    --pill-fg: #ff9d94;
+    --pill-bg: #2c1519;
+    --pill-line: #5e2a30;
+  }
+}
+
+.it-pill__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+/* Attention pulses once when the page loads, then holds still — noticed, not nagging. */
+@media (prefers-reduced-motion: no-preference) {
+  .it-pill--attention .it-pill__dot {
+    animation: it-pulse 1.6s ease-out 2;
+  }
+}
+
+@keyframes it-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(240 201 135 / 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 0 6px rgb(240 201 135 / 0);
+  }
+}
+
+.it-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--it-line-strong);
+  border-radius: 6px;
+  color: var(--it-text);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.it-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.it-stack__primary {
+  color: var(--it-heading);
+  font-weight: 500;
+}
+
+.it-stack__secondary {
+  overflow: hidden;
+  color: var(--it-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.it-money {
+  color: var(--it-heading);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.it-num {
+  text-align: end !important;
+}
+
+.it-nowrap {
+  white-space: nowrap;
+}
+
+.it-cell-empty {
+  color: var(--it-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Small screens
+--------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .it-dash__hero {
+    padding: 22px 20px;
+  }
+
+  .it-dash__actions {
+    width: 100%;
+  }
+
+  .it-action {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .it-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .it-stat__value {
+    font-size: 28px;
+  }
+
+  html[data-theme='dark'] .template-minimal__wrap {
+    padding: 28px 20px;
   }
 }

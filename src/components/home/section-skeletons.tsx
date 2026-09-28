@@ -164,19 +164,25 @@ export const TopToursSkeleton = ({ count = 3 }: { count?: number }) => (
 )
 
 /**
- * Testimonials render as one centred quote on the navy band, so the placeholder is
- * tinted for that background — the light grey generic skeleton flashed a white block
- * across a full-bleed dark section.
+ * The testimonials carousel: heading, then a row of quote cards on the navy band —
+ * one and a peek on phones, two from `sm`, three from `lg`, the same widths the
+ * real cards use. Tinted for the dark ground, where a grey skeleton would flash.
  */
 export const TestimonialsSkeleton = () => (
   <section className="bg-brand py-16 md:py-section-v-padding">
-    <Container size="narrow" className="flex flex-col items-center text-center">
-      <Skeleton className="mb-8 h-3 w-32 bg-white/15" />
-      <Skeleton className="mb-4 h-8 w-full max-w-2xl bg-white/15" />
-      <Skeleton className="mb-12 h-8 w-3/4 max-w-xl bg-white/15" />
-      <Skeleton className="mb-4 h-16 w-16 rounded-full bg-white/15" />
-      <Skeleton className="mb-2 h-5 w-40 bg-white/15" />
-      <Skeleton className="h-4 w-28 bg-white/15" />
+    <Container>
+      <div className="flex flex-col items-center md:items-start">
+        <Skeleton className="mb-4 h-3 w-32 bg-white/15" />
+        <Skeleton className="h-8 w-72 bg-white/15" />
+      </div>
+      <div className="-mx-6 mt-10 flex gap-5 overflow-hidden px-6 md:mx-0 md:mt-12 md:gap-6 md:px-0">
+        {Array.from({ length: 3 }, (_, index) => (
+          <Skeleton
+            key={index}
+            className="h-72 w-[86%] shrink-0 rounded-3xl bg-white/10 sm:w-[calc((100%-1.25rem)/2)] md:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)]"
+          />
+        ))}
+      </div>
     </Container>
   </section>
 )

@@ -49,6 +49,8 @@ export type TestimonialVM = {
   author: string
   location: string
   portrait: ImageVM | null
+  /** Whole stars, 1–5, or null when the editor left it empty. */
+  rating: number | null
 }
 
 export type PostVM = {
