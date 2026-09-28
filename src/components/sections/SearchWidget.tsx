@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useId, useMemo, useState, useTransition } from 'react'
+import { useEffect, useId, useRef, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/Button'
 import { DatePicker } from '@/components/ui/DatePicker'
-import { Icon } from '@/components/ui/Icon'
+import { Icon, type IconName } from '@/components/ui/Icon'
 import { usePresence } from '@/hooks/use-presence'
 import { useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
@@ -26,191 +26,185 @@ const fieldShell =
   'w-full rounded-xl border border-outline-variant bg-transparent py-4 pl-12 pr-4 text-on-surface ' +
   'placeholder:text-outline focus:border-brand focus:ring-brand focus:outline-none'
 
-/** Case- and accent-insensitive, so "aswan" finds "Aswān" and "cairo" finds "Cairo/Giza". */
+/** Case- and accent-insensitive, for matching the CMS default against destination names. */
 const fold = (value: string) =>
   value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
 
 /**
- * The destination field: type to narrow the published destinations, then pick one.
+ * The floating option list both pickers share, and its open/close animation.
  *
- * A picker rather than free text because the catalogue filters on a destination's
- * slug. Free text could only ever be matched loosely, and a near-miss such as
- * "Giza" against "Cairo/Giza" returned no tours at all. Every option here is one
- * the catalogue knows, so every search lands on real results.
- *
- * Built on the ARIA combobox pattern: focus stays in the input while the arrow keys
- * move the highlighted option, so it works the same with a keyboard, a screen reader
- * and a thumb. The list sits inline below `md`, inside the search sheet, where an
- * absolutely placed dropdown would be clipped by the sheet's own scrolling; from `md`
- * it floats over the page under the field.
+ * Always an overlay, at every width. It used to sit inline in the phone sheet, where
+ * opening it grew the bottom-anchored sheet upward and dragged the focused field
+ * ~200px up the screen mid-tap — while the phone keyboard was sliding in and
+ * scrolling to follow that same field. That combination is what made the list
+ * open and immediately close on a real phone. Floating, it moves nothing.
  */
-const DestinationCombobox = ({
+const listClass = (shown: boolean) =>
+  cn(
+    'absolute inset-x-0 top-full z-40 mt-2 max-h-60 origin-top overflow-y-auto overscroll-contain',
+    'rounded-xl border border-outline-variant bg-surface py-1 shadow-widget',
+    'transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none',
+    shown
+      ? 'translate-y-0 scale-100 opacity-100'
+      : 'pointer-events-none -translate-y-1.5 scale-[0.98] opacity-0',
+  )
+
+const optionClass = (active: boolean) =>
+  cn(
+    'flex cursor-pointer items-center justify-between gap-3 px-4 py-3 font-body-md text-body-md text-on-surface',
+    active && 'bg-brand/[0.06]',
+  )
+
+const Chevron = ({ open }: { open: boolean }) => (
+  <Icon
+    name="chevron-down"
+    className={cn(
+      'pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-outline transition-transform duration-200 motion-reduce:transition-none',
+      open && 'rotate-180',
+    )}
+  />
+)
+
+type PickerOption<T extends string> = {
+  value: T
+  label: string
+  /** Drawn in the secondary text colour — used for the "anywhere" catch-all. */
+  muted?: boolean
+}
+
+/**
+ * A choose-from-the-list field, used for both the destination and the tour type.
+ *
+ * A button that opens a list of fixed options — nothing to type. The destination was
+ * a type-to-filter input, but every choice is one of a handful of published
+ * destinations, and on a phone the input pulled up the keyboard for no gain: it
+ * covered half the sheet and turned a single tap into a tap, a keyboard and a
+ * dismissal. This is the ARIA select-only combobox pattern: the button keeps the
+ * focus and the arrow keys move the highlighted option.
+ *
+ * Closed by an outside press rather than by blur: Safari on iOS does not focus a
+ * button when it is tapped, so a blur-driven close would never fire there.
+ */
+const OptionPicker = <T extends string>({
   id,
+  icon,
   options,
   value,
   onChange,
-  t,
 }: {
   id: string
-  options: DestinationOption[]
-  value: string
-  onChange: (slug: string) => void
-  t: Translate
+  icon: IconName
+  options: PickerOption<T>[]
+  value: T
+  onChange: (value: T) => void
 }) => {
   const listId = `${id}-list`
+  const rootRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
   const list = usePresence(open, 200)
 
-  const selectedName = options.find((option) => option.slug === value)?.name ?? ''
+  const selectedIndex = Math.max(
+    options.findIndex((option) => option.value === value),
+    0,
+  )
 
-  // "Anywhere" leads the list until the visitor starts typing, then only matches show.
-  const items = useMemo<DestinationOption[]>(() => {
-    const needle = fold(query)
-    if (!needle) return [{ name: t('anyDestination'), slug: '' }, ...options]
-    return options.filter((option) => fold(option.name).includes(needle))
-  }, [options, query, t])
-
-  /**
-   * The typed filter is cleared as the list opens, not as it closes: the list stays on
-   * screen while it animates out, and clearing it then would swap the matches for the
-   * full list mid-exit — a visible jump.
-   */
-  const openList = () => {
-    if (!open) {
-      setQuery('')
-      setActive(0)
+  useEffect(() => {
+    if (!open) return
+    const onPointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
     }
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => document.removeEventListener('pointerdown', onPointerDown)
+  }, [open])
+
+  const show = () => {
+    setActive(selectedIndex)
     setOpen(true)
   }
 
-  const choose = (option: DestinationOption) => {
-    onChange(option.slug)
+  const choose = (option: PickerOption<T>) => {
+    onChange(option.value)
     setOpen(false)
   }
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    const last = options.length - 1
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
-      if (!open) return openList()
-      const step = event.key === 'ArrowDown' ? 1 : -1
-      setActive((index) => (index + step + items.length) % Math.max(items.length, 1))
-    } else if (event.key === 'Enter' && open) {
+      if (!open) return show()
+      setActive((index) => Math.min(last, Math.max(0, index + (event.key === 'ArrowDown' ? 1 : -1))))
+    } else if ((event.key === 'Home' || event.key === 'End') && open) {
+      event.preventDefault()
+      setActive(event.key === 'Home' ? 0 : last)
+    } else if ((event.key === 'Enter' || event.key === ' ') && open) {
       // Picks the highlighted option instead of submitting the form half-filled.
       event.preventDefault()
-      if (items[active]) choose(items[active])
+      if (options[active]) choose(options[active])
     } else if (event.key === 'Escape' && open) {
       // Stops here so the Escape does not also close the mobile search sheet.
       event.stopPropagation()
+      setOpen(false)
+    } else if (event.key === 'Tab') {
       setOpen(false)
     }
   }
 
   return (
-    <div className="relative">
-      <Icon
-        name="pin"
-        className="pointer-events-none absolute left-4 top-[29px] h-5 w-5 -translate-y-1/2 text-outline"
-      />
-      <input
-        id={id}
-        type="text"
-        role="combobox"
-        autoComplete="off"
-        aria-autocomplete="list"
-        aria-expanded={open}
-        aria-controls={listId}
-        aria-activedescendant={open && items[active] ? `${listId}-${active}` : undefined}
-        // While open the field is the filter; closed, it shows what was picked.
-        value={open ? query : selectedName}
-        placeholder={open ? selectedName || t('destinationPlaceholder') : t('anyDestination')}
-        onFocus={openList}
-        onClick={openList}
-        onBlur={() => setOpen(false)}
-        onChange={(event) => {
-          setQuery(event.target.value)
-          setActive(0)
-          setOpen(true)
-        }}
-        onKeyDown={onKeyDown}
-        className={cn(fieldShell, 'pr-10')}
-      />
-      <Icon
-        name="chevron-down"
-        className={cn(
-          'pointer-events-none absolute right-4 top-[29px] h-4 w-4 -translate-y-1/2 text-outline transition-transform duration-200 motion-reduce:transition-none',
-          open && 'rotate-180',
-        )}
-      />
-
-      {/*
-        Animated in both directions. Below `md` the list is inline, so it grows open by
-        its real height (the grid-rows trick) and the fields under it slide down with
-        it rather than jumping. From `md` it floats, so it keeps its full height and
-        instead fades and drops in from just under the field.
-      */}
-      {list.mounted ? (
-        <div
-          className={cn(
-            'grid transition-[grid-template-rows,opacity,transform] duration-200 ease-out motion-reduce:transition-none',
-            'md:absolute md:inset-x-0 md:top-full md:z-40 md:origin-top md:grid-rows-[1fr]',
-            list.shown
-              ? 'grid-rows-[1fr] opacity-100 md:translate-y-0 md:scale-100'
-              : 'pointer-events-none grid-rows-[0fr] opacity-0 md:-translate-y-1.5 md:scale-[0.98]',
-          )}
+    <div ref={rootRef} className="relative">
+      <div className="relative">
+        <Icon
+          name={icon}
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-outline"
+        />
+        <button
+          id={id}
+          type="button"
+          role="combobox"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-activedescendant={open ? `${listId}-${active}` : undefined}
+          onClick={() => (open ? setOpen(false) : show())}
+          onKeyDown={onKeyDown}
+          className={cn(fieldShell, 'h-[58px] truncate pr-10 text-start', open && 'border-brand')}
         >
-          <div className="min-h-0 overflow-hidden md:overflow-visible">
-            <ul
-              id={listId}
-              role="listbox"
-              className="mt-2 max-h-60 overflow-y-auto overscroll-contain rounded-xl border border-outline-variant bg-surface py-1 shadow-widget"
+          {options[selectedIndex]?.label}
+        </button>
+        <Chevron open={open} />
+      </div>
+
+      {list.mounted ? (
+        <ul id={listId} role="listbox" className={listClass(list.shown)}>
+          {options.map((option, index) => (
+            <li
+              key={option.value || 'any'}
+              id={`${listId}-${index}`}
+              role="option"
+              aria-selected={option.value === value}
+              // Keeps the focus on the button, so the highlighted option and the
+              // arrow keys stay in step after a pointer has been used.
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => choose(option)}
+              onMouseEnter={() => setActive(index)}
+              className={cn(optionClass(index === active), option.muted && 'text-on-surface-variant')}
             >
-              {items.length === 0 ? (
-                <li className="px-4 py-3 font-body-md text-caption text-on-surface-variant">
-                  {t('noMatches')}
-                </li>
-              ) : (
-                items.map((option, index) => (
-                  <li
-                    key={option.slug || 'any'}
-                    id={`${listId}-${index}`}
-                    role="option"
-                    aria-selected={option.slug === value}
-                    // mousedown, not click: a click fires after the input's blur has
-                    // already closed the list, so the option would be gone before it
-                    // could register. Preventing the default keeps focus in the input.
-                    onMouseDown={(event) => {
-                      event.preventDefault()
-                      choose(option)
-                    }}
-                    onMouseEnter={() => setActive(index)}
-                    className={cn(
-                      'flex cursor-pointer items-center justify-between gap-3 px-4 py-3 font-body-md text-body-md text-on-surface',
-                      index === active && 'bg-brand/[0.06]',
-                      option.slug === '' && 'text-on-surface-variant',
-                    )}
-                  >
-                    <span className="truncate">{option.name}</span>
-                    {option.slug === value ? (
-                      <Icon name="check" className="h-4 w-4 shrink-0 text-brand" />
-                    ) : null}
-                  </li>
-                ))
-              )}
-            </ul>
-          </div>
-        </div>
+              <span className="truncate">{option.label}</span>
+              {option.value === value ? (
+                <Icon name="check" className="h-4 w-4 shrink-0 text-brand" />
+              ) : null}
+            </li>
+          ))}
+        </ul>
       ) : null}
     </div>
   )
 }
 
 /**
- * The three fields and the submit button, shared between the desktop form (always on
- * screen, `md` and up) and the mobile popup dialog (opened from a compact trigger
- * below `md` — see `SearchWidget`). Identical markup either way; only the wrapper
- * around it differs.
+ * The three fields, shared between the desktop form (always on screen, `md` and up)
+ * and the mobile sheet (opened from a compact trigger below `md` — see
+ * `SearchWidget`). Identical markup either way; only the wrapper around it differs.
  */
 const SearchFields = ({
   ids,
@@ -218,7 +212,6 @@ const SearchFields = ({
   destination,
   travelDate,
   tourType,
-  pending,
   setField,
   t,
 }: {
@@ -227,7 +220,6 @@ const SearchFields = ({
   destination: string
   travelDate: string
   tourType: TourType
-  pending: boolean
   setField: <K extends keyof SearchCriteria>(key: K, value: SearchCriteria[K]) => void
   t: Translate
 }) => (
@@ -239,12 +231,15 @@ const SearchFields = ({
       >
         {t('destination')}
       </label>
-      <DestinationCombobox
+      <OptionPicker
         id={`${ids}-destination`}
-        options={destinations}
+        icon="pin"
+        options={[
+          { value: '', label: t('anyDestination'), muted: true },
+          ...destinations.map((option) => ({ value: option.slug, label: option.name })),
+        ]}
         value={destination}
         onChange={(slug) => setField('destination', slug)}
-        t={t}
       />
     </div>
 
@@ -274,33 +269,22 @@ const SearchFields = ({
       >
         {t('tourType')}
       </label>
-      <div className="relative">
-        <Icon name="compass" className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-outline" />
-        <select
-          id={`${ids}-type`}
-          name="tourType"
-          value={tourType}
-          onChange={(event) => setField('tourType', event.target.value as TourType)}
-          className={`${fieldShell} appearance-none pr-10`}
-        >
-          {TOUR_TYPES.map((value) => (
-            <option key={value} value={value}>
-              {t(`types.${value}`)}
-            </option>
-          ))}
-        </select>
-        <Icon
-          name="chevron-down"
-          className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-outline"
-        />
-      </div>
+      <OptionPicker
+        id={`${ids}-type`}
+        icon="compass"
+        options={TOUR_TYPES.map((type) => ({ value: type, label: t(`types.${type}`) }))}
+        value={tourType}
+        onChange={(type) => setField('tourType', type)}
+      />
     </div>
-
-    <Button type="submit" size="lg" disabled={pending} className="h-[58px] w-full md:w-auto">
-      <Icon name="search" className="h-5 w-5" />
-      {t('submit')}
-    </Button>
   </>
+)
+
+const SubmitButton = ({ pending, label, className }: { pending: boolean; label: string; className?: string }) => (
+  <Button type="submit" size="lg" disabled={pending} className={cn('h-[58px] w-full md:w-auto', className)}>
+    <Icon name="search" className="h-5 w-5" />
+    {label}
+  </Button>
 )
 
 /**
@@ -315,9 +299,8 @@ const SearchFields = ({
  * Two presentations of the same form, split at `md`:
  *
  *  - `md` and up: the fields sit inline, in the row this widget has always rendered.
- *  - Below `md`: a compact single-row trigger opens the same fields in a bottom-sheet
- *    dialog — the familiar mobile search pattern (Airbnb, Booking.com), and short
- *    enough not to push into the Services band under the hero.
+ *  - Below `md`: a compact single-row trigger opens the same fields in a tall sheet —
+ *    the familiar mobile search pattern (Airbnb, Booking.com).
  */
 export const SearchWidget = ({ defaultDestination, destinations }: SearchWidgetProps) => {
   const t = useTranslations('search')
@@ -391,7 +374,7 @@ export const SearchWidget = ({ defaultDestination, destinations }: SearchWidgetP
   const destinationName =
     destinations.find((option) => option.slug === destination)?.name ?? t('anyDestination')
 
-  const fieldsProps = { destinations, destination, travelDate, tourType, pending, setField, t }
+  const fieldsProps = { destinations, destination, travelDate, tourType, setField, t }
 
   return (
     <>
@@ -401,9 +384,10 @@ export const SearchWidget = ({ defaultDestination, destinations }: SearchWidgetP
         className="mx-auto hidden max-w-5xl items-end gap-4 rounded-2xl bg-surface p-8 shadow-widget md:flex"
       >
         <SearchFields ids={desktopIds} {...fieldsProps} />
+        <SubmitButton pending={pending} label={t('submit')} />
       </form>
 
-      {/* --- below md: a compact trigger, opening the same fields in a dialog -- */}
+      {/* --- below md: a compact trigger, opening the same fields in a sheet --- */}
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -442,6 +426,14 @@ export const SearchWidget = ({ defaultDestination, destinations }: SearchWidgetP
                 )}
               />
 
+              {/*
+                A fixed-height sheet with the fields at its top, not one sized to its
+                content and anchored to the bottom of the screen. Content-sized, the
+                sheet grew upward whenever anything in it grew, and the fields sat in
+                the lower half of the screen — exactly where the phone keyboard opens
+                over them. Here they sit high, above the keyboard, and never move; the
+                Search button stays pinned at the foot.
+              */}
               <div
                 id={dialogId}
                 role="dialog"
@@ -449,13 +441,13 @@ export const SearchWidget = ({ defaultDestination, destinations }: SearchWidgetP
                 aria-label={t('open')}
                 inert={!open}
                 className={cn(
-                  'fixed inset-x-0 bottom-0 z-[60] max-h-[85vh] overflow-y-auto overscroll-contain',
-                  'rounded-t-3xl bg-surface p-6 pb-8 shadow-2xl',
-                  'transition-transform duration-300 ease-out md:hidden',
+                  'fixed inset-x-0 bottom-0 top-[max(4rem,env(safe-area-inset-top))] z-[60] flex flex-col',
+                  'rounded-t-3xl bg-surface shadow-2xl',
+                  'transition-transform duration-300 ease-out motion-reduce:transition-none md:hidden',
                   open ? 'translate-y-0' : 'translate-y-full',
                 )}
               >
-                <div className="mb-5 flex items-center justify-between">
+                <div className="flex shrink-0 items-center justify-between px-6 pb-2 pt-6">
                   <span className="font-headline-card text-headline-card text-primary">
                     {t('open')}
                   </span>
@@ -469,8 +461,14 @@ export const SearchWidget = ({ defaultDestination, destinations }: SearchWidgetP
                   </button>
                 </div>
 
-                <form onSubmit={onSubmit} className="flex flex-col gap-4">
-                  <SearchFields ids={mobileIds} {...fieldsProps} />
+                <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
+                  {/* Bottom padding leaves room for a list opened from the last field. */}
+                  <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-6 pb-56 pt-3">
+                    <SearchFields ids={mobileIds} {...fieldsProps} />
+                  </div>
+                  <div className="shrink-0 border-t border-outline-variant/60 px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4">
+                    <SubmitButton pending={pending} label={t('submit')} />
+                  </div>
                 </form>
               </div>
             </>,
