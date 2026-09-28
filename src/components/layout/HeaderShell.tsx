@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { usePathname } from '@/i18n/navigation'
 import { useUIStore } from '@/stores'
@@ -11,79 +11,41 @@ import { cn } from '@/lib/utils'
  *
  * Header itself stays a Server Component — nav items, branding and the CTA are read
  * from the CMS and must not ship as props to the client. Only this shell is
- * interactive, and it publishes its state as data attributes on the <header> so the
- * server-rendered children can restyle themselves with `group-data-*` variants
- * instead of receiving the state through React.
+ * interactive: it owns the one piece of state the bar still has, whether it is
+ * tucked away on scroll.
  *
- * Three behaviours:
+ * The bar is a floating white pill at every width (drawn by Header's inner row); the
+ * <header> itself is only a transparent 12px frame around it. It used to go
+ * transparent over a hero photograph and turn white as the hero scrolled away; the
+ * pill is white throughout, so there is no longer a state for the children to read.
+ * Pages still carry their `data-hero-zone` markers from then; nothing reads them now.
  *
- * - `data-state="overlay" | "solid"`. Overlay is transparent chrome over the hero
- *   photograph; solid is the white bar used everywhere else. A page opts into overlay
- *   by rendering an element marked `data-hero-zone`; pages without a hero (every
- *   inner route) are solid from the first paint, because white-on-white nav text over
- *   a light page background is unreadable.
- * - `data-hidden`. The bar slides away on a downward scroll and returns on the way
- *   up, so a long listing gives its full height to content without costing a scroll
- *   back to the top to navigate. Suppressed while the mobile sheet is open — hiding
- *   the bar would take its own close button with it.
- * - `--scroll-progress`, a 0–1 read of how far down the document the reader is, used
- *   by the hairline under the bar.
+ * `data-hidden`: the bar slides away on a downward scroll and returns on the way up,
+ * so a long listing gives its full height to content without costing a scroll back
+ * to the top to navigate. Suppressed while the mobile sheet or a mega panel is open —
+ * hiding the bar would take its own close button with it.
  */
 export const HeaderShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
   const mobileNavOpen = useUIStore((state) => state.mobileNavOpen)
   const navPanelOpen = useUIStore((state) => state.navPanelOpen)
-  const ref = useRef<HTMLElement>(null)
-
-  /**
-   * Starts solid, and only a page that actually has a hero flips it to overlay.
-   * Getting this wrong in the safe direction costs a single frame of navy-on-white
-   * chrome over the photo; the other way round is invisible white-on-white text.
-   */
-  const [overlay, setOverlay] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
 
-  /** Does this route have a hero for the bar to sit over? */
   useEffect(() => {
-    setOverlay(Boolean(document.querySelector('[data-hero-zone]')))
-  }, [pathname])
-
-  useEffect(() => {
-    const header = ref.current
-    if (!header) return
-
     let frame = 0
     let last = window.scrollY
 
     const measure = () => {
       frame = 0
       const y = window.scrollY
-      const zone = document.querySelector('[data-hero-zone]')
-
-      /**
-       * With a hero, the bar turns solid as the hero's foot passes under it; without
-       * one, as soon as the page moves at all. `getBoundingClientRect` is read once
-       * per animation frame, never per scroll event, so this stays off the critical
-       * path even on a trackpad flick.
-       */
-      const trigger = zone ? zone.getBoundingClientRect().bottom - header.offsetHeight : 8
-      setScrolled(zone ? trigger <= 0 : y > trigger)
-
       // Below the fold only, and never far enough up to strand a mid-scroll reader.
-      // An open menu pins the bar for the same reason the mobile sheet does: sliding
-      // it away would take the open panel — and its close button — with it.
       const goingDown = y > last && y > 240
       setHidden(goingDown && !mobileNavOpen && !navPanelOpen)
       last = y
-
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight
-      header.style.setProperty(
-        '--scroll-progress',
-        scrollable > 0 ? String(Math.min(1, y / scrollable)) : '0',
-      )
     }
 
+    // Read once per animation frame, never per scroll event, so a trackpad flick
+    // costs nothing on the critical path.
     const onScroll = () => {
       if (frame) return
       frame = requestAnimationFrame(measure)
@@ -91,48 +53,23 @@ export const HeaderShell = ({ children }: { children: React.ReactNode }) => {
 
     measure()
     window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll, { passive: true })
     return () => {
       if (frame) cancelAnimationFrame(frame)
       window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
     }
   }, [pathname, mobileNavOpen, navPanelOpen])
 
-  /**
-   * An open mega panel forces the solid state.
-   *
-   * The panel is an opaque white band hanging directly off the bar. Over a hero the
-   * bar is transparent, so leaving it that way puts a hard white edge under floating
-   * white nav labels and the two stop reading as one piece of chrome.
-   */
-  const solid = !overlay || scrolled || navPanelOpen
-
   return (
     <header
-      ref={ref}
-      data-state={solid ? 'solid' : 'overlay'}
       data-hidden={hidden && !mobileNavOpen && !navPanelOpen ? '' : undefined}
       className={cn(
-        'group/header sticky top-0 z-50 w-full',
-        'transition-[transform,background-color,box-shadow,border-color] duration-300 ease-out',
-        'data-[hidden]:-translate-y-full',
-        solid
-          ? 'border-b border-outline-variant/40 bg-surface-container-lowest/90 shadow-nav backdrop-blur-md'
-          : 'border-b border-transparent bg-transparent',
+        // 12px frame + 56px pill + 12px frame = the 80px that the heroes' `-mt-20`
+        // cancels, so a hero photograph still starts at the very top of the viewport.
+        'sticky top-0 z-50 w-full p-3',
+        'transition-transform duration-300 ease-out data-[hidden]:-translate-y-full',
       )}
     >
       {children}
-
-      {/*
-        Reading progress. Painted with `scaleX` off a CSS variable rather than a width,
-        so every frame is a compositor transform and none of them lays the page out.
-      */}
-      <span
-        aria-hidden
-        className="absolute inset-x-0 bottom-0 h-px origin-left bg-brand opacity-0 transition-opacity duration-300 group-data-[state=solid]/header:opacity-100"
-        style={{ transform: 'scaleX(var(--scroll-progress, 0))' }}
-      />
     </header>
   )
 }

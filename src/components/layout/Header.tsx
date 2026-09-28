@@ -39,17 +39,17 @@ export const Header = async ({ locale }: { locale: Locale }) => {
   return (
     <HeaderShell>
       {/*
-        Height is fixed at 80px in the overlay state and only shrinks once the bar has
-        gone solid. Hero cancels exactly that 80px with `-mt-20` so the photograph runs
-        edge to edge from the top of the viewport; a bar that were shorter at first
-        paint would leave a strip of page background above it.
+        This row is the bar itself: a floating white pill at every width, a fixed 56px
+        tall, that never shrinks or goes transparent. HeaderShell supplies the 12px
+        frame around it — together the 80px that the heroes cancel with `-mt-20`, so a
+        hero photograph still runs to the very top of the viewport behind the pill.
       */}
-      <div className="mx-auto flex h-20 w-full max-w-[1600px] items-center justify-between px-6 transition-[height] duration-300 group-data-[state=solid]/header:h-16 md:px-grid-margin">
+      <div className="mx-auto flex h-14 w-full max-w-[1600px] items-center justify-between gap-2 rounded-full bg-white pl-2 pr-3 shadow-nav ring-1 ring-outline-variant/40 md:pr-2">
         <Link
           href="/"
           className="group/logo flex items-center gap-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2"
         >
-          <span className="relative block h-10 w-10 overflow-hidden rounded-full ring-1 ring-white/30 transition-transform duration-300 group-hover/logo:scale-105 group-data-[state=solid]/header:ring-outline-variant/50 md:h-11 md:w-11">
+          <span className="relative block h-10 w-10 overflow-hidden rounded-full ring-1 ring-outline-variant/50 transition-transform duration-300 group-hover/logo:scale-105">
             <CmsImage
               image={settings.logo}
               alt={settings.brandName}
@@ -57,7 +57,7 @@ export const Header = async ({ locale }: { locale: Locale }) => {
               className="object-contain"
             />
           </span>
-          <span className="font-display-hero text-lg font-semibold tracking-wide text-white transition-colors duration-300 group-data-[state=solid]/header:text-primary md:text-xl">
+          <span className="whitespace-nowrap font-display-hero text-base font-semibold tracking-wide text-primary min-[380px]:text-lg md:text-xl lg:max-xl:sr-only">
             {settings.brandName}
           </span>
         </Link>
@@ -92,23 +92,16 @@ export const Header = async ({ locale }: { locale: Locale }) => {
 
         {/*
           The colour is set once here and both switchers inherit it through
-          `currentColor`, so neither has to know which state the bar is in.
+          `currentColor`.
         */}
-        <div className="flex items-center gap-3 text-white transition-colors duration-300 group-data-[state=solid]/header:text-on-surface-variant md:gap-5">
+        <div className="flex shrink-0 items-center gap-2 text-on-surface-variant min-[380px]:gap-3 md:gap-5">
           <LocaleSwitcher className="hidden sm:flex" />
           <CurrencySwitcher currencies={settings.currencies} />
           <ButtonLink
             href={cta.href}
             variant="navy"
-            className={
-              'hidden lg:inline-flex ' +
-              // Over the photograph a navy pill sinks into the scrim, so the overlay
-              // state uses a glass chip that reads against whatever the editor uploads.
-              'group-data-[state=overlay]/header:border group-data-[state=overlay]/header:border-white/50 ' +
-              'group-data-[state=overlay]/header:bg-white/10 group-data-[state=overlay]/header:text-white ' +
-              'group-data-[state=overlay]/header:backdrop-blur-sm ' +
-              'group-data-[state=overlay]/header:hover:bg-white group-data-[state=overlay]/header:hover:text-brand'
-            }
+            // Fully rounded and a little shorter, to sit inside the pill's curve.
+            className="hidden h-10 whitespace-nowrap rounded-full px-6 lg:inline-flex"
           >
             {cta.label}
           </ButtonLink>
