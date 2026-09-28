@@ -128,9 +128,13 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
           who slows down on a card, and costs no height for everyone who does not.
           Transform and opacity only, so the whole interaction stays on the compositor.
         */}
-        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-          <div className="rounded-[20px] border border-white/15 bg-white/10 p-5 backdrop-blur-xl transition-colors duration-300 group-hover:bg-white/[0.18]">
-            <h3 className="line-clamp-2 font-headline-card text-headline-card leading-snug text-white">
+        {/*
+          Tighter on phones: the summary is always open there (see below), so at the
+          desktop padding and type size the panel covered most of the photograph.
+        */}
+        <div className="absolute inset-x-0 bottom-0 p-3 sm:p-5">
+          <div className="rounded-[20px] border border-white/15 bg-white/10 p-4 backdrop-blur-xl transition-colors duration-300 group-hover:bg-white/[0.18] sm:p-5">
+            <h3 className="line-clamp-2 font-headline-card text-xl leading-snug text-white sm:text-headline-card">
               <Link
                 href={item.href}
                 className="rounded-sm after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
@@ -162,16 +166,20 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
               undiscoverable. The grid-rows trick animates to the text's real height
               without hard-coding one, and `invisible` keeps the clipped copy out of
               the tab order and off the screen-reader's path while it is closed.
+
+              Left out entirely below `sm`: on a card ~280px wide the open summary
+              pushed the panel up over nearly the whole photograph, which is the thing
+              this card exists to show. The tour page it links to carries the full copy.
             */}
             {item.summary ? (
-              <div className="grid grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] md:group-focus-within:grid-rows-[1fr]">
+              <div className="hidden grid-rows-[1fr] sm:grid transition-[grid-template-rows] duration-500 ease-out md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] md:group-focus-within:grid-rows-[1fr]">
                 <p className="visible overflow-hidden font-body-md text-caption leading-relaxed text-white/70 opacity-100 transition-[opacity,visibility] duration-300 md:invisible md:opacity-0 md:group-hover:visible md:group-hover:opacity-100 md:group-focus-within:visible md:group-focus-within:opacity-100">
                   <span className="mt-3 block line-clamp-3">{item.summary}</span>
                 </p>
               </div>
             ) : null}
 
-            <div className="mt-4 flex items-end justify-between gap-3 border-t border-white/15 pt-4">
+            <div className="mt-3 flex items-end justify-between gap-3 border-t border-white/15 pt-3 sm:mt-4 sm:pt-4">
               <div>
                 {item.priceFrom !== null ? (
                   <>

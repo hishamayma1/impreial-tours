@@ -68,14 +68,14 @@ export const Services = ({ heading, services, exploreLabel, cta }: ServicesProps
       // (see Hero.tsx). Below `md`, SearchWidget renders as a short one-line trigger
       // rather than the full form, so it needs less room than the desktop widget, not
       // more — but it is a different height, so it still needs its own value here.
-      className="pb-section-v-padding pt-[220px] md:pt-[180px]"
+      className="pb-16 pt-24 md:pb-section-v-padding md:pt-[180px]"
       aria-labelledby="services-heading"
     >
       <SectionHeading
         headingId="services-heading"
         eyebrow={heading.eyebrow}
         title={heading.title}
-        className="mb-16"
+        className="mb-8 md:mb-16"
       />
 
       <CardCarousel className="md:grid-cols-2 lg:grid-cols-3">
@@ -163,7 +163,7 @@ export const Services = ({ heading, services, exploreLabel, cta }: ServicesProps
         })}
       </CardCarousel>
 
-      <SectionCta primary={cta.primary} secondary={cta.secondary} className="mt-14" />
+      <SectionCta primary={cta.primary} secondary={cta.secondary} className="mt-10 md:mt-14" />
     </Container>
   )
 }

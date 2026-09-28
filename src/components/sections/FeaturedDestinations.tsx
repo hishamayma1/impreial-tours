@@ -27,7 +27,7 @@ export const FeaturedDestinations = ({
 
   return (
     <section
-      className="bg-surface-container-low py-section-v-padding"
+      className="bg-surface-container-low py-16 md:py-section-v-padding"
       aria-labelledby="destinations-heading"
     >
       <Container>
@@ -38,7 +38,7 @@ export const FeaturedDestinations = ({
           body={heading.body}
           // The one band on the page that types itself in.
           typing
-          className="mb-12"
+          className="mb-8 md:mb-12"
         />
 
         {/*
@@ -81,7 +81,7 @@ export const FeaturedDestinations = ({
                     className="absolute inset-0 bg-gradient-to-t from-brand via-brand/50 to-transparent opacity-95"
                   />
 
-                  <span className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <span className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white opacity-100 backdrop-blur-sm transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100">
                     <Icon name="arrow-right" className="h-5 w-5" />
                   </span>
 
@@ -102,7 +102,7 @@ export const FeaturedDestinations = ({
           ))}
         </CardCarousel>
 
-        <SectionCta primary={cta.primary} secondary={cta.secondary} className="mt-14" />
+        <SectionCta primary={cta.primary} secondary={cta.secondary} className="mt-10 md:mt-14" />
       </Container>
     </section>
   )

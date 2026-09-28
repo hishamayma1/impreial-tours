@@ -98,20 +98,22 @@ const HomePage = async ({ params }: PageProps) => {
         <ServicesSection locale={locale as Locale} />
       </Suspense>
 
+
       <Suspense fallback={<TopToursSkeleton />}>
         <TopToursSection locale={locale as Locale} />
       </Suspense>
 
-      <Suspense fallback={<OffersSkeleton />}>
-        <OffersSection locale={locale as Locale} />
+      <Suspense fallback={<SectionSkeleton columns={3} />}>
+        <DestinationsSection locale={locale as Locale} />
       </Suspense>
+
       
       <Suspense fallback={<PlanJourneySkeleton />}>
         <PlanJourneySection locale={locale as Locale} />
       </Suspense>
 
-      <Suspense fallback={<SectionSkeleton columns={3} />}>
-        <DestinationsSection locale={locale as Locale} />
+      <Suspense fallback={<OffersSkeleton />}>
+        <OffersSection locale={locale as Locale} />
       </Suspense>
 
       <Suspense fallback={<TestimonialsSkeleton />}>

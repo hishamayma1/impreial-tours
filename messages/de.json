@@ -46,12 +46,12 @@
     "open": "Suchen & filtern",
     "close": "Schließen",
     "types": {
-      "private": "Privat",
-      "group": "Gruppe",
-      "yacht": "Yacht",
-      "villa": "Villa"
+      "any": "Alle Tourarten",
+      "daily": "Tagestour",
+      "experience": "Vollständiges Erlebnis"
     },
-    "resultsFor": "Reisen nach {destination}"
+    "anyDestination": "Überall in Ägypten",
+    "noMatches": "Kein passendes Reiseziel"
   },
   "hero": {
     "title": "Maßgeschneiderte Reisen durch Ägypten",

@@ -21,8 +21,8 @@ type PlanJourneyProps = {
 }
 
 const channelClass =
-  'inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/5 px-4 py-2.5 ' +
-  'font-body-md text-body-md text-white/90 backdrop-blur-sm transition-colors duration-200 ' +
+  'inline-flex flex-col items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-white/25 bg-white/5 px-2 py-3 sm:flex-row sm:gap-2 sm:px-4 sm:py-2.5 ' +
+  'font-body-md text-caption text-white/90 backdrop-blur-sm sm:text-body-md transition-colors duration-200 ' +
   'hover:border-white hover:bg-white hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white'
 
 const Channel = ({ href, icon, label }: { href: string; icon: IconName; label: string }) => (
@@ -52,7 +52,7 @@ export const PlanJourney = ({ heading, contact, labels }: PlanJourneyProps) => {
     <section
       // The hero's secondary CTA jumps here, so the id has to be stable.
       id="plan"
-      className="relative overflow-hidden bg-brand py-section-v-padding"
+      className="relative overflow-hidden bg-brand py-16 md:py-section-v-padding"
       aria-labelledby="plan-heading"
     >
       {/*
@@ -69,7 +69,7 @@ export const PlanJourney = ({ heading, contact, labels }: PlanJourneyProps) => {
         className="pointer-events-none absolute -bottom-40 -right-24 h-[32rem] w-[32rem] rounded-full bg-inverse-primary/10 blur-3xl"
       />
 
-      <Container className="relative z-10 grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-grid-gutter">
+      <Container className="relative z-10 grid grid-cols-1 items-center gap-10 md:gap-12 lg:grid-cols-12 lg:gap-grid-gutter">
         <div className="lg:col-span-6 xl:col-span-5">
           {heading.eyebrow ? (
             <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-label-caps text-label-caps uppercase tracking-widest text-white backdrop-blur-sm">
@@ -100,7 +100,7 @@ export const PlanJourney = ({ heading, contact, labels }: PlanJourneyProps) => {
             ))}
           </ul>
 
-          <dl className="mt-10 grid grid-cols-3 gap-4 border-t border-white/15 pt-8">
+          <dl className="mt-8 grid grid-cols-3 gap-4 border-t border-white/15 md:mt-10 pt-8">
             {labels.stats.map((stat) => (
               <div key={stat.label}>
                 <dt className="sr-only">{stat.label}</dt>
@@ -121,11 +121,11 @@ export const PlanJourney = ({ heading, contact, labels }: PlanJourneyProps) => {
             us" chip with no number behind it is worse than no chip at all.
           */}
           {whatsapp || contact.phone || contact.email ? (
-            <div className="mt-10">
+            <div className="mt-8 md:mt-10">
               <span className="mb-3 block font-label-caps text-label-caps uppercase tracking-widest text-white/50">
                 {labels.orReachUs}
               </span>
-              <div className="flex flex-wrap gap-3">
+              <div className="grid auto-cols-fr grid-flow-col gap-2 sm:flex sm:flex-wrap sm:gap-3">
                 {whatsapp ? (
                   <Channel href={`https://wa.me/${whatsapp}`} icon="whatsapp" label={labels.whatsapp} />
                 ) : null}

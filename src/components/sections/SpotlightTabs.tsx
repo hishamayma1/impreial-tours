@@ -56,7 +56,7 @@ export const SpotlightTabs = ({ tabs, groupLabel, header }: SpotlightTabsProps) 
 
   return (
     <>
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-grid-gutter">
+      <div className="flex flex-col gap-6 md:gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-grid-gutter">
         {header}
 
         <div
@@ -97,7 +97,7 @@ export const SpotlightTabs = ({ tabs, groupLabel, header }: SpotlightTabsProps) 
           aria-labelledby={`${baseId}-tab-${tab.id}`}
           hidden={index !== active}
           tabIndex={0}
-          className="mt-12 focus-visible:outline-none"
+          className="mt-8 focus-visible:outline-none md:mt-12"
         >
           {tab.panel}
         </div>

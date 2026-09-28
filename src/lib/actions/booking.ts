@@ -3,7 +3,14 @@
 import { headers } from 'next/headers'
 import { getPayloadClient } from '@/lib/payload/client'
 import { locales, type Locale } from '@/i18n/routing'
-import { TOUR_TYPES, type TourType } from '@/stores/search-store'
+
+/**
+ * The Bookings collection's own enquiry tour types. Kept here rather than read from
+ * the search store: the hero search now filters the catalogue by its day-tour /
+ * full-experience types, and these are a separate field in the CMS schema.
+ */
+const TOUR_TYPES = ['private', 'group', 'yacht', 'villa'] as const
+type TourType = (typeof TOUR_TYPES)[number]
 
 export type BookingEnquiryInput = {
   destination: string

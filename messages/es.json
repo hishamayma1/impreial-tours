@@ -46,12 +46,12 @@
     "open": "Buscar y filtrar",
     "close": "Cerrar",
     "types": {
-      "private": "Privado",
-      "group": "En grupo",
-      "yacht": "Yate",
-      "villa": "Villa"
+      "any": "Todos los tipos",
+      "daily": "Excursión de un día",
+      "experience": "Experiencia completa"
     },
-    "resultsFor": "Mostrando viajes a {destination}"
+    "anyDestination": "Todo Egipto",
+    "noMatches": "Ningún destino coincide"
   },
   "hero": {
     "title": "Viajes a Medida por Egipto",
