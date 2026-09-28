@@ -71,8 +71,12 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
       className="reveal group relative isolate flex h-full flex-col overflow-hidden rounded-[28px] border border-white/10 bg-brand-dark card-lift hover:border-white/25 hover:shadow-widget focus-within:border-white/40"
       style={{ '--reveal-index': index } as React.CSSProperties}
     >
-      {/* The photo is the card. Everything else is drawn over it. */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden">
+      {/*
+        The photo is the card. Everything else is drawn over it. Taller on phones
+        (3:4), where the card is a single swipeable column and the photo has to do the
+        selling on its own; 4:5 from `md`, where three sit side by side.
+      */}
+      <div className="relative aspect-[3/4] w-full overflow-hidden md:aspect-[4/5]">
         <CmsImage
           image={item.image}
           alt=""
@@ -83,18 +87,20 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
         {/*
           Two stops rather than one: a near-opaque foot so the panel's text always has
           a dark field under it whatever an editor uploads, and a light wash at the top
-          so the ribbon and rating stay legible over a bright sky.
+          so the ribbon and rating stay legible over a bright sky. Shallower on phones,
+          where the copy is down to two short lines at the foot and the upper two-thirds
+          of the photo can be left clear.
         */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/35 via-45% to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/25 via-35% to-transparent md:via-brand-dark/35 md:via-45%"
         />
         <div
           aria-hidden
           className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/35 to-transparent"
         />
 
-        <div className="absolute inset-x-5 top-5 flex items-start justify-between gap-3">
+        <div className="absolute inset-x-4 top-4 flex items-start justify-between gap-3 md:inset-x-5 md:top-5">
           {/*
             The ribbon states why this tour is in the band. 'new' and 'top' are the
             band's own grouping, so the two tones are fixed here rather than read from
@@ -129,12 +135,15 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
           Transform and opacity only, so the whole interaction stays on the compositor.
         */}
         {/*
-          Tighter on phones: the summary is always open there (see below), so at the
-          desktop padding and type size the panel covered most of the photograph.
+          Below `md` the copy is cut to what a thumb-scroller decides on — title, one
+          fact, price — and set straight onto the photo's dark foot rather than into
+          the frosted panel. The panel with all of its content stood about half the
+          card's height on a phone, covering the photograph the card exists to show.
+          From `md` the frosted panel and its full content return.
         */}
-        <div className="absolute inset-x-0 bottom-0 p-3 sm:p-5">
-          <div className="rounded-[20px] border border-white/15 bg-white/10 p-4 backdrop-blur-xl transition-colors duration-300 group-hover:bg-white/[0.18] sm:p-5">
-            <h3 className="line-clamp-2 font-headline-card text-xl leading-snug text-white sm:text-headline-card">
+        <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
+          <div className="transition-colors duration-300 md:rounded-[20px] md:border md:border-white/15 md:bg-white/10 md:p-5 md:backdrop-blur-xl md:group-hover:bg-white/[0.18]">
+            <h3 className="line-clamp-2 font-headline-card text-xl leading-snug text-white [text-shadow:0_1px_12px_rgb(0_0_0/0.35)] md:text-headline-card md:[text-shadow:none]">
               <Link
                 href={item.href}
                 className="rounded-sm after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark"
@@ -144,11 +153,17 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
             </h3>
 
             {facts.length ? (
-              <ul className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                {facts.slice(0, 3).map((fact) => (
+              <ul className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 md:mt-3">
+                {facts.slice(0, 3).map((fact, factIndex) => (
                   <li
                     key={fact.label}
-                    className="inline-flex items-center gap-1.5 font-body-md text-caption text-white/75"
+                    // One fact on phones — the length of the trip, which is the one a
+                    // day tour and a multi-day experience are first chosen on.
+                    className={
+                      factIndex === 0
+                        ? 'inline-flex items-center gap-1.5 font-body-md text-caption text-white/80'
+                        : 'hidden items-center gap-1.5 font-body-md text-caption text-white/75 md:inline-flex'
+                    }
                   >
                     <FactIcon icon={fact.icon} className="h-3.5 w-3.5 text-tertiary-fixed-dim" />
                     <span className="sr-only">{ts(`fact.${fact.label}Label`)}: </span>
@@ -167,36 +182,37 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
               without hard-coding one, and `invisible` keeps the clipped copy out of
               the tab order and off the screen-reader's path while it is closed.
 
-              Left out entirely below `sm`: on a card ~280px wide the open summary
-              pushed the panel up over nearly the whole photograph, which is the thing
-              this card exists to show. The tour page it links to carries the full copy.
+              Left out entirely below `md`: on a phone-width card the open summary
+              pushed the copy up over most of the photograph, which is the thing this
+              card exists to show. The tour page it links to carries the full copy.
             */}
             {item.summary ? (
-              <div className="hidden grid-rows-[1fr] sm:grid transition-[grid-template-rows] duration-500 ease-out md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] md:group-focus-within:grid-rows-[1fr]">
+              <div className="hidden grid-rows-[1fr] md:grid transition-[grid-template-rows] duration-500 ease-out md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] md:group-focus-within:grid-rows-[1fr]">
                 <p className="visible overflow-hidden font-body-md text-caption leading-relaxed text-white/70 opacity-100 transition-[opacity,visibility] duration-300 md:invisible md:opacity-0 md:group-hover:visible md:group-hover:opacity-100 md:group-focus-within:visible md:group-focus-within:opacity-100">
                   <span className="mt-3 block line-clamp-3">{item.summary}</span>
                 </p>
               </div>
             ) : null}
 
-            <div className="mt-3 flex items-end justify-between gap-3 border-t border-white/15 pt-3 sm:mt-4 sm:pt-4">
+            <div className="mt-3 flex items-end justify-between gap-3 md:mt-4 md:border-t md:border-white/15 md:pt-4">
               <div>
                 {item.priceFrom !== null ? (
-                  <>
-                    <span className="block font-label-caps text-label-caps uppercase tracking-widest text-white/55">
+                  <span className="block">
+                    <span className="block font-label-caps text-label-caps uppercase tracking-widest text-white/60 md:text-white/55">
                       {ts('from')}
                     </span>
-                    <span className="flex items-baseline gap-1.5">
+                    {/* One line: a five-figure price in EGP wrapped "per person" in two. */}
+                    <span className="flex items-baseline gap-1.5 whitespace-nowrap">
                       <Price
                         amount={item.priceFrom}
                         currencies={currencies}
-                        className="font-headline-card text-headline-card text-white"
+                        className="font-headline-card text-xl text-white md:text-headline-card"
                       />
                       <span className="font-body-md text-caption text-white/60">
                         {ts('perPersonShort')}
                       </span>
                     </span>
-                  </>
+                  </span>
                 ) : (
                   <span className="font-body-md text-body-md text-white/80">
                     {ts('priceOnRequest')}
@@ -207,7 +223,9 @@ export const SpotlightTourCard = async ({ item, currencies, index }: SpotlightTo
               {/* Decorative: the title link above is the card's one real link. */}
               <span
                 aria-hidden
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-colors duration-300 group-hover:border-white group-hover:bg-white group-hover:text-brand"
+                // A filled white disc on phones, where it sits straight on the photo
+                // with no panel behind it; outlined in the frosted panel from `md`.
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-brand shadow-sm transition-colors duration-300 md:h-11 md:w-11 md:border md:border-white/25 md:bg-transparent md:text-white md:shadow-none md:group-hover:border-white md:group-hover:bg-white md:group-hover:text-brand"
               >
                 <svg
                   viewBox="0 0 16 16"
