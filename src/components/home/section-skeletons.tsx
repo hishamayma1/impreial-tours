@@ -156,7 +156,7 @@ export const TopToursSkeleton = ({ count = 3 }: { count?: number }) => (
 
       <CardCarousel as="div" className="mt-12 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: count }, (_, index) => (
-          <Skeleton key={index} className="aspect-[4/5] w-full rounded-[28px] bg-white/10" />
+          <Skeleton key={index} className="aspect-[3/4] w-full rounded-[28px] bg-white/10 md:aspect-[4/5]" />
         ))}
       </CardCarousel>
     </Container>
